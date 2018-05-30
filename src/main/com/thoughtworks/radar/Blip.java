@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Blip implements Comparable<Blip> {
     private final int id;
     private String name;
-    List<BlipHistory> historyList;
+    private List<BlipHistory> historyList;
 
     public Blip(int id, String name) {
         this.id = id;

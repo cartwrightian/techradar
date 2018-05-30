@@ -74,7 +74,6 @@ public class ParserTest {
 
         assertEquals(2018, result.getYear());
         assertEquals(Month.NOVEMBER, result.getMonth());
-
     }
 
 }
