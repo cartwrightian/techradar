@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group 'radar'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.clerezza.ext', name: 'org.json.simple', version: '0.4'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
