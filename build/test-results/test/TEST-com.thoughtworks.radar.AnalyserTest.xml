@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.thoughtworks.radar.AnalyserTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2018-05-31T15:10:57" hostname="iclaptop.local" time="0.012">
+  <properties/>
+  <testcase name="shouldSummariseBlipDecay" classname="com.thoughtworks.radar.AnalyserTest" time="0.011"/>
+  <testcase name="shouldFindLifeTimesAndRadarNumbers" classname="com.thoughtworks.radar.AnalyserTest" time="0.0"/>
+  <testcase name="shouldSummariseBlipDecayFilter" classname="com.thoughtworks.radar.AnalyserTest" time="0.0"/>
+  <testcase name="shouldIndexRadars" classname="com.thoughtworks.radar.AnalyserTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

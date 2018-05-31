@@ -1,5 +1,6 @@
 package com.thoughtworks.radar;
 
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -7,12 +8,18 @@ import java.util.Objects;
 public class Blip implements Comparable<Blip> {
     private final int id;
     private String name;
+    private Quadrant quadrant;
     private List<BlipHistory> historyList;
+    private LocalDate appeared;
+    private LocalDate lastDate;
 
-    public Blip(int id, String name) {
+    public Blip(int id, String name, Quadrant quadrant) {
         this.id = id;
         this.name = name;
+        this.quadrant = quadrant;
         historyList = new LinkedList<>();
+        appeared = LocalDate.MAX;
+        lastDate = LocalDate.MIN;
     }
 
     public String getName() {
@@ -21,6 +28,26 @@ public class Blip implements Comparable<Blip> {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public int compareTo(Blip other) {
+        return Integer.compare(this.id, other.id);
+    }
+
+    public List<BlipHistory> getHistory() {
+        return historyList;
+    }
+
+    public void addHistory(BlipHistory blipHistory) {
+        historyList.add(blipHistory);
+        LocalDate date = blipHistory.getDate();
+        if (date.isAfter(lastDate)) {
+            lastDate = date;
+        }
+        if (date.isBefore(appeared)) {
+            appeared = date;
+        }
     }
 
     @Override
@@ -36,16 +63,15 @@ public class Blip implements Comparable<Blip> {
         return Objects.hash(id);
     }
 
-    @Override
-    public int compareTo(Blip other) {
-        return Integer.compare(this.id, other.id);
+    public LocalDate appearedDate() {
+        return appeared;
     }
 
-    public List<BlipHistory> getHistory() {
-        return historyList;
+    public LocalDate lastDate() {
+        return lastDate;
     }
 
-    public void addHistory(BlipHistory blipHistory) {
-        historyList.add(blipHistory);
+    public Quadrant getQuadrant() {
+        return quadrant;
     }
 }

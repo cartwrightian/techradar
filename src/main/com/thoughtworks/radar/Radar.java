@@ -20,7 +20,7 @@ public class Radar {
 
         Blip blip;
         if (!blips.containsKey(id)) {
-            blip = new Blip(id, rawBlip.getName());
+            blip = new Blip(id, rawBlip.getName(), rawBlip.getQuadrant());
             blips.put(id, blip);
         } else {
             blip = blips.get(id);

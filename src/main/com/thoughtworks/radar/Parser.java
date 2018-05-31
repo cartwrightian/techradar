@@ -49,25 +49,28 @@ public class Parser {
     private RawBlip parseItem(JSONObject jsonObject, LocalDate date) {
         String name = (String) jsonObject.get("name");
         String rawRing = (String) jsonObject.get("ring");
+        String rawQuadrant = (String) jsonObject.get("quadrant");
         int id = Integer.parseInt((String) jsonObject.get("id"));
 
         Ring ring = Ring.valueOf(rawRing);
-        return new RawBlip(id, name, date, ring);
+        Quadrant quadrant = Quadrant.fromString(rawQuadrant);
+        return new RawBlip(id, name, date, ring, quadrant);
     }
 
-    public class RawBlip {
+    public static class RawBlip {
 
         private final int id;
         private final String name;
         private final LocalDate date;
         private final Ring ring;
+        private Quadrant quadrant;
 
-        public RawBlip(int id, String name, LocalDate date, Ring ring) {
-
+        public RawBlip(int id, String name, LocalDate date, Ring ring, Quadrant quadrant) {
             this.id = id;
             this.name = name;
             this.date = date;
             this.ring = ring;
+            this.quadrant = quadrant;
         }
 
         public String getName() {
@@ -84,6 +87,10 @@ public class Parser {
 
         public int getId() {
             return id;
+        }
+
+        public Quadrant getQuadrant() {
+            return quadrant;
         }
     }
 
