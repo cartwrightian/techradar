@@ -60,4 +60,20 @@ public class ResultsWriter {
         });
         return builder.toString();
     }
+
+    public void writeSummary(Map<Integer, Integer> halfLives) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        halfLives.forEach((day,halflife) -> {
+            builder.append(String.format("%s,", day));
+            if (halflife!=Integer.MAX_VALUE) {
+                builder.append(halflife);
+            } else {
+                builder.append("\"\"");
+            }
+            builder.append(lineSep);
+        });
+
+
+        writeBytesToFile(builder);
+    }
 }

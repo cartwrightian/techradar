@@ -43,8 +43,7 @@ public class AnalyserTest {
 
     @Test
     public void shouldSummariseBlipDecay() {
-        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(Quadrant.tools,Quadrant.LanguagesAndFrameworks,
-                Quadrant.LanguagesAndFrameworks,Quadrant.techniques);
+        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(Quadrant.values());
 
         assertEquals(5,decay.size());
         assertEquals(5, decay.get(1).size());
@@ -85,7 +84,7 @@ public class AnalyserTest {
 
     @Test
     public void shouldIndexRadars() {
-        Map<LocalDate, Integer> result = analyser.countRadars();
+        Map<LocalDate, Integer> result = analyser.getDateToNumberIndex();
 
         assertEquals(5, result.size());
         assertEquals(result.get(firstDate),new Integer(1));
@@ -118,6 +117,25 @@ public class AnalyserTest {
         assertEquals("blipC", blipLifetimeB.getName());
         assertEquals(53, blipLifetimeB.getId());
         assertEquals(Quadrant.LanguagesAndFrameworks, blipLifetimeB.getQuadrant());
+    }
+
+    @Test
+    public void shouldCalcHalfLifeForBlips() {
+        Radar radar = new Radar();
+        for (int i = 0; i < 100; i++) {
+            Parser.RawBlip rawA = new Parser.RawBlip(i, "blip"+i, firstDate, Ring.Assess, Quadrant.tools);
+            radar.add(rawA);
+            if (i<40) {
+                Parser.RawBlip rawB = new Parser.RawBlip(i, "blip"+i, firstDate.plusDays(100), Ring.Adopt, Quadrant.tools);
+                radar.add(rawB);
+            }
+        }
+        analyser = new Analyser(radar);
+        Map<Integer,Integer> halfLife = analyser.findHalfLife(Quadrant.values());
+
+        // half gone by 100 days
+        int key = Math.toIntExact(firstDate.toEpochDay());
+        assertEquals(new Integer(100),halfLife.get(key));
 
     }
 

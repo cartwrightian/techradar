@@ -27,11 +27,20 @@ public class Main {
         ResultsWriter decayWriter = new ResultsWriter(Paths.get("data","decays.csv"));
         Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(Quadrant.values());
         decayWriter.write(decays);
-
+        
         for(Quadrant quadrant : Quadrant.values()) {
             ResultsWriter quadWriter = new ResultsWriter(Paths.get("data","decays-"+quadrant.toString()+".csv"));
-            Map<Integer, List<Integer>> quadDecays = analyser.summaryOfDecay(quadrant);
-            quadWriter.write(quadDecays);
+            quadWriter.write(analyser.summaryOfDecay(quadrant));
         }
+
+        Map<Integer, Integer> halfLives = analyser.findHalfLife(Quadrant.values());
+        ResultsWriter halflifeWriter = new ResultsWriter(Paths.get("data", "halflife.csv"));
+        halflifeWriter.writeSummary(halfLives);
+
+        for(Quadrant quadrant : Quadrant.values()) {
+            ResultsWriter quadWriter = new ResultsWriter(Paths.get("data","halflife-"+quadrant.toString()+".csv"));
+            quadWriter.writeSummary(analyser.findHalfLife(quadrant));
+        }
+
     }
 }

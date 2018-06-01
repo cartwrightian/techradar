@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.thoughtworks.radar.JsonFromFileTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2018-05-31T15:10:57" hostname="iclaptop.local" time="0.273">
-  <properties/>
-  <testcase name="shouldLoadJson" classname="com.thoughtworks.radar.JsonFromFileTest" time="0.273"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -5,29 +5,32 @@ import java.util.*;
 
 public class Analyser {
     private Radar radar;
+    private Map<Integer,LocalDate> numberToDate;
+    private Map<LocalDate,Integer> dateToNumber;
 
     public Analyser(Radar radar) {
         this.radar = radar;
+        numberToDate = new TreeMap<>();
+        dateToNumber = new TreeMap<>();
+        indexRadars();
     }
 
     public List<BlipLifetime> lifeTimes() {
 
         List<BlipLifetime> results = new LinkedList<>();
 
-        Map<LocalDate, Integer> radarNumbers = countRadars();
-
         radar.getBlips().forEach(blip -> {
             LocalDate appearedDate = blip.appearedDate();
             LocalDate lastDate = blip.lastDate();
             BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getQuadrant(), appearedDate, lastDate,
-                    radarNumbers.get(appearedDate), radarNumbers.get(lastDate));
+                    dateToNumber.get(appearedDate), dateToNumber.get(lastDate));
             results.add(blipLifetime);
         });
 
         return results;
     }
 
-    public Map<LocalDate, Integer> countRadars() {
+    private void indexRadars() {
         List<LocalDate> dates = new LinkedList<>();
 
         radar.getBlips().forEach(blip -> blip.getHistory().forEach(item -> {
@@ -38,12 +41,13 @@ public class Analyser {
 
         Collections.sort(dates);
 
-        Map<LocalDate, Integer> result = new TreeMap<>();
         for (int i = 0; i < dates.size(); i++) {
-            result.put(dates.get(i),i+1);
+            int radarNumber = i + 1;
+            LocalDate radarDate = dates.get(i);
+            dateToNumber.put(radarDate, radarNumber);
+            numberToDate.put(radarNumber, radarDate);
         }
 
-        return result;
     }
 
     public Map<Integer, List<Integer>> summaryOfDecay(Quadrant...quadrants) {
@@ -51,12 +55,11 @@ public class Analyser {
 
         HashMap<Integer, List<Integer>> result = new HashMap<>();
 
-        Map<LocalDate, Integer> radarIndex = countRadars();
-        int count = radarIndex.size();
+        int count = dateToNumber.size();
 
         List<BlipLifetime> lifeTimes = lifeTimes();
 
-        radarIndex.forEach((date,index) -> {
+        dateToNumber.forEach((date,index) -> {
             ArrayList<Integer> stillLeft = initList(count);
             lifeTimes.stream().
                     filter(time -> filter.contains(time.getQuadrant())).
@@ -83,5 +86,43 @@ public class Analyser {
             result.add(0);
         }
         return result;
+    }
+
+    public Map<Integer, Integer> findHalfLife(Quadrant...quadrants) {
+        Map<Integer, Integer> results = new TreeMap<>();
+
+        Map<Integer, List<Integer>> summary = summaryOfDecay(quadrants);
+        int count = summary.size();
+
+        for (int radarNumber = 1; radarNumber <=count; radarNumber++) {
+            List<Integer> decaysForRadar = summary.get(radarNumber);
+            int index = radarNumber - 1;
+            int radarDays = Math.toIntExact(numberToDate.get(radarNumber).toEpochDay());
+            Integer initialCount = decaysForRadar.get(index);
+            for (int j = index; j<count ; j++) { // zero indexed
+                int current = decaysForRadar.get(j);
+                if ((current+current)<initialCount) {
+                    int decayedByNumber = j + 1;
+                    long halflife = differenceInDays(radarNumber, decayedByNumber);
+                    results.put(radarDays, Math.toIntExact(halflife));
+                    break;
+                }
+            }
+            // not decayed yet
+            if (!results.containsKey(radarDays)) {
+                results.put(radarDays, Integer.MAX_VALUE);
+            }
+        }
+
+        return results;
+
+    }
+
+    private long differenceInDays(int radarA, int radarB) {
+        return numberToDate.get(radarB).toEpochDay()-numberToDate.get(radarA).toEpochDay();
+    }
+
+    public Map<LocalDate, Integer> getDateToNumberIndex() {
+        return dateToNumber;
     }
 }
