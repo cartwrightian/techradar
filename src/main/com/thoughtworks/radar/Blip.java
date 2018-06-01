@@ -12,6 +12,7 @@ public class Blip implements Comparable<Blip> {
     private List<BlipHistory> historyList;
     private LocalDate appeared;
     private LocalDate lastDate;
+    private Ring lastRing;
 
     public Blip(int id, String name, Quadrant quadrant) {
         this.id = id;
@@ -44,6 +45,7 @@ public class Blip implements Comparable<Blip> {
         LocalDate date = blipHistory.getDate();
         if (date.isAfter(lastDate)) {
             lastDate = date;
+            lastRing = blipHistory.getRing();
         }
         if (date.isBefore(appeared)) {
             appeared = date;
@@ -73,5 +75,9 @@ public class Blip implements Comparable<Blip> {
 
     public Quadrant getQuadrant() {
         return quadrant;
+    }
+
+    public Ring lastRing() {
+        return lastRing;
     }
 }

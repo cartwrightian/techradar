@@ -23,7 +23,7 @@ public class Analyser {
             LocalDate appearedDate = blip.appearedDate();
             LocalDate lastDate = blip.lastDate();
             BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getQuadrant(), appearedDate, lastDate,
-                    dateToNumber.get(appearedDate), dateToNumber.get(lastDate));
+                    dateToNumber.get(appearedDate), dateToNumber.get(lastDate), blip.lastRing());
             results.add(blipLifetime);
         });
 
@@ -50,8 +50,7 @@ public class Analyser {
 
     }
 
-    public Map<Integer, List<Integer>> summaryOfDecay(Quadrant...quadrants) {
-        List<Quadrant> filter =  Arrays.asList(quadrants);
+    public Map<Integer, List<Integer>> summaryOfDecay(BlipFilter blipFilter) {
 
         HashMap<Integer, List<Integer>> result = new HashMap<>();
 
@@ -62,9 +61,9 @@ public class Analyser {
         dateToNumber.forEach((date,index) -> {
             ArrayList<Integer> stillLeft = initList(count);
             lifeTimes.stream().
-                    filter(time -> filter.contains(time.getQuadrant())).
-                    filter(time -> (index.equals(time.getFirst()))).
-                    map(BlipLifetime::getLast).
+                    filter(time -> blipFilter.filter(time)).
+                    filter(time -> (index.equals(time.getFirstRadarNum()))).
+                    map(BlipLifetime::getLastRadarNum).
                     forEach(lastRadar -> increment(stillLeft,index, lastRadar));
             result.put(index, stillLeft);
         });
@@ -88,10 +87,10 @@ public class Analyser {
         return result;
     }
 
-    public Map<Integer, Integer> findHalfLife(Quadrant...quadrants) {
+    public Map<Integer, Integer> findHalfLife(BlipFilter blipFilter) {
         Map<Integer, Integer> results = new TreeMap<>();
 
-        Map<Integer, List<Integer>> summary = summaryOfDecay(quadrants);
+        Map<Integer, List<Integer>> summary = summaryOfDecay(blipFilter);
         int count = summary.size();
 
         for (int radarNumber = 1; radarNumber <=count; radarNumber++) {
@@ -125,4 +124,5 @@ public class Analyser {
     public Map<LocalDate, Integer> getDateToNumberIndex() {
         return dateToNumber;
     }
+
 }

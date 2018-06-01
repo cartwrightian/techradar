@@ -21,6 +21,7 @@ public class BlipTest {
 
         assertEquals(LocalDate.of(2002,11,23), blip.appearedDate());
         assertEquals(LocalDate.of(2018,11,23), blip.lastDate());
+        assertEquals(Ring.Adopt, blip.lastRing());
 
 
     }

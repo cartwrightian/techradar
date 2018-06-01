@@ -9,25 +9,28 @@ public class BlipLifetime implements ToCSV {
     private final LocalDate lastSeen;
     private String name;
     private int id;
-    private int first;
-    private int last;
+    private int firstRadarNum;
+    private int lastRadarNum;
     private Quadrant quadrant;
+    private Ring finalRing;
 
     @Override
     public String toCSV() {
         long epochDay = appeared.toEpochDay();
-        long lasted = lastSeen.toEpochDay()- epochDay;
-        return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, first, last, lasted);
+        long lifetimeInDays = lastSeen.toEpochDay()- epochDay;
+        return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstRadarNum, lastRadarNum, lifetimeInDays);
     }
 
-    public BlipLifetime(String name, int id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen, int first, int last) {
+    public BlipLifetime(String name, int id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
+                        int firstRadarNum, int lastRadarNum, Ring finalRing) {
         this.name = name;
         this.id = id;
         this.quadrant = quadrant;
         this.appeared = appeared;
         this.lastSeen = lastSeen;
-        this.first = first;
-        this.last = last;
+        this.firstRadarNum = firstRadarNum;
+        this.lastRadarNum = lastRadarNum;
+        this.finalRing = finalRing;
     }
 
     public LocalDate getAppearedDate() {
@@ -38,12 +41,12 @@ public class BlipLifetime implements ToCSV {
         return lastSeen;
     }
 
-    public int getFirst() {
-        return first;
+    public int getFirstRadarNum() {
+        return firstRadarNum;
     }
 
-    public int getLast() {
-        return last;
+    public int getLastRadarNum() {
+        return lastRadarNum;
     }
 
     public String getName() {
@@ -56,5 +59,9 @@ public class BlipLifetime implements ToCSV {
 
     public Quadrant getQuadrant() {
         return quadrant;
+    }
+
+    public Ring getFinalRing() {
+        return finalRing;
     }
 }

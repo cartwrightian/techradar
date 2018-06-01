@@ -18,6 +18,7 @@ public class AnalyserTest {
     private LocalDate thirdDate = LocalDate.of(2017, 11, 24);
     private LocalDate fourthDate = LocalDate.of(2018, 10, 22);
     private LocalDate fifthDate = LocalDate.of(2019, 8, 19);
+    private BlipFilter blipFilter;
 
     @Before
     public void beforeEachTestRuns() {
@@ -27,9 +28,9 @@ public class AnalyserTest {
         Parser.RawBlip rawC = new Parser.RawBlip(42, "blipA", fourthDate, Ring.Adopt, Quadrant.tools);
 
         Parser.RawBlip rawD = new Parser.RawBlip(52, "blipB", fifthDate, Ring.Adopt, Quadrant.techniques);
-        Parser.RawBlip rawE = new Parser.RawBlip(52, "blipB", firstDate, Ring.Adopt, Quadrant.techniques);
+        Parser.RawBlip rawE = new Parser.RawBlip(52, "blipB", firstDate, Ring.Assess, Quadrant.techniques);
 
-        Parser.RawBlip rawF = new Parser.RawBlip(53, "blipC", secondDate, Ring.Adopt, Quadrant.LanguagesAndFrameworks);
+        Parser.RawBlip rawF = new Parser.RawBlip(53, "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -39,11 +40,28 @@ public class AnalyserTest {
         radar.add(rawF);
 
         analyser = new Analyser(radar);
+        blipFilter = new BlipFilter();
     }
 
     @Test
-    public void shouldSummariseBlipDecay() {
-        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(Quadrant.values());
+    public void shouldSummariseBlipDecayFilterByFinalRing() {
+        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(blipFilter.allow(Quadrant.values()).allow(Ring.Adopt));
+
+        assertEquals(5,decay.size());
+        assertEquals(5, decay.get(1).size());
+
+        List<Integer> first = decay.get(2);
+        assertEquals(new Integer(0), first.get(0));
+        assertEquals(new Integer(1), first.get(1));
+        assertEquals(new Integer(1), first.get(2));
+        assertEquals(new Integer(1), first.get(3));
+        assertEquals(new Integer(0), first.get(4));
+
+    }
+
+    @Test
+    public void shouldSummariseBlipDecayAllQuadrants() {
+        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(BlipFilter.All());
 
         assertEquals(5,decay.size());
         assertEquals(5, decay.get(1).size());
@@ -65,12 +83,12 @@ public class AnalyserTest {
         assertEquals(new Integer(1), first.get(2));
         assertEquals(new Integer(1), first.get(3));
         assertEquals(new Integer(1), first.get(4));
-
     }
 
     @Test
-    public void shouldSummariseBlipDecayFilter() {
-        Map<Integer, List<Integer>> decay = analyser.summaryOfDecay(Quadrant.tools);
+    public void shouldSummariseBlipDecayFilterByQuad() {
+        Map<Integer, List<Integer>> decay = analyser.summaryOfDecay(
+                blipFilter.allow(Quadrant.tools).allow(Ring.values()));
 
         assertEquals(5, decay.get(1).size());
         assertEquals(5, decay.size());
@@ -103,8 +121,8 @@ public class AnalyserTest {
         BlipLifetime blipLifetimeA = result.get(0);
         assertEquals(LocalDate.of(2017,6,23), blipLifetimeA.getAppearedDate());
         assertEquals(LocalDate.of(2018,10,22), blipLifetimeA.getLastSeen());
-        assertEquals(2, blipLifetimeA.getFirst());
-        assertEquals(4, blipLifetimeA.getLast());
+        assertEquals(2, blipLifetimeA.getFirstRadarNum());
+        assertEquals(4, blipLifetimeA.getLastRadarNum());
         assertEquals("blipA", blipLifetimeA.getName());
         assertEquals(42, blipLifetimeA.getId());
         assertEquals(Quadrant.tools, blipLifetimeA.getQuadrant());
@@ -112,8 +130,8 @@ public class AnalyserTest {
         BlipLifetime blipLifetimeB = result.get(2);
         assertEquals(secondDate, blipLifetimeB.getAppearedDate());
         assertEquals(secondDate, blipLifetimeB.getLastSeen());
-        assertEquals(2, blipLifetimeB.getFirst());
-        assertEquals(2, blipLifetimeB.getLast());
+        assertEquals(2, blipLifetimeB.getFirstRadarNum());
+        assertEquals(2, blipLifetimeB.getLastRadarNum());
         assertEquals("blipC", blipLifetimeB.getName());
         assertEquals(53, blipLifetimeB.getId());
         assertEquals(Quadrant.LanguagesAndFrameworks, blipLifetimeB.getQuadrant());
@@ -131,7 +149,7 @@ public class AnalyserTest {
             }
         }
         analyser = new Analyser(radar);
-        Map<Integer,Integer> halfLife = analyser.findHalfLife(Quadrant.values());
+        Map<Integer,Integer> halfLife = analyser.findHalfLife(BlipFilter.All());
 
         // half gone by 100 days
         int key = Math.toIntExact(firstDate.toEpochDay());

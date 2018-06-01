@@ -25,22 +25,40 @@ public class Main {
         writer.write(results);
 
         ResultsWriter decayWriter = new ResultsWriter(Paths.get("data","decays.csv"));
-        Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(Quadrant.values());
+        Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(BlipFilter.All());
         decayWriter.write(decays);
-        
+
         for(Quadrant quadrant : Quadrant.values()) {
             ResultsWriter quadWriter = new ResultsWriter(Paths.get("data","decays-"+quadrant.toString()+".csv"));
-            quadWriter.write(analyser.summaryOfDecay(quadrant));
+            quadWriter.write(analyser.summaryOfDecay(filterByQuad(quadrant)));
         }
 
-        Map<Integer, Integer> halfLives = analyser.findHalfLife(Quadrant.values());
+        for(Ring ring : Ring.values()) {
+            ResultsWriter ringWriter = new ResultsWriter(Paths.get("data","decays-"+ring.toString()+".csv"));
+            ringWriter.write(analyser.summaryOfDecay(filterByRing(ring)));
+        }
+
+        Map<Integer, Integer> halfLives = analyser.findHalfLife(BlipFilter.All());
         ResultsWriter halflifeWriter = new ResultsWriter(Paths.get("data", "halflife.csv"));
         halflifeWriter.writeSummary(halfLives);
 
         for(Quadrant quadrant : Quadrant.values()) {
             ResultsWriter quadWriter = new ResultsWriter(Paths.get("data","halflife-"+quadrant.toString()+".csv"));
-            quadWriter.writeSummary(analyser.findHalfLife(quadrant));
+            quadWriter.writeSummary(analyser.findHalfLife(filterByQuad(quadrant)));
         }
 
+        for(Ring ring : Ring.values()) {
+            ResultsWriter ringWriter = new ResultsWriter(Paths.get("data","halflife-"+ring.toString()+".csv"));
+            ringWriter.writeSummary(analyser.findHalfLife(filterByRing(ring)));
+        }
+
+    }
+
+    private static BlipFilter filterByRing(Ring ring) {
+        return new BlipFilter().allow(Quadrant.values()).allow(ring);
+    }
+
+    private static BlipFilter filterByQuad(Quadrant quadrant) {
+        return new BlipFilter().allow(quadrant).allow(Ring.values());
     }
 }
