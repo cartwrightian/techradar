@@ -36,7 +36,7 @@ public class Radars {
         }
 
         LocalDate blipDate = rawBlip.getDate();
-        blip.addHistory(new BlipHistory(blipDate, rawBlip.getRing(), rawBlip.getDescription()));
+        blip.addHistory(new BlipHistory(blipDate, rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId()));
         dates.add(blipDate);
 
     }
@@ -53,8 +53,8 @@ public class Radars {
         }
     }
 
-    public List<Blip> getBlipForRadarOn(LocalDate date) {
-        return blips.values().stream().filter(blip->blip.appearedDate().equals(date)).collect(Collectors.toList());
+    public List<Blip> blipsVisibleOn(LocalDate date) {
+        return blips.values().stream().filter(blip -> blip.visibleOn(date)).collect(Collectors.toList());
     }
 
     public LocalDate dateOfEdition(int editionNumber) {

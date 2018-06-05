@@ -23,14 +23,14 @@ public class AnalyserTest {
     @Before
     public void beforeEachTestRuns() {
         radar = new Radars();
-        Parser.RawBlip rawA = new Parser.RawBlip(42, "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA");
-        Parser.RawBlip rawB = new Parser.RawBlip(42, "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA");
-        Parser.RawBlip rawC = new Parser.RawBlip(42, "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA");
+        Parser.RawBlip rawA = new Parser.RawBlip(42, "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA", 30);
+        Parser.RawBlip rawB = new Parser.RawBlip(42, "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA", 11);
+        Parser.RawBlip rawC = new Parser.RawBlip(42, "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA", 40);
 
-        Parser.RawBlip rawD = new Parser.RawBlip(52, "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text");
-        Parser.RawBlip rawE = new Parser.RawBlip(52, "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text");
+        Parser.RawBlip rawD = new Parser.RawBlip(52, "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text", 50);
+        Parser.RawBlip rawE = new Parser.RawBlip(52, "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 1);
 
-        Parser.RawBlip rawF = new Parser.RawBlip(53, "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC");
+        Parser.RawBlip rawF = new Parser.RawBlip(53, "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -47,13 +47,21 @@ public class AnalyserTest {
     public void shouldCreateSummaryOfText() {
         List <SummaryText> summaryTexts = analyser.createSummaryText();
 
-        SummaryText summaryText = summaryTexts.get(0);
+        assertEquals(6,summaryTexts.size());
 
+        // only one thing on first radar, so one summary line
+        SummaryText summaryText = summaryTexts.get(0);
         assertEquals("52", summaryText.getId());
-        assertEquals(firstDate, summaryText.getDate());
+        assertEquals("Jul 2000", summaryText.getDate());
         assertEquals("Assess", summaryText.getRing());
         assertEquals("techniques", summaryText.getQuadrant());
         assertEquals("init text", summaryText.getDescription());
+
+        // should be 3 lines for second radar
+        // summary text ordered by radar date then, if present, radarID
+        assertEquals("10", summaryTexts.get(1).getRadarId());
+        assertEquals("11", summaryTexts.get(2).getRadarId());
+
     }
 
     @Test
@@ -153,11 +161,11 @@ public class AnalyserTest {
     public void shouldCalcHalfLifeForBlips() {
         Radars radar = new Radars();
         for (int i = 0; i < 100; i++) {
-            Parser.RawBlip rawA = new Parser.RawBlip(i, "blip"+i, firstDate, Ring.Assess, Quadrant.tools, "desc");
+            Parser.RawBlip rawA = new Parser.RawBlip(i, "blip"+i, firstDate, Ring.Assess, Quadrant.tools, "desc", i);
             radar.add(rawA);
             if (i<40) {
                 Parser.RawBlip rawB = new Parser.RawBlip(i, "blip"+i, firstDate.plusDays(100), Ring.Adopt,
-                        Quadrant.tools, "desc");
+                        Quadrant.tools, "desc", 41-i);
                 radar.add(rawB);
             }
         }

@@ -53,9 +53,19 @@ public class Parser {
         int id = Integer.parseInt((String) jsonObject.get("id"));
         String description = (String) jsonObject.get("description");
 
+        int radarId = -1;
+        Object maybeRadarId = jsonObject.get("radarId");
+        if (maybeRadarId!=null) {
+            if (maybeRadarId instanceof Long) {
+                radarId = Math.toIntExact((Long) maybeRadarId);
+            } else {
+                radarId = Integer.parseInt((String) maybeRadarId);
+            }
+        }
+
         Ring ring = Ring.valueOf(rawRing);
         Quadrant quadrant = Quadrant.fromString(rawQuadrant);
-        return new RawBlip(id, name, date, ring, quadrant,description);
+        return new RawBlip(id, name, date, ring, quadrant,description, radarId);
     }
 
     public static class RawBlip {
@@ -65,15 +75,17 @@ public class Parser {
         private final LocalDate date;
         private final Ring ring;
         private final String description;
+        private final int radarId;
         private Quadrant quadrant;
 
-        public RawBlip(int id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description) {
+        public RawBlip(int id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
             this.id = id;
             this.name = name;
             this.date = date;
             this.ring = ring;
             this.quadrant = quadrant;
             this.description = description;
+            this.radarId = radarId;
         }
 
         public String getName() {
@@ -98,6 +110,10 @@ public class Parser {
 
         public String getDescription() {
             return description;
+        }
+
+        public int getRadarId() {
+            return radarId;
         }
     }
 

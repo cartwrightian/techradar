@@ -11,7 +11,8 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) throws IOException, ParseException {
-        Path path = Paths.get("data","blips.json");
+        String folder = "data";
+        Path path = Paths.get(folder,"blips.json");
 
         JsonFromFile jsonFromFile = new JsonFromFile(path);
         Parser parser = new Parser();
@@ -20,46 +21,48 @@ public class Main {
 
         Analyser analyser = new Analyser(radar);
 
-        ResultsWriter writer = new ResultsWriter(Paths.get("data","output.csv"));
+        ResultsWriter writer = new ResultsWriter(Paths.get(folder,"output.csv"));
         List<BlipLifetime> results = analyser.lifeTimes();
         writer.write(results);
 
-        ResultsWriter decayWriter = new ResultsWriter(Paths.get("data","decays.csv"));
+        ResultsWriter decayWriter = new ResultsWriter(Paths.get(folder,"decays.csv"));
         Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(BlipFilter.All());
         decayWriter.write(decays);
 
         for(Quadrant quadrant : Quadrant.values()) {
-            ResultsWriter quadWriter = new ResultsWriter(Paths.get("data","decays-"+quadrant.toString()+".csv"));
+            ResultsWriter quadWriter = new ResultsWriter(Paths.get(folder,"decays-"+quadrant.toString()+".csv"));
             quadWriter.write(analyser.summaryOfDecay(filterByQuad(quadrant)));
         }
 
         for(Ring ring : Ring.values()) {
-            ResultsWriter ringWriter = new ResultsWriter(Paths.get("data","decays-"+ring.toString()+".csv"));
+            ResultsWriter ringWriter = new ResultsWriter(Paths.get(folder,"decays-"+ring.toString()+".csv"));
             ringWriter.write(analyser.summaryOfDecay(filterByRing(ring)));
         }
 
         Map<Integer, Integer> halfLives = analyser.findHalfLife(BlipFilter.All());
-        ResultsWriter halflifeWriter = new ResultsWriter(Paths.get("data", "halflife.csv"));
+        ResultsWriter halflifeWriter = new ResultsWriter(Paths.get(folder, "halflife.csv"));
         halflifeWriter.writeSummary(halfLives);
 
         for(Quadrant quadrant : Quadrant.values()) {
-            ResultsWriter quadWriter = new ResultsWriter(Paths.get("data","halflife-"+quadrant.toString()+".csv"));
+            ResultsWriter quadWriter = new ResultsWriter(Paths.get(folder,"halflife-"+quadrant.toString()+".csv"));
             quadWriter.writeSummary(analyser.findHalfLife(filterByQuad(quadrant)));
         }
 
         for(Ring ring : Ring.values()) {
-            ResultsWriter ringWriter = new ResultsWriter(Paths.get("data","halflife-"+ring.toString()+".csv"));
+            ResultsWriter ringWriter = new ResultsWriter(Paths.get(folder,"halflife-"+ring.toString()+".csv"));
             ringWriter.writeSummary(analyser.findHalfLife(filterByRing(ring)));
         }
 
-        ResultsWriter newBlipsWriter = new ResultsWriter(Paths.get("data", "newblips.csv"));
+        ResultsWriter newBlipsWriter = new ResultsWriter(Paths.get(folder, "newblips.csv"));
         newBlipsWriter.writeFigures(analyser.summaryOfNew(BlipFilter.All()));
 
         for(Quadrant quadrant : Quadrant.values()) {
-            ResultsWriter quadWriter = new ResultsWriter(Paths.get("data","newblips-"+quadrant.toString()+".csv"));
+            ResultsWriter quadWriter = new ResultsWriter(Paths.get(folder,"newblips-"+quadrant.toString()+".csv"));
             quadWriter.writeFigures((analyser.summaryOfNew(filterByQuad(quadrant))));
         }
 
+        ResultsWriter summaryWriter = new ResultsWriter(Paths.get(folder, "summaryText.csv"));
+        summaryWriter.write(analyser.createSummaryText());
     }
 
     private static BlipFilter filterByRing(Ring ring) {

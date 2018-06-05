@@ -6,11 +6,13 @@ public class BlipHistory {
     private final LocalDate date;
     private final Ring ring;
     private String description;
+    private int radarId;
 
-    public BlipHistory(LocalDate date, Ring ring, String description) {
+    public BlipHistory(LocalDate date, Ring ring, String description, int radarId) {
         this.date = date;
         this.ring = ring;
         this.description = description;
+        this.radarId = radarId;
     }
 
     public Ring getRing() {
@@ -23,5 +25,9 @@ public class BlipHistory {
 
     public String getDescription() {
         return description;
+    }
+
+    public int getRadarId() {
+        return radarId;
     }
 }

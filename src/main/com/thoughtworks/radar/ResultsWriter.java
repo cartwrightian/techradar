@@ -31,7 +31,7 @@ public class ResultsWriter {
     }
 
     private void writeBytesToFile(StringBuilder builder) throws IOException {
-        byte[] bytes = builder.toString().getBytes(Charsets.US_ASCII);
+        byte[] bytes = builder.toString().getBytes(Charsets.UTF_8);
         Files.write(path, bytes, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
     }
 

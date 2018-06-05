@@ -15,7 +15,7 @@ public class JsonFromFile {
 
     public String load() throws IOException {
         byte[] bytes = Files.readAllBytes(path);
-        String result = new String(bytes, Charsets.US_ASCII);
+        String result = new String(bytes, Charsets.UTF_8);
         return result;
     }
 }

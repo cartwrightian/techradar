@@ -1,15 +1,13 @@
 package com.thoughtworks.radar;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Blip implements Comparable<Blip> {
     private final int id;
     private String name;
     private Quadrant quadrant;
-    private List<BlipHistory> historyList;
+    private Map<LocalDate,BlipHistory> historyList;
     private LocalDate appeared;
     private LocalDate lastDate;
     private Ring lastRing;
@@ -20,7 +18,7 @@ public class Blip implements Comparable<Blip> {
         this.id = id;
         this.name = name;
         this.quadrant = quadrant;
-        historyList = new LinkedList<>();
+        historyList = new HashMap<>();
         appeared = LocalDate.MAX;
         lastDate = LocalDate.MIN;
         this.description = "";
@@ -30,6 +28,7 @@ public class Blip implements Comparable<Blip> {
         return name;
     }
 
+    // TODO later on in radars this changed to a string....
     public int getId() {
         return id;
     }
@@ -39,12 +38,12 @@ public class Blip implements Comparable<Blip> {
         return Integer.compare(this.id, other.id);
     }
 
-    public List<BlipHistory> getHistory() {
-        return historyList;
+    public Collection<BlipHistory> getHistory() {
+        return historyList.values();
     }
 
     public void addHistory(BlipHistory blipHistory) {
-        historyList.add(blipHistory);
+        historyList.put(blipHistory.getDate(), blipHistory);
         LocalDate date = blipHistory.getDate();
         if (date.isAfter(lastDate)) {
             lastDate = date;
@@ -53,6 +52,8 @@ public class Blip implements Comparable<Blip> {
         if (date.isBefore(appeared)) {
             firstRing = blipHistory.getRing();
             appeared = date;
+
+            // todo - should this be history based as well....
             description = blipHistory.getDescription();
         }
     }
@@ -92,5 +93,13 @@ public class Blip implements Comparable<Blip> {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean visibleOn(LocalDate date) {
+        return historyList.containsKey(date);
+    }
+
+    public int idOnRadar(LocalDate date) {
+        return historyList.get(date).getRadarId();
     }
 }

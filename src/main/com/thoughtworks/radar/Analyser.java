@@ -122,14 +122,16 @@ public class Analyser {
         return result;
     }
 
-    public List<SummaryText> createSummaryText() {
-        List<SummaryText> results = new LinkedList();
+    public LinkedList<SummaryText> createSummaryText() {
+        SortedSet<SummaryText> sorted = new TreeSet<>();
 
-        radar.forEachEdition((num, date) -> radar.getBlipForRadarOn(date).forEach(blip -> {
-                results.add(new SummaryText(blip.getId(), date, blip.firstRing(), blip.getQuadrant(),
-                        blip.getDescription()));
+        radar.forEachEdition((num, date) -> radar.blipsVisibleOn(date).forEach(blip -> {
+            sorted.add(new SummaryText(blip.getId(), date, blip.firstRing(), blip.getQuadrant(),
+                        blip.getDescription(), blip.idOnRadar(date)));
         }));
 
+        LinkedList<SummaryText> results = new LinkedList<>();
+        results.addAll(sorted);
         return results;
     }
 }
