@@ -9,6 +9,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.format;
+
 public class ResultsWriter {
     private Path path;
     private final String lineSep;
@@ -64,7 +66,7 @@ public class ResultsWriter {
     public void writeSummary(Map<Integer, Integer> halfLives) throws IOException {
         StringBuilder builder = new StringBuilder();
         halfLives.forEach((day,halflife) -> {
-            builder.append(String.format("%s,", day));
+            builder.append(format("%s,", day));
             if (halflife!=Integer.MAX_VALUE) {
                 builder.append(halflife);
             } else {
@@ -74,6 +76,12 @@ public class ResultsWriter {
         });
 
 
+        writeBytesToFile(builder);
+    }
+
+    public void writeFigures(Map<Integer, Double> percentageNew) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        percentageNew.forEach((index,value) -> builder.append(format("%s,%.3f", index,value)).append(lineSep));
         writeBytesToFile(builder);
     }
 }

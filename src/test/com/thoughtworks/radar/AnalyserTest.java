@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 public class AnalyserTest {
 
-    private Radar radar;
+    private Radars radar;
     private Analyser analyser;
     private LocalDate firstDate = LocalDate.of(2000, 7, 17);
     private LocalDate secondDate = LocalDate.of(2017, 6, 23);
@@ -22,15 +22,15 @@ public class AnalyserTest {
 
     @Before
     public void beforeEachTestRuns() {
-        radar = new Radar();
-        Parser.RawBlip rawA = new Parser.RawBlip(42, "blipA", thirdDate, Ring.Hold, Quadrant.tools);
-        Parser.RawBlip rawB = new Parser.RawBlip(42, "blipA", secondDate, Ring.Assess, Quadrant.tools);
-        Parser.RawBlip rawC = new Parser.RawBlip(42, "blipA", fourthDate, Ring.Adopt, Quadrant.tools);
+        radar = new Radars();
+        Parser.RawBlip rawA = new Parser.RawBlip(42, "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA");
+        Parser.RawBlip rawB = new Parser.RawBlip(42, "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA");
+        Parser.RawBlip rawC = new Parser.RawBlip(42, "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA");
 
-        Parser.RawBlip rawD = new Parser.RawBlip(52, "blipB", fifthDate, Ring.Adopt, Quadrant.techniques);
-        Parser.RawBlip rawE = new Parser.RawBlip(52, "blipB", firstDate, Ring.Assess, Quadrant.techniques);
+        Parser.RawBlip rawD = new Parser.RawBlip(52, "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text");
+        Parser.RawBlip rawE = new Parser.RawBlip(52, "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text");
 
-        Parser.RawBlip rawF = new Parser.RawBlip(53, "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks);
+        Parser.RawBlip rawF = new Parser.RawBlip(53, "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC");
 
         radar.add(rawA);
         radar.add(rawB);
@@ -41,6 +41,30 @@ public class AnalyserTest {
 
         analyser = new Analyser(radar);
         blipFilter = new BlipFilter();
+    }
+
+    @Test
+    public void shouldCreateSummaryOfText() {
+        List <SummaryText> summaryTexts = analyser.createSummaryText();
+
+        SummaryText summaryText = summaryTexts.get(0);
+
+        assertEquals("52", summaryText.getId());
+        assertEquals(firstDate, summaryText.getDate());
+        assertEquals("Assess", summaryText.getRing());
+        assertEquals("techniques", summaryText.getQuadrant());
+        assertEquals("init text", summaryText.getDescription());
+    }
+
+    @Test
+    public void shouldSummariseAmountNewPerRadar() {
+        Map<Integer, Double> amounts = analyser.summaryOfNew(BlipFilter.All());
+
+        assertEquals((Double) 1.0, amounts.get(1));
+        assertEquals((Double) (2.0/3.0), amounts.get(2));
+        assertEquals((Double) 0.0, amounts.get(3));
+        assertEquals((Double) 0.0, amounts.get(4));
+        assertEquals((Double) 0.0, amounts.get(5));
     }
 
     @Test
@@ -101,18 +125,6 @@ public class AnalyserTest {
     }
 
     @Test
-    public void shouldIndexRadars() {
-        Map<LocalDate, Integer> result = analyser.getDateToNumberIndex();
-
-        assertEquals(5, result.size());
-        assertEquals(result.get(firstDate),new Integer(1));
-        assertEquals(result.get(secondDate),new Integer(2));
-        assertEquals(result.get(thirdDate),new Integer(3));
-        assertEquals(result.get(fourthDate),new Integer(4));
-        assertEquals(result.get(fifthDate),new Integer(5));
-    }
-
-    @Test
     public void shouldFindLifeTimesAndRadarNumbers() {
         List<BlipLifetime> result = analyser.lifeTimes();
 
@@ -139,12 +151,13 @@ public class AnalyserTest {
 
     @Test
     public void shouldCalcHalfLifeForBlips() {
-        Radar radar = new Radar();
+        Radars radar = new Radars();
         for (int i = 0; i < 100; i++) {
-            Parser.RawBlip rawA = new Parser.RawBlip(i, "blip"+i, firstDate, Ring.Assess, Quadrant.tools);
+            Parser.RawBlip rawA = new Parser.RawBlip(i, "blip"+i, firstDate, Ring.Assess, Quadrant.tools, "desc");
             radar.add(rawA);
             if (i<40) {
-                Parser.RawBlip rawB = new Parser.RawBlip(i, "blip"+i, firstDate.plusDays(100), Ring.Adopt, Quadrant.tools);
+                Parser.RawBlip rawB = new Parser.RawBlip(i, "blip"+i, firstDate.plusDays(100), Ring.Adopt,
+                        Quadrant.tools, "desc");
                 radar.add(rawB);
             }
         }

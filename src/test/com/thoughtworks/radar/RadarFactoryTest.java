@@ -18,7 +18,7 @@ public class RadarFactoryTest {
         JsonFromFile loader = new JsonFromFile(path);
         Parser parser = new Parser();
         RadarFactory factor = new RadarFactory(loader, parser);
-        Radar result = factor.loadRadar();
+        Radars result = factor.loadRadar();
 
         assertEquals(768,result.getBlips().size());
 

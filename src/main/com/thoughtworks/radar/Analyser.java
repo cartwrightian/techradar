@@ -2,19 +2,16 @@ package com.thoughtworks.radar;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Analyser {
-    private Radar radar;
-    private Map<Integer,LocalDate> numberToDate;
-    private Map<LocalDate,Integer> dateToNumber;
+    private Radars radar;
 
-    public Analyser(Radar radar) {
+    public Analyser(Radars radar) {
         this.radar = radar;
-        numberToDate = new TreeMap<>();
-        dateToNumber = new TreeMap<>();
-        indexRadars();
     }
 
+    // pass in filter
     public List<BlipLifetime> lifeTimes() {
 
         List<BlipLifetime> results = new LinkedList<>();
@@ -22,50 +19,30 @@ public class Analyser {
         radar.getBlips().forEach(blip -> {
             LocalDate appearedDate = blip.appearedDate();
             LocalDate lastDate = blip.lastDate();
-            BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getQuadrant(), appearedDate, lastDate,
-                    dateToNumber.get(appearedDate), dateToNumber.get(lastDate), blip.lastRing());
+            BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getQuadrant(), appearedDate,
+                    lastDate, radar.getEditionFrom(appearedDate), radar.getEditionFrom(lastDate), blip.lastRing());
             results.add(blipLifetime);
         });
 
         return results;
     }
 
-    private void indexRadars() {
-        List<LocalDate> dates = new LinkedList<>();
-
-        radar.getBlips().forEach(blip -> blip.getHistory().forEach(item -> {
-            if (!dates.contains(item.getDate())) {
-                dates.add(item.getDate());
-            }
-        }));
-
-        Collections.sort(dates);
-
-        for (int i = 0; i < dates.size(); i++) {
-            int radarNumber = i + 1;
-            LocalDate radarDate = dates.get(i);
-            dateToNumber.put(radarDate, radarNumber);
-            numberToDate.put(radarNumber, radarDate);
-        }
-
-    }
-
     public Map<Integer, List<Integer>> summaryOfDecay(BlipFilter blipFilter) {
 
         HashMap<Integer, List<Integer>> result = new HashMap<>();
 
-        int count = dateToNumber.size();
+        int count = radar.numberOfRadars();
 
         List<BlipLifetime> lifeTimes = lifeTimes();
 
-        dateToNumber.forEach((date,index) -> {
+        radar.forEachEdition((edition, published) -> {
             ArrayList<Integer> stillLeft = initList(count);
             lifeTimes.stream().
                     filter(time -> blipFilter.filter(time)).
-                    filter(time -> (index.equals(time.getFirstRadarNum()))).
+                    filter(time -> (edition.equals(time.getFirstRadarNum()))).
                     map(BlipLifetime::getLastRadarNum).
-                    forEach(lastRadar -> increment(stillLeft,index, lastRadar));
-            result.put(index, stillLeft);
+                    forEach(lastRadar -> increment(stillLeft,edition, lastRadar));
+            result.put(edition, stillLeft);
         });
 
         return result;
@@ -93,16 +70,17 @@ public class Analyser {
         Map<Integer, List<Integer>> summary = summaryOfDecay(blipFilter);
         int count = summary.size();
 
-        for (int radarNumber = 1; radarNumber <=count; radarNumber++) {
-            List<Integer> decaysForRadar = summary.get(radarNumber);
-            int index = radarNumber - 1;
-            int radarDays = Math.toIntExact(numberToDate.get(radarNumber).toEpochDay());
+        // radar editions
+        radar.forEachEdition((edition,published) -> {
+            List<Integer> decaysForRadar = summary.get(edition);
+            int index = edition - 1;
+            int radarDays = Math.toIntExact(published.toEpochDay());
             Integer initialCount = decaysForRadar.get(index);
             for (int j = index; j<count ; j++) { // zero indexed
                 int current = decaysForRadar.get(j);
                 if ((current+current)<initialCount) {
                     int decayedByNumber = j + 1;
-                    long halflife = differenceInDays(radarNumber, decayedByNumber);
+                    long halflife = differenceInDays(edition, decayedByNumber);
                     results.put(radarDays, Math.toIntExact(halflife));
                     break;
                 }
@@ -111,18 +89,47 @@ public class Analyser {
             if (!results.containsKey(radarDays)) {
                 results.put(radarDays, Integer.MAX_VALUE);
             }
-        }
+        });
 
         return results;
 
     }
 
     private long differenceInDays(int radarA, int radarB) {
-        return numberToDate.get(radarB).toEpochDay()-numberToDate.get(radarA).toEpochDay();
+        return radar.dateOfEdition(radarB).toEpochDay()-radar.dateOfEdition(radarA).toEpochDay();
     }
 
-    public Map<LocalDate, Integer> getDateToNumberIndex() {
-        return dateToNumber;
+    public Map<Integer, Double> summaryOfNew(BlipFilter blipFilter) {
+        TreeMap<Integer, Double> result = new TreeMap<>();
+
+        List<BlipLifetime> filteredLifetimes = lifeTimes().stream().
+                filter(item -> blipFilter.filter(item))
+                .collect(Collectors.toList());
+
+        // indexes
+        radar.forEachEdition((edition,published) -> {
+            Double countNew = Double.valueOf(filteredLifetimes.stream().
+                    filter(item -> edition.equals(item.getFirstRadarNum())).
+                    count());
+            Double countAll = Double.valueOf(filteredLifetimes.stream().
+                    filter(item -> (edition >= item.getFirstRadarNum() && edition<=item.getLastRadarNum())).
+                    count());
+            Double ratio = countNew/countAll;
+            result.put(edition,ratio);
+
+        });
+
+        return result;
     }
 
+    public List<SummaryText> createSummaryText() {
+        List<SummaryText> results = new LinkedList();
+
+        radar.forEachEdition((num, date) -> radar.getBlipForRadarOn(date).forEach(blip -> {
+                results.add(new SummaryText(blip.getId(), date, blip.firstRing(), blip.getQuadrant(),
+                        blip.getDescription()));
+        }));
+
+        return results;
+    }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Parser {
 
-    public Radar parse(String rawJson) throws ParseException {
+    public Radars parse(String rawJson) throws ParseException {
 
         JSONParser jsonParser = new JSONParser();
 
@@ -26,7 +26,7 @@ public class Parser {
             }
         });
 
-        Radar radar = new Radar();
+        Radars radar = new Radars();
         radarJson.forEach(json -> {
             String rawDate = (String) json.get("date");
             LocalDate date = parseDate(rawDate);
@@ -51,10 +51,11 @@ public class Parser {
         String rawRing = (String) jsonObject.get("ring");
         String rawQuadrant = (String) jsonObject.get("quadrant");
         int id = Integer.parseInt((String) jsonObject.get("id"));
+        String description = (String) jsonObject.get("description");
 
         Ring ring = Ring.valueOf(rawRing);
         Quadrant quadrant = Quadrant.fromString(rawQuadrant);
-        return new RawBlip(id, name, date, ring, quadrant);
+        return new RawBlip(id, name, date, ring, quadrant,description);
     }
 
     public static class RawBlip {
@@ -63,14 +64,16 @@ public class Parser {
         private final String name;
         private final LocalDate date;
         private final Ring ring;
+        private final String description;
         private Quadrant quadrant;
 
-        public RawBlip(int id, String name, LocalDate date, Ring ring, Quadrant quadrant) {
+        public RawBlip(int id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description) {
             this.id = id;
             this.name = name;
             this.date = date;
             this.ring = ring;
             this.quadrant = quadrant;
+            this.description = description;
         }
 
         public String getName() {
@@ -91,6 +94,10 @@ public class Parser {
 
         public Quadrant getQuadrant() {
             return quadrant;
+        }
+
+        public String getDescription() {
+            return description;
         }
     }
 

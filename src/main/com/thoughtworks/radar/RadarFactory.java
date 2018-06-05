@@ -13,7 +13,7 @@ public class RadarFactory {
         this.parser = parser;
     }
 
-    public Radar loadRadar() throws IOException, ParseException {
+    public Radars loadRadar() throws IOException, ParseException {
         String text = jsonFromFile.load();
         return parser.parse(text);
     }

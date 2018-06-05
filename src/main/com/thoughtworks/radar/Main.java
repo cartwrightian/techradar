@@ -16,7 +16,7 @@ public class Main {
         JsonFromFile jsonFromFile = new JsonFromFile(path);
         Parser parser = new Parser();
 
-        Radar radar = new RadarFactory(jsonFromFile,parser).loadRadar();
+        Radars radar = new RadarFactory(jsonFromFile,parser).loadRadar();
 
         Analyser analyser = new Analyser(radar);
 
@@ -50,6 +50,14 @@ public class Main {
         for(Ring ring : Ring.values()) {
             ResultsWriter ringWriter = new ResultsWriter(Paths.get("data","halflife-"+ring.toString()+".csv"));
             ringWriter.writeSummary(analyser.findHalfLife(filterByRing(ring)));
+        }
+
+        ResultsWriter newBlipsWriter = new ResultsWriter(Paths.get("data", "newblips.csv"));
+        newBlipsWriter.writeFigures(analyser.summaryOfNew(BlipFilter.All()));
+
+        for(Quadrant quadrant : Quadrant.values()) {
+            ResultsWriter quadWriter = new ResultsWriter(Paths.get("data","newblips-"+quadrant.toString()+".csv"));
+            quadWriter.writeFigures((analyser.summaryOfNew(filterByQuad(quadrant))));
         }
 
     }

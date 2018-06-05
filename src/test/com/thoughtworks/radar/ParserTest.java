@@ -42,7 +42,7 @@ public class ParserTest {
 
     @Test
     public void shouldParseBlips() throws ParseException {
-        Radar radar = parser.parse(example);
+        Radars radar = parser.parse(example);
 
         List<Blip> blips = radar.getBlips();
 
@@ -55,6 +55,12 @@ public class ParserTest {
 
         assertEquals("ASP.NET MVC", blips.get(2).getName());
         assertEquals("ALT.NET", blips.get(1).getName());
+        String expected = "While .NET has proven itself as a solid platform, many practitioners are dissatisfied with " +
+                "many of the default Microsoft tools and practices. This has led to the growth of the Alt.NET " +
+                "community, which champions techniques that we find more effective along with (usually opensource) " +
+                "tools that better support them.";
+        assertEquals(expected,
+                blips.get(1).getDescription());
 
         List<BlipHistory> blipHistory = blip.getHistory();
         assertEquals(2, blipHistory.size());
