@@ -51,11 +51,10 @@ public class AnalyserTest {
 
         // only one thing on first radar, so one summary line
         SummaryText summaryText = summaryTexts.get(0);
-        assertEquals("52", summaryText.getId());
         assertEquals("Jul 2000", summaryText.getDate());
         assertEquals("Assess", summaryText.getRing());
         assertEquals("techniques", summaryText.getQuadrant());
-        assertEquals("init text", summaryText.getDescription());
+        assertEquals("\"later text\"", summaryText.getDescription());
 
         // should be 3 lines for second radar
         // summary text ordered by radar date then, if present, radarID

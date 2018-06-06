@@ -48,13 +48,16 @@ public class Blip implements Comparable<Blip> {
         if (date.isAfter(lastDate)) {
             lastDate = date;
             lastRing = blipHistory.getRing();
+            // use the latest version of description
+            if (!blipHistory.getDescription().isEmpty()) {
+                description = blipHistory.getDescription();
+            }
         }
         if (date.isBefore(appeared)) {
             firstRing = blipHistory.getRing();
             appeared = date;
 
-            // todo - should this be history based as well....
-            description = blipHistory.getDescription();
+
         }
     }
 

@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 public class SummaryText implements ToCSV, Comparable<SummaryText> {
 
-    private final Integer id;
+    private final String name;
     private final LocalDate date;
     private final Ring ring;
     private final Quadrant quadrant;
@@ -14,9 +14,8 @@ public class SummaryText implements ToCSV, Comparable<SummaryText> {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
 
-    public SummaryText(int id, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
-
-        this.id = id;
+    public SummaryText(String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
+        this.name = name;
         this.date = date;
         this.ring = ring;
         this.quadrant = quadrant;
@@ -35,15 +34,15 @@ public class SummaryText implements ToCSV, Comparable<SummaryText> {
             } else if (current=='>') {
                 inside=false;
             } else if (!inside) {
-                output.append(current);
+                if (current!='\"') {
+                    output.append(current);
+                } else {
+                    output.append('\'');
+                }
             }
         }
 
         return output.toString();
-    }
-
-    public String getId() {
-        return id.toString();
     }
 
     public String getDate() {
@@ -55,17 +54,25 @@ public class SummaryText implements ToCSV, Comparable<SummaryText> {
     }
 
     public String getQuadrant() {
+        if (quadrant.equals(Quadrant.LanguagesAndFrameworks)) {
+            // spaces allow easier formatting later on
+            return "Languages And Frameworks";
+        }
         return quadrant.toString();
     }
 
     public String getDescription() {
-        return description;
+        return String.format("\"%s\"",description);
     }
 
     @Override
     public String toCSV() {
-        return String.format("%s,%s,%s,%s,\"%s\"",
-                getDate(), getRadarId(),  getQuadrant(), getRing(), getDescription());
+        return String.format("%s,%s,%s,%s,%s,%s",
+                getDate(), getRadarId(),  getName(), getQuadrant(), getRing(), getDescription());
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getRadarId() {
@@ -75,7 +82,7 @@ public class SummaryText implements ToCSV, Comparable<SummaryText> {
         return Integer.toString(radarId);
     }
 
-    // order of precedence: date, radarId, quadrant, ring, description
+    // order of precedence: date, radarId, quadrant, ring, name
     @Override
     public int compareTo(SummaryText other) {
         int byDate = date.compareTo(other.date);
@@ -100,7 +107,7 @@ public class SummaryText implements ToCSV, Comparable<SummaryText> {
         if (byRing!=0) {
             return byRing;
         }
-        // final fallback is description
-        return description.compareTo(other.description);
+        // final fallback is name
+        return name.compareTo(other.name);
     }
 }

@@ -126,7 +126,7 @@ public class Analyser {
         SortedSet<SummaryText> sorted = new TreeSet<>();
 
         radar.forEachEdition((num, date) -> radar.blipsVisibleOn(date).forEach(blip -> {
-            sorted.add(new SummaryText(blip.getId(), date, blip.firstRing(), blip.getQuadrant(),
+            sorted.add(new SummaryText(blip.getName(), date, blip.firstRing(), blip.getQuadrant(),
                         blip.getDescription(), blip.idOnRadar(date)));
         }));
 
