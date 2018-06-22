@@ -21,10 +21,12 @@ public class Main {
 
         Analyser analyser = new Analyser(radar);
 
+        // raw csv
         ResultsWriter writer = new ResultsWriter(Paths.get(folder,"output.csv"));
         List<BlipLifetime> results = analyser.lifeTimes();
         writer.write(results);
 
+        //// decays
         ResultsWriter decayWriter = new ResultsWriter(Paths.get(folder,"decays.csv"));
         Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(BlipFilter.All());
         decayWriter.write(decays);
@@ -39,7 +41,8 @@ public class Main {
             ringWriter.write(analyser.summaryOfDecay(filterByRing(ring)));
         }
 
-        Map<Integer, Integer> halfLives = analyser.findHalfLife(BlipFilter.All());
+        //// Half lifes
+        Map<Integer, Quartiles> halfLives = analyser.findHalfLife(BlipFilter.All());
         ResultsWriter halflifeWriter = new ResultsWriter(Paths.get(folder, "halflife.csv"));
         halflifeWriter.writeSummary(halfLives);
 
@@ -53,6 +56,7 @@ public class Main {
             ringWriter.writeSummary(analyser.findHalfLife(filterByRing(ring)));
         }
 
+        //// summary of new
         ResultsWriter newBlipsWriter = new ResultsWriter(Paths.get(folder, "newblips.csv"));
         newBlipsWriter.writeFigures(analyser.summaryOfNew(BlipFilter.All()));
 
@@ -61,6 +65,7 @@ public class Main {
             quadWriter.writeFigures((analyser.summaryOfNew(filterByQuad(quadrant))));
         }
 
+        //// radar cheat sheet text
         ResultsWriter summaryWriter = new ResultsWriter(Paths.get(folder, "summaryText.csv"));
         summaryWriter.write(analyser.createSummaryText());
     }

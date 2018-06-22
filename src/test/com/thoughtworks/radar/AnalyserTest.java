@@ -159,21 +159,28 @@ public class AnalyserTest {
     @Test
     public void shouldCalcHalfLifeForBlips() {
         Radars radar = new Radars();
-        for (int i = 0; i < 100; i++) {
-            Parser.RawBlip rawA = new Parser.RawBlip(i, "blip"+i, firstDate, Ring.Assess, Quadrant.tools, "desc", i);
+        for (int blipNumber = 0; blipNumber < 100; blipNumber++) {
+            Parser.RawBlip rawA = new Parser.RawBlip(blipNumber, "blip"+blipNumber, firstDate, Ring.Assess, Quadrant.tools, "desc", blipNumber);
             radar.add(rawA);
-            if (i<40) {
-                Parser.RawBlip rawB = new Parser.RawBlip(i, "blip"+i, firstDate.plusDays(100), Ring.Adopt,
-                        Quadrant.tools, "desc", 41-i);
-                radar.add(rawB);
+            if (blipNumber<49) {
+                Parser.RawBlip later = new Parser.RawBlip(blipNumber, "blip"+blipNumber, firstDate.plusDays(100), Ring.Adopt,
+                        Quadrant.tools, "desc", 41-blipNumber);
+                radar.add(later);
+            }
+            if (blipNumber<24) {
+                Parser.RawBlip later = new Parser.RawBlip(blipNumber, "blip"+blipNumber, firstDate.plusDays(200), Ring.Adopt,
+                        Quadrant.tools, "desc", 41-blipNumber);
+                radar.add(later);
             }
         }
         analyser = new Analyser(radar);
-        Map<Integer,Integer> halfLife = analyser.findHalfLife(BlipFilter.All());
+        Map<Integer,Quartiles> halfLife = analyser.findHalfLife(BlipFilter.All());
 
         // half gone by 100 days
-        int key = Math.toIntExact(firstDate.toEpochDay());
-        assertEquals(new Integer(100),halfLife.get(key));
+        int firstRadarKey = Math.toIntExact(firstDate.toEpochDay());
+        Quartiles quartiles = halfLife.get(firstRadarKey);
+        assertEquals(200L, quartiles.get(1));
+        assertEquals(100L, quartiles.get(2));
 
     }
 

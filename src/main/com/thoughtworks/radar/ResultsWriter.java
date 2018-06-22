@@ -63,15 +63,21 @@ public class ResultsWriter {
         return builder.toString();
     }
 
-    public void writeSummary(Map<Integer, Integer> halfLives) throws IOException {
+    public void writeSummary(Map<Integer, Quartiles> halfLives) throws IOException {
         StringBuilder builder = new StringBuilder();
-        halfLives.forEach((day,halflife) -> {
-            builder.append(format("%s,", day));
-            if (halflife!=Integer.MAX_VALUE) {
-                builder.append(halflife);
-            } else {
-                builder.append("\"\"");
+        builder.append("Released,100%,75%,50%,25%").append(lineSep);
+        halfLives.forEach((day,quartiles) -> {
+            builder.append(format("%s", day));
+            for (int quarter = 1; quarter <=4; quarter++) {
+                long halflife = quartiles.get(quarter);
+                builder.append(",");
+                if (halflife!=Integer.MAX_VALUE) {
+                    builder.append(halflife);
+                } else {
+                    builder.append("\"\"");
+                }
             }
+
             builder.append(lineSep);
         });
 

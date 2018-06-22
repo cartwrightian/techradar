@@ -64,11 +64,11 @@ public class Analyser {
         return result;
     }
 
-    public Map<Integer, Integer> findHalfLife(BlipFilter blipFilter) {
-        Map<Integer, Integer> results = new TreeMap<>();
+    public Map<Integer, Quartiles> findHalfLife(BlipFilter blipFilter) {
+        Map<Integer, Quartiles> results = new TreeMap<>();
 
         Map<Integer, List<Integer>> summary = summaryOfDecay(blipFilter);
-        int count = summary.size();
+        int radarCount = summary.size();
 
         // radar editions
         radar.forEachEdition((edition,published) -> {
@@ -76,19 +76,24 @@ public class Analyser {
             int index = edition - 1;
             int radarDays = Math.toIntExact(published.toEpochDay());
             Integer initialCount = decaysForRadar.get(index);
-            for (int j = index; j<count ; j++) { // zero indexed
-                int current = decaysForRadar.get(j);
-                if ((current+current)<initialCount) {
-                    int decayedByNumber = j + 1;
-                    long halflife = differenceInDays(edition, decayedByNumber);
-                    results.put(radarDays, Math.toIntExact(halflife));
-                    break;
+
+            Quartiles quartiles = new Quartiles();
+            for (int quater=1; quater<=4; quater++) {
+                int target = quater * initialCount;
+
+                long halflife =  Integer.MAX_VALUE;
+                for (int futureEditions = index; futureEditions < radarCount; futureEditions++) { // zero indexed
+                    int current = decaysForRadar.get(futureEditions); // how many blips from radar left now?
+                    if ((4*current)  < target) {
+                        int decayedByNumber = futureEditions + 1;
+                        halflife = differenceInDays(edition, decayedByNumber);
+                        break;
+                    }
                 }
+                quartiles.add(quater,halflife);
             }
-            // not decayed yet
-            if (!results.containsKey(radarDays)) {
-                results.put(radarDays, Integer.MAX_VALUE);
-            }
+            results.put(radarDays, quartiles);
+
         });
 
         return results;
