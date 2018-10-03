@@ -21,6 +21,16 @@ public class Main {
 
         Analyser analyser = new Analyser(radar);
 
+        // total blip counts
+        ResultsWriter countsWriter = new ResultsWriter(getPath(folder,"counts.csv"));
+        List<SimpleCSV> counts = analyser.counts();
+        countsWriter.write(counts);
+
+        // appearing blip counts
+        ResultsWriter trendsWriter = new ResultsWriter(getPath(folder,"countsByEdition.csv"));
+        List<SimpleCSV> countByRadar = analyser.countByRadar();
+        trendsWriter.write(countByRadar);
+
         // raw csv
         ResultsWriter writer = new ResultsWriter(Paths.get(folder,"output.csv"));
         List<BlipLifetime> results = analyser.lifeTimes();
@@ -69,6 +79,11 @@ public class Main {
         ResultsWriter summaryWriter = new ResultsWriter(Paths.get(folder, "summaryText.csv"));
         summaryWriter.write(analyser.createSummaryText());
     }
+
+    private static Path getPath(String folder, String filename) {
+        return Paths.get(folder,filename);
+    }
+
 
     private static BlipFilter filterByRing(Ring ring) {
         return new BlipFilter().allow(Quadrant.values()).allow(ring);

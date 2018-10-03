@@ -26,10 +26,10 @@ public class RadarsTest {
         thirdDate = LocalDate.of(2018, 10, 22);
 
         radar = new Radars();
-        rawA = new Parser.RawBlip(1, "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
-        rawB = new Parser.RawBlip(1, "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
-        rawC = new Parser.RawBlip(1, "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
-        rawD = new Parser.RawBlip(4, "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
+        rawA = new Parser.RawBlip(BlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
+        rawB = new Parser.RawBlip(BlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
+        rawC = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
+        rawD = new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -63,8 +63,8 @@ public class RadarsTest {
 
         blips = radar.blipsVisibleOn(thirdDate);
         assertEquals(2, blips.size());
-        assertEquals(1, blips.get(0).getId());
-        assertEquals(4, blips.get(1).getId());
+        assertEquals(BlipId.from(1), blips.get(0).getId());
+        assertEquals(BlipId.from(4), blips.get(1).getId());
 
     }
 

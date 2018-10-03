@@ -34,7 +34,16 @@ public class BlipFilter {
         if (!rings.contains(item.getFinalRing())) {
             return false;
         }
+        return true;
+    }
 
+    public boolean filter(Blip item) {
+        if (!quadrants.contains(item.getQuadrant())) {
+            return false;
+        }
+        if (!rings.contains(item.firstRing())) {
+            return false;
+        }
         return true;
     }
 }

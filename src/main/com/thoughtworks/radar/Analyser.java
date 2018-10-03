@@ -1,5 +1,7 @@
 package com.thoughtworks.radar;
 
+import com.sun.org.apache.xalan.internal.lib.ExsltStrings;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -137,6 +139,64 @@ public class Analyser {
 
         LinkedList<SummaryText> results = new LinkedList<>();
         results.addAll(sorted);
+        return results;
+    }
+
+    public List<SimpleCSV> counts() {
+        List<SimpleCSV> counts = new LinkedList<>();
+        SimpleCSV header = new SimpleCSV();
+
+        header.add("Quadrant");
+        for (Ring ring : Ring.values()) {
+            header.add(ring.toString());
+        }
+        counts.add(header);
+
+        for (Quadrant quadrant : Quadrant.values()) {
+            SimpleCSV line = new SimpleCSV();
+            line.add(quadrant.toString());
+            for (Ring ring : Ring.values()) {
+                Long count = radar.blipCount(new BlipFilter().allow(quadrant).allow(ring));
+                line.add(count.toString());
+            }
+            counts.add(line);
+        }
+
+        return counts;
+    }
+
+    public List<SimpleCSV> countByRadar() {
+        List<SimpleCSV> results = new LinkedList<>();
+
+        SimpleCSV header = new SimpleCSV();
+        header.add("Edition");
+        for (Ring ring : Ring.values()) {
+            header.add(ring.toString());
+        }
+        for (Quadrant quadrant : Quadrant.values()) {
+            header.add(quadrant.toString());
+        }
+        results.add(header);
+
+        radar.forEachEdition((number,date) -> {
+            SimpleCSV line = new SimpleCSV();
+            line.add(number.toString());
+
+            for (Ring ring : Ring.values()) {
+                BlipFilter filter = new BlipFilter().allow(ring).allow(Quadrant.values());
+                Long count = radar.blipCount(date,filter);
+                line.add(count.toString());
+            }
+
+            for (Quadrant quadrant : Quadrant.values()) {
+                BlipFilter filter = new BlipFilter().allow(quadrant).allow(Ring.values());
+                Long count = radar.blipCount(date,filter);
+                line.add(count.toString());
+            }
+
+            results.add(line);
+        });
+
         return results;
     }
 }

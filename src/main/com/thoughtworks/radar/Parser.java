@@ -50,7 +50,7 @@ public class Parser {
         String name = (String) jsonObject.get("name");
         String rawRing = (String) jsonObject.get("ring");
         String rawQuadrant = (String) jsonObject.get("quadrant");
-        int id = Integer.parseInt((String) jsonObject.get("id"));
+        BlipId id = BlipId.parse((String)jsonObject.get("id"));
         String description = (String) jsonObject.get("description");
 
         int radarId = -1;
@@ -70,7 +70,7 @@ public class Parser {
 
     public static class RawBlip {
 
-        private final int id;
+        private final BlipId id;
         private final String name;
         private final LocalDate date;
         private final Ring ring;
@@ -78,7 +78,7 @@ public class Parser {
         private final int radarId;
         private Quadrant quadrant;
 
-        public RawBlip(int id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
+        public RawBlip(BlipId id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
             this.id = id;
             this.name = name;
             this.date = date;
@@ -100,7 +100,7 @@ public class Parser {
             return ring;
         }
 
-        public int getId() {
+        public BlipId getId() {
             return id;
         }
 

@@ -8,7 +8,7 @@ public class BlipLifetime implements ToCSV {
     private final LocalDate appeared ;
     private final LocalDate lastSeen;
     private String name;
-    private int id;
+    private BlipId id;
     private int firstRadarNum;
     private int lastRadarNum;
     private Quadrant quadrant;
@@ -21,7 +21,7 @@ public class BlipLifetime implements ToCSV {
         return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstRadarNum, lastRadarNum, lifetimeInDays);
     }
 
-    public BlipLifetime(String name, int id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
+    public BlipLifetime(String name, BlipId id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
                         int firstRadarNum, int lastRadarNum, Ring finalRing) {
         this.name = name;
         this.id = id;
@@ -53,7 +53,7 @@ public class BlipLifetime implements ToCSV {
         return name;
     }
 
-    public int getId() {
+    public BlipId getId() {
         return id;
     }
 

@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class Blip implements Comparable<Blip> {
-    private final int id;
-    private String name;
+    private final BlipId id;
+    private final String name;
     private Quadrant quadrant;
     private Map<LocalDate,BlipHistory> historyList;
     private LocalDate appeared;
@@ -14,7 +14,7 @@ public class Blip implements Comparable<Blip> {
     private Ring firstRing;
     private String description;
 
-    public Blip(int id, String name, Quadrant quadrant) {
+    public Blip(BlipId id, String name, Quadrant quadrant) {
         this.id = id;
         this.name = name;
         this.quadrant = quadrant;
@@ -28,14 +28,13 @@ public class Blip implements Comparable<Blip> {
         return name;
     }
 
-    // TODO later on in radars this changed to a string....
-    public int getId() {
+    public BlipId getId() {
         return id;
     }
 
     @Override
     public int compareTo(Blip other) {
-        return Integer.compare(this.id, other.id);
+        return BlipId.compare(this.id, other.id);
     }
 
     public Collection<BlipHistory> getHistory() {

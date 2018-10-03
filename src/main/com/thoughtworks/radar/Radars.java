@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class Radars {
     // blip ID to blip
-    private SortedMap<Integer,Blip> blips;
+    private SortedMap<BlipId,Blip> blips;
 
     SortedSet<LocalDate> dates;
 
@@ -23,7 +23,7 @@ public class Radars {
     }
 
     public void add(Parser.RawBlip rawBlip) {
-        int id = rawBlip.getId();
+        BlipId id = rawBlip.getId();
 
         // consolidate multiple entries for a blip into one blip with a history
         Blip blip;
@@ -77,6 +77,17 @@ public class Radars {
             count.incrementAndGet();
             eachEdition.edition(count.get(),date);
         });
+    }
+
+    public long blipCount(BlipFilter blipFilter) {
+        return blips.values().stream().filter(blip -> blipFilter.filter(blip)).count();
+    }
+
+    public long blipCount(LocalDate date, BlipFilter blipFilter) {
+        return blips.values().stream().
+                filter(blip -> blip.appearedDate().isEqual(date)).
+                filter(blip->blipFilter.filter(blip)).
+                count();
     }
 
     public interface EachEdition {

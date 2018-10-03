@@ -12,7 +12,7 @@ public class BlipFilterTest {
 
     private LocalDate date;
     private BlipFilter filter;
-    BlipLifetime item = new BlipLifetime("name",42, Quadrant.LanguagesAndFrameworks, date, date, 1,18, Ring.Adopt);
+    BlipLifetime item = new BlipLifetime("name",BlipId.from(42), Quadrant.LanguagesAndFrameworks, date, date, 1,18, Ring.Adopt);
 
     @Before
     public void beforeEachTestRuns() {
