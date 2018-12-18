@@ -1,7 +1,5 @@
 package com.thoughtworks.radar;
 
-import com.sun.org.apache.xalan.internal.lib.ExsltStrings;
-
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +29,7 @@ public class Analyser {
 
     public Map<Integer, List<Integer>> summaryOfDecay(BlipFilter blipFilter) {
 
+        // edition -> number blips left ordred by edition
         HashMap<Integer, List<Integer>> result = new HashMap<>();
 
         int count = radar.numberOfRadars();
@@ -110,17 +109,17 @@ public class Analyser {
         TreeMap<Integer, Double> result = new TreeMap<>();
 
         List<BlipLifetime> filteredLifetimes = lifeTimes().stream().
-                filter(item -> blipFilter.filter(item))
+                filter(blipFilter::filter)
                 .collect(Collectors.toList());
 
         // indexes
         radar.forEachEdition((edition,published) -> {
-            Double countNew = Double.valueOf(filteredLifetimes.stream().
+            Double countNew = (double) filteredLifetimes.stream().
                     filter(item -> edition.equals(item.getFirstRadarNum())).
-                    count());
-            Double countAll = Double.valueOf(filteredLifetimes.stream().
-                    filter(item -> (edition >= item.getFirstRadarNum() && edition<=item.getLastRadarNum())).
-                    count());
+                    count();
+            Double countAll = (double) filteredLifetimes.stream().
+                    filter(item -> (edition >= item.getFirstRadarNum() && edition <= item.getLastRadarNum())).
+                    count();
             Double ratio = countNew/countAll;
             result.put(edition,ratio);
 
@@ -132,9 +131,10 @@ public class Analyser {
     public LinkedList<SummaryText> createSummaryText() {
         SortedSet<SummaryText> sorted = new TreeSet<>();
 
-        radar.forEachEdition((num, date) -> radar.blipsVisibleOn(date).forEach(blip -> {
-            sorted.add(new SummaryText(blip.getName(), date, blip.firstRing(), blip.getQuadrant(),
-                        blip.getDescription(), blip.idOnRadar(date)));
+        radar.forEachEdition((num, date) -> radar.blipsVisibleOn(num).forEach(blip -> {
+            SummaryText summaryText = new SummaryText(blip.getName(), date, blip.ringFor(num), blip.getQuadrant(),
+                    blip.getDescription(), blip.idOnRadar(num));
+            sorted.add(summaryText);
         }));
 
         LinkedList<SummaryText> results = new LinkedList<>();
@@ -156,8 +156,8 @@ public class Analyser {
             SimpleCSV line = new SimpleCSV();
             line.add(quadrant.toString());
             for (Ring ring : Ring.values()) {
-                Long count = radar.blipCount(new BlipFilter().allow(quadrant).allow(ring));
-                line.add(count.toString());
+                long count = radar.blipCount(new BlipFilter().allow(quadrant).allow(ring));
+                line.add(Long.toString(count));
             }
             counts.add(line);
         }
@@ -190,8 +190,8 @@ public class Analyser {
 
             for (Quadrant quadrant : Quadrant.values()) {
                 BlipFilter filter = new BlipFilter().allow(quadrant).allow(Ring.values());
-                Long count = radar.blipCount(date,filter);
-                line.add(count.toString());
+                long count = radar.blipCount(date,filter);
+                line.add(Long.toString(count));
             }
 
             results.add(line);

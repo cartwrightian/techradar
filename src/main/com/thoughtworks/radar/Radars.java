@@ -6,14 +6,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Radars {
-    // blip ID to blip
+    // blip ID -> blip
     private SortedMap<BlipId,Blip> blips;
-
-    SortedSet<LocalDate> dates;
+    private SortedSet<LocalDate> dates;
+    private List<BlipHistory> historyToAdd;
 
     public Radars() {
-        blips = new TreeMap();
+        blips = new TreeMap<>();
         dates = new TreeSet<>();
+        historyToAdd = new LinkedList<>();
     }
 
     public List<Blip> getBlips() {
@@ -31,14 +32,25 @@ public class Radars {
             // todo Which version of blip to take description from? First? Last?
             blip = new Blip(id, rawBlip.getName(), rawBlip.getQuadrant());
             blips.put(id, blip);
-        } else {
-            blip = blips.get(id);
         }
 
         LocalDate blipDate = rawBlip.getDate();
-        blip.addHistory(new BlipHistory(blipDate, rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId()));
+        BlipHistory blipHistory = new BlipHistory(id, blipDate, rawBlip.getRing(), rawBlip.getDescription(),
+                rawBlip.getRadarId(), rawBlip.isFaded());
+        historyToAdd.add(blipHistory);
         dates.add(blipDate);
+    }
 
+
+    public void updateBlipHistories() {
+        if (historyToAdd.isEmpty()) {
+            throw new RuntimeException("Call after add()'ing all of the blips");
+        }
+        historyToAdd.forEach(blipHistory -> {
+            int edition = getEditionFrom(blipHistory.getDate());
+            blips.get(blipHistory.getBlipId()).addHistory(edition, blipHistory);
+        });
+        historyToAdd.clear();
     }
 
     public int numberOfRadars() {
@@ -53,8 +65,8 @@ public class Radars {
         }
     }
 
-    public List<Blip> blipsVisibleOn(LocalDate date) {
-        return blips.values().stream().filter(blip -> blip.visibleOn(date)).collect(Collectors.toList());
+    public List<Blip> blipsVisibleOn(int edition) {
+        return blips.values().stream().filter(blip -> blip.visibleOn(edition)).collect(Collectors.toList());
     }
 
     public LocalDate dateOfEdition(int editionNumber) {
@@ -89,6 +101,17 @@ public class Radars {
                 filter(blip->blipFilter.filter(blip)).
                 count();
     }
+
+    public List<Blip> longestOnRadar(BlipFilter blipFilter, long limit) {
+        Comparator<? super Blip> comparitor = (Comparator<Blip>) (blipA, blipB) -> blipB.getDuration().compareTo(blipA.getDuration());
+
+        return blips.values().stream().
+                filter(blip -> blipFilter.filter(blip)).
+                sorted(comparitor).
+                limit(limit).
+                collect(Collectors.toList());
+    }
+
 
     public interface EachEdition {
         void edition(Integer number, LocalDate published);

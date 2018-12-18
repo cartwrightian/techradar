@@ -26,15 +26,26 @@ public class RadarsTest {
         thirdDate = LocalDate.of(2018, 10, 22);
 
         radar = new Radars();
-        rawA = new Parser.RawBlip(BlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
-        rawB = new Parser.RawBlip(BlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
-        rawC = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
-        rawD = new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
+        rawA = new Parser.RawBlip(BlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11, false);
+        rawB = new Parser.RawBlip(BlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22, false);
+        rawC = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33, false);
+        rawD = new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44, false);
 
         radar.add(rawA);
         radar.add(rawB);
         radar.add(rawC);
         radar.add(rawD);
+
+        radar.updateBlipHistories();
+    }
+
+
+    @Test
+    public void shouldGetLongestOnRadar() {
+        List<Blip> result = radar.longestOnRadar(BlipFilter.All(), 2);
+        assertEquals(2, result.size());
+        assertEquals(22, result.get(0).idOnRadar(1));
+        assertEquals(11, result.get(0).idOnRadar(2));
     }
 
     @Test
@@ -56,12 +67,12 @@ public class RadarsTest {
 
     @Test
     public void shouldGetByDate() {
-        List<Blip> blips = radar.blipsVisibleOn(firstDate);
+        List<Blip> blips = radar.blipsVisibleOn(1);
         assertEquals(1, blips.size());
         assertEquals(Quadrant.tools, blips.get(0).getQuadrant());
         assertEquals(Ring.Assess, blips.get(0).firstRing());
 
-        blips = radar.blipsVisibleOn(thirdDate);
+        blips = radar.blipsVisibleOn(3);
         assertEquals(2, blips.size());
         assertEquals(BlipId.from(1), blips.get(0).getId());
         assertEquals(BlipId.from(4), blips.get(1).getId());

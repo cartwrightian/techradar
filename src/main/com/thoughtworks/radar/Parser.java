@@ -26,7 +26,7 @@ public class Parser {
             }
         });
 
-        Radars radar = new Radars();
+        Radars radars = new Radars();
         radarJson.forEach(json -> {
             String rawDate = (String) json.get("date");
             LocalDate date = parseDate(rawDate);
@@ -34,11 +34,12 @@ public class Parser {
             JSONArray blipsList = (JSONArray) json.get("blips");
             blipsList.forEach(blipJson -> {
                 RawBlip blip = parseItem((JSONObject) blipJson, date);
-                radar.add(blip);
+                radars.add(blip);
             });
         });
+        radars.updateBlipHistories();
 
-        return radar;
+        return radars;
     }
 
     public LocalDate parseDate(String string) {
@@ -52,7 +53,9 @@ public class Parser {
         String rawQuadrant = (String) jsonObject.get("quadrant");
         BlipId id = BlipId.parse((String)jsonObject.get("id"));
         String description = (String) jsonObject.get("description");
+        boolean faded = jsonObject.get("faded")!=null;
 
+        // format of radar ID was changed at one point
         int radarId = -1;
         Object maybeRadarId = jsonObject.get("radarId");
         if (maybeRadarId!=null) {
@@ -65,7 +68,7 @@ public class Parser {
 
         Ring ring = Ring.valueOf(rawRing);
         Quadrant quadrant = Quadrant.fromString(rawQuadrant);
-        return new RawBlip(id, name, date, ring, quadrant,description, radarId);
+        return new RawBlip(id, name, date, ring, quadrant,description, radarId, faded);
     }
 
     public static class RawBlip {
@@ -76,9 +79,10 @@ public class Parser {
         private final Ring ring;
         private final String description;
         private final int radarId;
+        private final boolean faded;
         private Quadrant quadrant;
 
-        public RawBlip(BlipId id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
+        public RawBlip(BlipId id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId, boolean faded) {
             this.id = id;
             this.name = name;
             this.date = date;
@@ -86,6 +90,7 @@ public class Parser {
             this.quadrant = quadrant;
             this.description = description;
             this.radarId = radarId;
+            this.faded = faded;
         }
 
         public String getName() {
@@ -114,6 +119,10 @@ public class Parser {
 
         public int getRadarId() {
             return radarId;
+        }
+
+        public boolean isFaded() {
+            return faded;
         }
     }
 

@@ -75,6 +75,12 @@ public class Main {
             quadWriter.writeFigures((analyser.summaryOfNew(filterByQuad(quadrant))));
         }
 
+        for(Ring ring: Ring.values()) {
+            ResultsWriter lonestLivedWriter = new ResultsWriter(Paths.get(folder, "longestLived-"+ring.toString()+".csv"));
+            List<Blip> blips = radar.longestOnRadar(filterByRing(ring), 20);
+            lonestLivedWriter.write(blips);
+        }
+
         //// radar cheat sheet text
         ResultsWriter summaryWriter = new ResultsWriter(Paths.get(folder, "summaryText.csv"));
         summaryWriter.write(analyser.createSummaryText());

@@ -37,6 +37,10 @@ public class BlipFilter {
         return true;
     }
 
+    // TODO Never made it out of assess
+    // TODO first, last, touched ring
+    // TODO N at random, on or off vote
+    // TODO export into google spreadsheet, up/down voting....??
     public boolean filter(Blip item) {
         if (!quadrants.contains(item.getQuadrant())) {
             return false;

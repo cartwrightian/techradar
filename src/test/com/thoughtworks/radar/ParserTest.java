@@ -6,13 +6,13 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.thoughtworks.radar.Ring.Trial;
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class ParserTest {
@@ -65,7 +65,6 @@ public class ParserTest {
         assertEquals(BlipId.from(6661), blip.getId());
         assertEquals(Quadrant.platforms, blip.getQuadrant());
 
-        assertEquals("ASP.NET MVC", blips.get(2).getName());
         assertEquals("ALT.NET", blips.get(1).getName());
         String expected = "While .NET has proven itself as a solid platform, many practitioners are dissatisfied with " +
                 "many of the default Microsoft tools and practices. This has led to the growth of the Alt.NET " +
@@ -73,8 +72,14 @@ public class ParserTest {
                 "tools that better support them.";
         assertEquals(expected, blips.get(1).getDescription());
 
+        assertEquals("ASP.NET MVC", blips.get(2).getName());
+        assertTrue(blips.get(2).isCurrentlyFaded());
+
+        assertEquals("WebAssembly", blips.get(3).getName());
+        assertFalse(blips.get(3).isCurrentlyFaded());
+
         // check parsed radar id, which is not on all blips
-        assertEquals(105,blips.get(3).idOnRadar(LocalDate.of(2010,8,1)));
+        assertEquals(105,blips.get(3).idOnRadar(2));
 
         List<BlipHistory> blipHistory = new LinkedList<>();
         blipHistory.addAll(blip.getHistory());
@@ -88,6 +93,7 @@ public class ParserTest {
         assertEquals(Ring.Adopt, entryB.getRing());
         assertEquals(2010, entryB.getDate().getYear());
         assertEquals(Month.AUGUST, entryB.getDate().getMonth());
+
     }
 
     @Test

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 
 public class AnalyserTest {
@@ -23,14 +24,15 @@ public class AnalyserTest {
     @Before
     public void beforeEachTestRuns() {
         radar = new Radars();
-        Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(42), "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA", 30);
-        Parser.RawBlip rawB = new Parser.RawBlip(BlipId.from(42), "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA", 11);
-        Parser.RawBlip rawC = new Parser.RawBlip(BlipId.from(42), "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA", 40);
+        // when blips fades all previous marked as faded
+        Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(42), "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA", 30, true);
+        Parser.RawBlip rawB = new Parser.RawBlip(BlipId.from(42), "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA", 11, true);
+        Parser.RawBlip rawC = new Parser.RawBlip(BlipId.from(42), "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA", 40, false);
 
-        Parser.RawBlip rawD = new Parser.RawBlip(BlipId.from(52), "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text", 50);
-        Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(52), "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 1);
+        Parser.RawBlip rawD = new Parser.RawBlip(BlipId.from(52), "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text", 50, false);
+        Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(52), "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 1, false);
 
-        Parser.RawBlip rawF = new Parser.RawBlip(BlipId.from(53), "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10);
+        Parser.RawBlip rawF = new Parser.RawBlip(BlipId.from(53), "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10, false);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -39,8 +41,16 @@ public class AnalyserTest {
         radar.add(rawE);
         radar.add(rawF);
 
+        radar.updateBlipHistories();
+
         analyser = new Analyser(radar);
         blipFilter = new BlipFilter();
+    }
+
+    @Test
+    public void shouldSpotFadeAndThenReappear() {
+        // TODO can this be done from the JSON
+        fail("TODO");
     }
 
     @Test
@@ -161,21 +171,22 @@ public class AnalyserTest {
         Radars radar = new Radars();
         for (int blipNumber = 0; blipNumber < 100; blipNumber++) {
             Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber, firstDate,
-                    Ring.Assess, Quadrant.tools, "desc", blipNumber);
+                    Ring.Assess, Quadrant.tools, "desc", blipNumber, false);
             radar.add(rawA);
             if (blipNumber<49) {
                 Parser.RawBlip later = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber,
                         firstDate.plusDays(100), Ring.Adopt,
-                        Quadrant.tools, "desc", 41-blipNumber);
+                        Quadrant.tools, "desc", 41-blipNumber, false);
                 radar.add(later);
             }
             if (blipNumber<24) {
                 Parser.RawBlip later = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber,
                         firstDate.plusDays(200), Ring.Adopt,
-                        Quadrant.tools, "desc", 41-blipNumber);
+                        Quadrant.tools, "desc", 41-blipNumber, false);
                 radar.add(later);
             }
         }
+        radar.updateBlipHistories();
         analyser = new Analyser(radar);
         Map<Integer,Quartiles> halfLife = analyser.findHalfLife(BlipFilter.All());
 

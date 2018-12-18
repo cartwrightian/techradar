@@ -13,17 +13,18 @@ public class BlipTest {
     @Test
     public void shouldCreateHistory() {
         LocalDate firstDate = LocalDate.of(2010, 12, 24);
-        LocalDate secondDate = LocalDate.of(2011, 12, 24);
-        LocalDate thirdDate = LocalDate.of(2018, 11, 23);
+        LocalDate secondDate = firstDate.plusDays(365); // LocalDate.of(2011, 12, 24);
+        LocalDate thirdDate = secondDate.plusDays(1000);
 
-        Blip blip = new Blip(BlipId.from(42), "LifeTheUniverseEtc", Quadrant.tools);
-        BlipHistory historyA = new BlipHistory(firstDate, Ring.Assess, "descA", 1);
-        BlipHistory historyB = new BlipHistory(secondDate, Ring.Trial, "descB", 33);
-        BlipHistory historyC = new BlipHistory(thirdDate, Ring.Adopt, "descC", 12);
+        BlipId blipId = BlipId.from(42);
+        Blip blip = new Blip(blipId, "LifeTheUniverseEtc", Quadrant.tools);
+        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "descA", 1, true);
+        BlipHistory historyB = new BlipHistory(blipId, secondDate, Ring.Trial, "descB", 33, true);
+        BlipHistory historyC = new BlipHistory(blipId, thirdDate, Ring.Adopt, "descC", 12, true);
 
-        blip.addHistory(historyA);
-        blip.addHistory(historyB);
-        blip.addHistory(historyC);
+        blip.addHistory(1,historyA);
+        blip.addHistory(2,historyB);
+        blip.addHistory(3,historyC);
 
         assertEquals(firstDate, blip.appearedDate());
         assertEquals(thirdDate, blip.lastDate());
@@ -31,25 +32,35 @@ public class BlipTest {
         assertEquals(Ring.Assess, blip.firstRing());
         assertEquals("descC", blip.getDescription());
 
-        assertTrue(blip.visibleOn(firstDate));
-        assertTrue(blip.visibleOn(thirdDate));
+        assertTrue(blip.visibleOn(1));
+        assertTrue(blip.visibleOn(3));
 
-        assertFalse(blip.visibleOn(firstDate.minusDays(1)));
-        assertFalse(blip.visibleOn(thirdDate.plusDays(1)));
+        assertFalse(blip.visibleOn(5));
+        //assertFalse(blip.visibleOn(thirdDate.plusDays(1)));
 
-        assertEquals(33, blip.idOnRadar(secondDate));
-        assertEquals(1, blip.idOnRadar(firstDate));
+        assertEquals(33, blip.idOnRadar(2));
+        assertEquals(1, blip.idOnRadar(1));
+        assertEquals(1365, blip.getDuration().toDays());
+        assertTrue(blip.isCurrentlyFaded());
+
+        blip.addHistory(4,new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12, false));
+        blip.addHistory(5,new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12, false));
+
+        assertFalse(blip.isCurrentlyFaded());
+        // duration only for not faded
+        assertEquals(1365+100, blip.getDuration().toDays());
     }
 
     @Test
     public void shouldKeepPreviousDescriptionIfNewOneIsEmpty() {
-        Blip blip = new Blip(BlipId.from(42), "LifeTheUniverseEtc", Quadrant.tools);
+        BlipId blipId = BlipId.from(42);
+        Blip blip = new Blip(blipId, "LifeTheUniverseEtc", Quadrant.tools);
         LocalDate firstDate = LocalDate.of(2010, 12, 24);
-        BlipHistory historyA = new BlipHistory(firstDate, Ring.Assess, "textPresent", 1);
-        BlipHistory historyB = new BlipHistory(firstDate.plusDays(42), Ring.Trial, "", 33);
+        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "textPresent", 1, true);
+        BlipHistory historyB = new BlipHistory(blipId, firstDate.plusDays(42), Ring.Trial, "", 33, true);
 
-        blip.addHistory(historyA);
-        blip.addHistory(historyB);
+        blip.addHistory(1,historyA);
+        blip.addHistory(2,historyB);
 
         assertEquals("textPresent", blip.getDescription());
     }

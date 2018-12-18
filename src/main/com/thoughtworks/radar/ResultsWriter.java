@@ -40,11 +40,11 @@ public class ResultsWriter {
         // header
         builder.append("\"\"");
         for (int i = 1; i <= decays.size(); i++) {
-            builder.append(","+i);
+            builder.append(",").append(i);
         }
         builder.append(lineSep);
         // values
-        decays.forEach((key,values) -> builder.append(key).append(',').append(formatList(values)).append(lineSep));
+        decays.forEach((edition,blipDecay) -> builder.append(edition).append(',').append(formatList(blipDecay)).append(lineSep));
         writeBytesToFile(builder);
     }
 
