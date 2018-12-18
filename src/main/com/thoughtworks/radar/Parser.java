@@ -53,7 +53,6 @@ public class Parser {
         String rawQuadrant = (String) jsonObject.get("quadrant");
         BlipId id = BlipId.parse((String)jsonObject.get("id"));
         String description = (String) jsonObject.get("description");
-        boolean faded = jsonObject.get("faded")!=null;
 
         // format of radar ID was changed at one point
         int radarId = -1;
@@ -68,7 +67,7 @@ public class Parser {
 
         Ring ring = Ring.valueOf(rawRing);
         Quadrant quadrant = Quadrant.fromString(rawQuadrant);
-        return new RawBlip(id, name, date, ring, quadrant,description, radarId, faded);
+        return new RawBlip(id, name, date, ring, quadrant,description, radarId);
     }
 
     public static class RawBlip {
@@ -79,10 +78,9 @@ public class Parser {
         private final Ring ring;
         private final String description;
         private final int radarId;
-        private final boolean faded;
         private Quadrant quadrant;
 
-        public RawBlip(BlipId id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId, boolean faded) {
+        public RawBlip(BlipId id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
             this.id = id;
             this.name = name;
             this.date = date;
@@ -90,7 +88,6 @@ public class Parser {
             this.quadrant = quadrant;
             this.description = description;
             this.radarId = radarId;
-            this.faded = faded;
         }
 
         public String getName() {
@@ -121,9 +118,6 @@ public class Parser {
             return radarId;
         }
 
-        public boolean isFaded() {
-            return faded;
-        }
     }
 
 }

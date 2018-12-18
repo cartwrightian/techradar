@@ -18,9 +18,9 @@ public class BlipTest {
 
         BlipId blipId = BlipId.from(42);
         Blip blip = new Blip(blipId, "LifeTheUniverseEtc", Quadrant.tools);
-        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "descA", 1, true);
-        BlipHistory historyB = new BlipHistory(blipId, secondDate, Ring.Trial, "descB", 33, true);
-        BlipHistory historyC = new BlipHistory(blipId, thirdDate, Ring.Adopt, "descC", 12, true);
+        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "descA", 1);
+        BlipHistory historyB = new BlipHistory(blipId, secondDate, Ring.Trial, "descB", 33);
+        BlipHistory historyC = new BlipHistory(blipId, thirdDate, Ring.Adopt, "descC", 12);
 
         blip.addHistory(1,historyA);
         blip.addHistory(2,historyB);
@@ -42,10 +42,10 @@ public class BlipTest {
         assertEquals(1, blip.idOnRadar(1));
         assertEquals(1365, blip.getDuration().toDays());
 
-        blip.addHistory(5,new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12, false));
-        blip.addHistory(6,new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12, false));
+        blip.addHistory(5,new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12));
+        blip.addHistory(6,new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12));
 
-        // duration only for not faded
+        // duration only when on radar
         assertEquals(1365+100, blip.getDuration().toDays());
     }
 
@@ -54,8 +54,8 @@ public class BlipTest {
         BlipId blipId = BlipId.from(42);
         Blip blip = new Blip(blipId, "LifeTheUniverseEtc", Quadrant.tools);
         LocalDate firstDate = LocalDate.of(2010, 12, 24);
-        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "textPresent", 1, true);
-        BlipHistory historyB = new BlipHistory(blipId, firstDate.plusDays(42), Ring.Trial, "", 33, true);
+        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "textPresent", 1);
+        BlipHistory historyB = new BlipHistory(blipId, firstDate.plusDays(42), Ring.Trial, "", 33);
 
         blip.addHistory(1,historyA);
         blip.addHistory(2,historyB);

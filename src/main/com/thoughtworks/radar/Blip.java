@@ -141,35 +141,6 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return Duration.ofDays(duration);
     }
 
-    private Duration getDurationFromFaded() {
-        Iterator<Map.Entry<Integer, BlipHistory>> iter = history.entrySet().iterator();
-
-        Map.Entry<Integer, BlipHistory> first = iter.next();
-        Boolean previousWasFaded = first.getValue().isFaded();
-        LocalDate previousDate = first.getValue().getDate();
-
-        long duration = 0L;
-        while (iter.hasNext()) {
-            Map.Entry<Integer, BlipHistory> current = iter.next();
-            boolean faded = current.getValue().isFaded();
-            LocalDate currentDate = current.getValue().getDate();
-            if (faded) {
-                if (previousWasFaded) {
-                    long gap = currentDate.toEpochDay()-previousDate.toEpochDay();
-                    duration = duration + gap;
-                }
-            } else {
-                if (previousWasFaded) {
-                    long gap = currentDate.toEpochDay()-previousDate.toEpochDay();
-                    duration = duration + gap;
-                }
-            }
-            previousDate = currentDate;
-            previousWasFaded = faded;
-        }
-        return Duration.ofDays(duration);
-    }
-
     @Override
     public String toCSV() {
         return String.format("%s, %s, %s, %s, %s, %s", id, name, quadrant, getDuration().toDays(), firstRing, lastRing);

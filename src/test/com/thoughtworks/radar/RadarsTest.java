@@ -22,14 +22,14 @@ public class RadarsTest {
     @Before
     public void beforeEachTestRuns() {
         firstDate = LocalDate.of(2017, 6, 23);
-        secondDate = LocalDate.of(2017, 11, 24);
-        thirdDate = LocalDate.of(2018, 10, 22);
+        secondDate = firstDate.plusDays(20);
+        thirdDate = firstDate.plusDays(100);
 
         radar = new Radars();
-        rawA = new Parser.RawBlip(BlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11, false);
-        rawB = new Parser.RawBlip(BlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22, false);
-        rawC = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33, false);
-        rawD = new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44, false);
+        rawA = new Parser.RawBlip(BlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
+        rawB = new Parser.RawBlip(BlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
+        rawC = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
+        rawD = new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -38,7 +38,6 @@ public class RadarsTest {
 
         radar.updateBlipHistories();
     }
-
 
     @Test
     public void shouldGetLongestOnRadar() {
@@ -76,7 +75,6 @@ public class RadarsTest {
         assertEquals(2, blips.size());
         assertEquals(BlipId.from(1), blips.get(0).getId());
         assertEquals(BlipId.from(4), blips.get(1).getId());
-
     }
 
 }

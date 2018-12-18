@@ -8,16 +8,14 @@ public class BlipHistory {
     private final Ring ring;
     private final String description;
     private final int idOfBlipOnThisRadar;
-    private final boolean faded;
     private final BlipId blipId;
 
-    public BlipHistory(BlipId blipId, LocalDate date, Ring ring, String description, int rawRadarId, boolean faded) {
+    public BlipHistory(BlipId blipId, LocalDate date, Ring ring, String description, int rawRadarId) {
         this.blipId = blipId;
         this.date = date;
         this.ring = ring;
         this.description = description;
         this.idOfBlipOnThisRadar = rawRadarId;
-        this.faded = faded;
     }
 
     public Ring getRing() {
@@ -34,10 +32,6 @@ public class BlipHistory {
 
     public int getIdOfBlipOnThisRadar() {
         return idOfBlipOnThisRadar;
-    }
-
-    public boolean isFaded() {
-        return faded;
     }
 
     public BlipId getBlipId() {

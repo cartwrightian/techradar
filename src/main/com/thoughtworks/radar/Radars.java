@@ -36,7 +36,7 @@ public class Radars {
 
         LocalDate blipDate = rawBlip.getDate();
         BlipHistory blipHistory = new BlipHistory(id, blipDate, rawBlip.getRing(), rawBlip.getDescription(),
-                rawBlip.getRadarId(), rawBlip.isFaded());
+                rawBlip.getRadarId());
         historyToAdd.add(blipHistory);
         dates.add(blipDate);
     }
