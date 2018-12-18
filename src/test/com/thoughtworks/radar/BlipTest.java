@@ -33,20 +33,18 @@ public class BlipTest {
         assertEquals("descC", blip.getDescription());
 
         assertTrue(blip.visibleOn(1));
+        assertTrue(blip.visibleOn(2));
         assertTrue(blip.visibleOn(3));
 
         assertFalse(blip.visibleOn(5));
-        //assertFalse(blip.visibleOn(thirdDate.plusDays(1)));
 
         assertEquals(33, blip.idOnRadar(2));
         assertEquals(1, blip.idOnRadar(1));
         assertEquals(1365, blip.getDuration().toDays());
-        assertTrue(blip.isCurrentlyFaded());
 
-        blip.addHistory(4,new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12, false));
-        blip.addHistory(5,new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12, false));
+        blip.addHistory(5,new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12, false));
+        blip.addHistory(6,new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12, false));
 
-        assertFalse(blip.isCurrentlyFaded());
         // duration only for not faded
         assertEquals(1365+100, blip.getDuration().toDays());
     }

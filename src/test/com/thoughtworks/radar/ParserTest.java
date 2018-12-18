@@ -73,10 +73,8 @@ public class ParserTest {
         assertEquals(expected, blips.get(1).getDescription());
 
         assertEquals("ASP.NET MVC", blips.get(2).getName());
-        assertTrue(blips.get(2).isCurrentlyFaded());
 
         assertEquals("WebAssembly", blips.get(3).getName());
-        assertFalse(blips.get(3).isCurrentlyFaded());
 
         // check parsed radar id, which is not on all blips
         assertEquals(105,blips.get(3).idOnRadar(2));

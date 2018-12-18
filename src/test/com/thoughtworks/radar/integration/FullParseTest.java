@@ -41,7 +41,6 @@ public class FullParseTest {
         assertEquals(1, awsBlips.size());
 
         Blip aws = awsBlips.get(0);
-        assertFalse(aws.isCurrentlyFaded());
         Collection<BlipHistory> awsHistory = aws.getHistory();
 
         assertEquals(3, awsHistory.size());
@@ -52,6 +51,6 @@ public class FullParseTest {
                 filter(blip -> (
                         blip.lastDate().toEpochDay() - blip.appearedDate().toEpochDay()) != blip.getDuration().toDays())
                 .collect(Collectors.toList());
-        assertEquals(292, fadedAtSomePoint.size());
+        assertEquals(39, fadedAtSomePoint.size());
     }
 }

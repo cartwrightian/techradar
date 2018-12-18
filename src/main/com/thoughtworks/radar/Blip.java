@@ -114,12 +114,31 @@ public class Blip implements Comparable<Blip>, ToCSV {
     }
 
     public Duration getDuration() {
-        return getDurationFromFaded();
+        return getDurationFromAssumedFading();
     }
 
     private Duration getDurationFromAssumedFading() {
-        // TODO
-        return Duration.ofDays(0);
+        Iterator<Map.Entry<Integer, BlipHistory>> iter = history.entrySet().iterator();
+
+        Map.Entry<Integer, BlipHistory> first = iter.next();
+        Integer previousEdition = first.getKey();
+        LocalDate previousDate = first.getValue().getDate();
+
+        long duration = 0L;
+        while (iter.hasNext()) {
+            Map.Entry<Integer, BlipHistory> current = iter.next();
+            Integer currentEdition = current.getKey();
+            LocalDate currentDate = current.getValue().getDate();
+
+            // only count if present from one radar to the next
+            if (currentEdition-previousEdition==1) {
+                long gap = currentDate.toEpochDay()-previousDate.toEpochDay();
+                duration = duration + gap;
+            }
+            previousEdition = currentEdition;
+            previousDate = currentDate;
+        }
+        return Duration.ofDays(duration);
     }
 
     private Duration getDurationFromFaded() {
@@ -160,7 +179,4 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return history.get(edition).getRing();
     }
 
-    public boolean isCurrentlyFaded() {
-        return history.get(lastEdition).isFaded();
-    }
 }
