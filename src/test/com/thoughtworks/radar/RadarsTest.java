@@ -40,7 +40,7 @@ public class RadarsTest {
     }
 
     @Test
-    public void shouldFindMostMoved() {
+    public void shouldFindMostMovedAndNonMovers() {
         // not a move, same ring
         Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate.plusDays(10), Ring.Adopt, Quadrant.tools, "desc", 88);
         radar.add(rawE);
@@ -50,16 +50,20 @@ public class RadarsTest {
         }
         radar.updateBlipHistories();
 
-        List<Blip> results = radar.mostMoves(BlipFilter.All(), 2);
+        List<Blip> mostMoves = radar.mostMoves(BlipFilter.All(), 2);
 
-        assertEquals(2, results.size());
-        Blip firstResult = results.get(0);
-        Blip secondResult = results.get(1);
+        assertEquals(2, mostMoves.size());
+        Blip firstResult = mostMoves.get(0);
+        Blip secondResult = mostMoves.get(1);
 
         assertEquals(BlipId.from(1), firstResult.getId());
         assertEquals(2, firstResult.getNumberBlipMoves().intValue());
         assertEquals(BlipId.from(4), secondResult.getId());
-        assertEquals(1, secondResult.getNumberBlipMoves().intValue());
+        assertEquals(0, secondResult.getNumberBlipMoves().intValue()); // never moved from adopt
+
+        List<Blip> nonMovers = radar.nonMovers();
+        assertEquals(1, nonMovers.size());
+        assertEquals(BlipId.from(4), nonMovers.get(0).getId());
     }
 
     @Test

@@ -7,7 +7,7 @@ import java.util.*;
 public class Blip implements Comparable<Blip>, ToCSV {
     private final BlipId id;
     private final String name;
-    private final String formatForCSV = "%s, %s, %s, %s, %s, %s, %s";
+    private final String formatForCSV = "%s, \"%s\", %s, %s, %s, %s, %s, %s";
     private Quadrant quadrant;
     // date -> history, in date order
     private SortedMap<Integer,BlipHistory> history;
@@ -28,6 +28,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
         lastDate = LocalDate.MIN;
         this.description = "";
         blipMoves = 0;
+        lastRing=null;
     }
 
     public String getName() {
@@ -52,7 +53,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
         LocalDate date = blipHistory.getDate();
         if (date.isAfter(lastDate)) {
             lastDate = date;
-            if (!blipHistory.getRing().equals(lastRing)) {
+            if ((lastRing!=null) && (!blipHistory.getRing().equals(lastRing))) {
                 blipMoves++;
             }
             lastRing = blipHistory.getRing();
@@ -68,7 +69,6 @@ public class Blip implements Comparable<Blip>, ToCSV {
         if (edition>lastEdition) {
             lastEdition = edition;
         }
-        // TODO duration - not same as first appear and fade as some things came back on to radar later...
     }
 
     @Override
@@ -188,13 +188,17 @@ public class Blip implements Comparable<Blip>, ToCSV {
     @Override
     public String toCSV() {
         return String.format(formatForCSV,
-                id, name, quadrant, getDuration().toDays(), firstRing, lastRing, blipMoves);
+                id, name, quadrant, getDuration().toDays(), firstRing, lastRing, blipMoves, getNumberEditions());
+    }
+
+    private int getNumberEditions() {
+        return history.size();
     }
 
     @Override
     public String getHeader() {
         return String.format(formatForCSV,
-                "id", "name", "quadrant", "duration", "firstRing", "lastRing", "blipMoves");
+                "id", "name", "quadrant", "duration", "firstRing", "lastRing", "blipMoves", "editions");
     }
 
     public Ring ringFor(int edition) {

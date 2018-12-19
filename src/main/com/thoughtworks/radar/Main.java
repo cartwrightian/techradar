@@ -21,8 +21,8 @@ public class Main {
     }
 
     private void analyse() throws IOException, ParseException {
-        Radars radar = loadRadars();
-        Analyser analyser = new Analyser(radar);
+        Radars radars = loadRadars();
+        Analyser analyser = new Analyser(radars);
 
         // raw csv
         ResultsWriter writer = new ResultsWriter(Paths.get(folder,"output.csv"));
@@ -33,14 +33,21 @@ public class Main {
         decays(analyser);
         halflives(analyser);
         newBlips(analyser);
-        longestLived(radar, 10);
+        longestLived(radars, 10);
         cheatSheet(analyser);
-        mostMoves(radar, 20);
+        mostMoves(radars, 30);
+        gotStuck(radars);
+    }
+
+    private void gotStuck(Radars radars) {
+        List nonMovers = radars.nonMovers();
+        ResultsWriter summaryWriter = getWriter("nonMovers.csv");
+        summaryWriter.write(nonMovers);
     }
 
     private void cheatSheet(Analyser analyser) {
         //// radar presentation cheat sheet :-)
-        ResultsWriter summaryWriter = new ResultsWriter(Paths.get("summaryText.csv"));
+        ResultsWriter summaryWriter = getWriter("summaryText.csv");
         summaryWriter.write(analyser.createSummaryText());
     }
 

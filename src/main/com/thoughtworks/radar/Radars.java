@@ -43,12 +43,20 @@ public class Radars {
 
 
     public void updateBlipHistories() {
+        // edition -> things that happened in the edition
+        Map<Integer, List<BlipHistory>> historyByEdition = new HashMap<>();
         if (historyToAdd.isEmpty()) {
             throw new RuntimeException("Call after add()'ing all of the blips");
         }
         historyToAdd.forEach(blipHistory -> {
             int edition = getEditionFrom(blipHistory.getDate());
-            blips.get(blipHistory.getBlipId()).addHistory(edition, blipHistory);
+            if (!historyByEdition.containsKey(edition)) {
+                historyByEdition.put(edition, new LinkedList<>());
+            }
+            historyByEdition.get(edition).add(blipHistory);
+        });
+        historyByEdition.forEach((edition,historyList)-> {
+            historyList.forEach(history -> { blips.get(history.getBlipId()).addHistory(edition, history);});
         });
         historyToAdd.clear();
     }
@@ -92,36 +100,37 @@ public class Radars {
     }
 
     public long blipCount(BlipFilter blipFilter) {
-        return blips.values().stream().filter(blip -> blipFilter.filter(blip)).count();
+        return blips.values().stream().filter(blipFilter::filter).count();
     }
 
     public long blipCount(LocalDate date, BlipFilter blipFilter) {
         return blips.values().stream().
                 filter(blip -> blip.appearedDate().isEqual(date)).
-                filter(blip->blipFilter.filter(blip)).
+                filter(blipFilter::filter).
                 count();
     }
 
     public List<Blip> longestOnRadar(BlipFilter blipFilter, int limit) {
         Comparator<? super Blip> comparitor = (Comparator<Blip>) (blipA, blipB) -> blipB.getDuration().compareTo(blipA.getDuration());
-
         return filterAndSort(blipFilter, comparitor, limit);
-
     }
 
     public List<Blip> mostMoves(BlipFilter blipFilter, int limit) {
         Comparator<? super Blip> comparitor =
                 (Comparator<Blip>) (blipA, blipB) -> blipB.getNumberBlipMoves().compareTo(blipA.getNumberBlipMoves());
-
         return filterAndSort(blipFilter, comparitor, limit);
     }
 
     private List<Blip> filterAndSort(BlipFilter blipFilter, Comparator<? super Blip> comparitor, int limit) {
         return blips.values().stream().
-                filter(blip -> blipFilter.filter(blip)).
+                filter(blipFilter::filter).
                 sorted(comparitor).
                 limit(limit).
                 collect(Collectors.toList());
+    }
+
+    public List<Blip> nonMovers() {
+        return blips.values().stream().filter(blip->(blip.getNumberBlipMoves()==0)).collect(Collectors.toList());
     }
 
     public interface EachEdition {
