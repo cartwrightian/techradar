@@ -102,16 +102,27 @@ public class Radars {
                 count();
     }
 
-    public List<Blip> longestOnRadar(BlipFilter blipFilter, long limit) {
+    public List<Blip> longestOnRadar(BlipFilter blipFilter, int limit) {
         Comparator<? super Blip> comparitor = (Comparator<Blip>) (blipA, blipB) -> blipB.getDuration().compareTo(blipA.getDuration());
 
+        return filterAndSort(blipFilter, comparitor, limit);
+
+    }
+
+    public List<Blip> mostMoves(BlipFilter blipFilter, int limit) {
+        Comparator<? super Blip> comparitor =
+                (Comparator<Blip>) (blipA, blipB) -> blipB.getNumberBlipMoves().compareTo(blipA.getNumberBlipMoves());
+
+        return filterAndSort(blipFilter, comparitor, limit);
+    }
+
+    private List<Blip> filterAndSort(BlipFilter blipFilter, Comparator<? super Blip> comparitor, int limit) {
         return blips.values().stream().
                 filter(blip -> blipFilter.filter(blip)).
                 sorted(comparitor).
                 limit(limit).
                 collect(Collectors.toList());
     }
-
 
     public interface EachEdition {
         void edition(Integer number, LocalDate published);

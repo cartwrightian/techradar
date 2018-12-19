@@ -15,27 +15,35 @@ public class ResultsWriter {
     private Path path;
     private final String lineSep;
 
-    public ResultsWriter(Path path) throws IOException {
+    public ResultsWriter(Path path)  {
         lineSep = System.getProperty("line.separator");
         this.path = path;
 
         if (Files.exists(path)){
-            Files.delete(path);
+            try {
+                Files.delete(path);
+            } catch (IOException e) {
+                throw new RuntimeException("Cannot delete file"+path.toAbsolutePath(), e);
+            }
         }
     }
 
-    public void write(List<? extends ToCSV> items) throws IOException {
+    public void write(List<? extends ToCSV> items) {
         StringBuilder builder = new StringBuilder();
         items.forEach(item -> builder.append(item.toCSV()).append(lineSep));
         writeBytesToFile(builder);
     }
 
-    private void writeBytesToFile(StringBuilder builder) throws IOException {
+    private void writeBytesToFile(StringBuilder builder)  {
         byte[] bytes = builder.toString().getBytes(Charsets.UTF_8);
-        Files.write(path, bytes, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
+        try {
+            Files.write(path, bytes, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot write to file" +path.toAbsolutePath(), e);
+        }
     }
 
-    public void write(Map<Integer, List<Integer>> decays) throws IOException {
+    public void write(Map<Integer, List<Integer>> decays) {
         StringBuilder builder = new StringBuilder();
         // header
         builder.append("\"\"");
@@ -63,7 +71,7 @@ public class ResultsWriter {
         return builder.toString();
     }
 
-    public void writeSummary(Map<Integer, Quartiles> halfLives) throws IOException {
+    public void writeSummary(Map<Integer, Quartiles> halfLives) {
         StringBuilder builder = new StringBuilder();
         builder.append("Released,100%,75%,50%,25%").append(lineSep);
         halfLives.forEach((day,quartiles) -> {
@@ -85,7 +93,7 @@ public class ResultsWriter {
         writeBytesToFile(builder);
     }
 
-    public void writeFigures(Map<Integer, Double> percentageNew) throws IOException {
+    public void writeFigures(Map<Integer, Double> percentageNew)  {
         StringBuilder builder = new StringBuilder();
         percentageNew.forEach((index,value) -> builder.append(format("%s,%.3f", index,value)).append(lineSep));
         writeBytesToFile(builder);

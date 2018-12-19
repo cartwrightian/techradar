@@ -18,9 +18,9 @@ public class Analyser {
 
         radar.getBlips().forEach(blip -> {
             LocalDate appearedDate = blip.appearedDate();
-            LocalDate lastDate = blip.lastDate();
+            LocalDate firstFaded = blip.firstFadedDate();
             BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getQuadrant(), appearedDate,
-                    lastDate, radar.getEditionFrom(appearedDate), radar.getEditionFrom(lastDate), blip.lastRing());
+                    firstFaded, radar.getEditionFrom(appearedDate), radar.getEditionFrom(firstFaded), blip.fadedRing());
             results.add(blipLifetime);
         });
 
@@ -105,6 +105,7 @@ public class Analyser {
         return radar.dateOfEdition(radarB).toEpochDay()-radar.dateOfEdition(radarA).toEpochDay();
     }
 
+    // Integer -> Ratio new to existing
     public Map<Integer, Double> summaryOfNew(BlipFilter blipFilter) {
         TreeMap<Integer, Double> result = new TreeMap<>();
 

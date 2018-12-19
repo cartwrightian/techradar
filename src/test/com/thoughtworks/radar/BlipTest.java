@@ -42,8 +42,14 @@ public class BlipTest {
         assertEquals(1, blip.idOnRadar(1));
         assertEquals(1365, blip.getDuration().toDays());
 
+        assertEquals(Ring.Adopt,blip.fadedRing());
+        assertEquals(thirdDate, blip.firstFadedDate());
+
         blip.addHistory(5,new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12));
         blip.addHistory(6,new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12));
+
+        assertEquals(blip.fadedRing(),Ring.Adopt);
+        assertEquals(thirdDate, blip.firstFadedDate());
 
         // duration only when on radar
         assertEquals(1365+100, blip.getDuration().toDays());

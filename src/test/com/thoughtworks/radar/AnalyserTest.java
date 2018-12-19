@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 
 public class AnalyserTest {
@@ -24,15 +23,17 @@ public class AnalyserTest {
     @Before
     public void beforeEachTestRuns() {
         radar = new Radars();
-        // when blips fades all previous marked as faded
         Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(42), "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA", 30);
         Parser.RawBlip rawB = new Parser.RawBlip(BlipId.from(42), "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA", 11);
         Parser.RawBlip rawC = new Parser.RawBlip(BlipId.from(42), "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA", 40);
 
         Parser.RawBlip rawD = new Parser.RawBlip(BlipId.from(52), "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text", 50);
-        Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(52), "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 1);
+        Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(52), "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 51);
+        Parser.RawBlip rawF = new Parser.RawBlip(BlipId.from(52), "blipB", secondDate, Ring.Assess, Quadrant.techniques, "later text", 52);
+        Parser.RawBlip rawG = new Parser.RawBlip(BlipId.from(52), "blipB", thirdDate, Ring.Assess, Quadrant.techniques, "later text", 53);
+        Parser.RawBlip rawH = new Parser.RawBlip(BlipId.from(52), "blipB", fourthDate, Ring.Assess, Quadrant.techniques, "later text", 54);
 
-        Parser.RawBlip rawF = new Parser.RawBlip(BlipId.from(53), "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10);
+        Parser.RawBlip rawI = new Parser.RawBlip(BlipId.from(53), "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -40,6 +41,10 @@ public class AnalyserTest {
         radar.add(rawD);
         radar.add(rawE);
         radar.add(rawF);
+        radar.add(rawG);
+        radar.add(rawH);
+
+        radar.add(rawI);
 
         radar.updateBlipHistories();
 
@@ -51,7 +56,7 @@ public class AnalyserTest {
     public void shouldCreateSummaryOfText() {
         List <SummaryText> summaryTexts = analyser.createSummaryText();
 
-        assertEquals(6,summaryTexts.size());
+        assertEquals(9,summaryTexts.size());
 
         // only one thing on first radar, so one summary line
         SummaryText summaryText = summaryTexts.get(0);
@@ -69,6 +74,7 @@ public class AnalyserTest {
 
     @Test
     public void shouldSummariseAmountNewPerRadar() {
+        // Integer -> Ratio new to existing
         Map<Integer, Double> amounts = analyser.summaryOfNew(BlipFilter.All());
 
         assertEquals((Double) 1.0, amounts.get(1));

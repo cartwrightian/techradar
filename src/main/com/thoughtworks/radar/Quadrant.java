@@ -1,5 +1,7 @@
 package com.thoughtworks.radar;
 
+import java.util.function.Consumer;
+
 public enum Quadrant {
     tools,
     LanguagesAndFrameworks,
@@ -12,5 +14,11 @@ public enum Quadrant {
             return LanguagesAndFrameworks;
         }
         return Quadrant.valueOf(lower);
+    }
+
+    public static void foreach(Consumer<Quadrant> action) {
+        for(Quadrant quadrant :Quadrant.values()) {
+            action.accept(quadrant);
+        }
     }
 }

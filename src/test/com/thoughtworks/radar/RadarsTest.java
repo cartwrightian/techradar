@@ -40,6 +40,29 @@ public class RadarsTest {
     }
 
     @Test
+    public void shouldFindMostMoved() {
+        // not a move, same ring
+        Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate.plusDays(10), Ring.Adopt, Quadrant.tools, "desc", 88);
+        radar.add(rawE);
+        // lots of none moving history
+        for (int i = 20; i <200; i=i+20) {
+            radar.add(new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate.plusDays(i), Ring.Adopt, Quadrant.tools, "desc", i));
+        }
+        radar.updateBlipHistories();
+
+        List<Blip> results = radar.mostMoves(BlipFilter.All(), 2);
+
+        assertEquals(2, results.size());
+        Blip firstResult = results.get(0);
+        Blip secondResult = results.get(1);
+
+        assertEquals(BlipId.from(1), firstResult.getId());
+        assertEquals(2, firstResult.getNumberBlipMoves().intValue());
+        assertEquals(BlipId.from(4), secondResult.getId());
+        assertEquals(1, secondResult.getNumberBlipMoves().intValue());
+    }
+
+    @Test
     public void shouldGetLongestOnRadar() {
         List<Blip> result = radar.longestOnRadar(BlipFilter.All(), 2);
         assertEquals(2, result.size());
