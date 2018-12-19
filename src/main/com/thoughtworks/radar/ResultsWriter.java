@@ -30,6 +30,10 @@ public class ResultsWriter {
 
     public void write(List<? extends ToCSV> items) {
         StringBuilder builder = new StringBuilder();
+        String header = items.get(0).getHeader();
+        if (!header.isEmpty()) {
+            builder.append(header).append(lineSep);
+        }
         items.forEach(item -> builder.append(item.toCSV()).append(lineSep));
         writeBytesToFile(builder);
     }

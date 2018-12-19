@@ -7,6 +7,7 @@ import java.util.*;
 public class Blip implements Comparable<Blip>, ToCSV {
     private final BlipId id;
     private final String name;
+    private final String formatForCSV = "%s, %s, %s, %s, %s, %s, %s";
     private Quadrant quadrant;
     // date -> history, in date order
     private SortedMap<Integer,BlipHistory> history;
@@ -186,7 +187,14 @@ public class Blip implements Comparable<Blip>, ToCSV {
 
     @Override
     public String toCSV() {
-        return String.format("%s, %s, %s, %s, %s, %s", id, name, quadrant, getDuration().toDays(), firstRing, lastRing);
+        return String.format(formatForCSV,
+                id, name, quadrant, getDuration().toDays(), firstRing, lastRing, blipMoves);
+    }
+
+    @Override
+    public String getHeader() {
+        return String.format(formatForCSV,
+                "id", "name", "quadrant", "duration", "firstRing", "lastRing", "blipMoves");
     }
 
     public Ring ringFor(int edition) {

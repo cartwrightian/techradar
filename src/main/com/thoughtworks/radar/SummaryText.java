@@ -71,6 +71,12 @@ public class SummaryText implements ToCSV, Comparable<SummaryText> {
                 getDate(), getRadarId(),  getName(), getQuadrant(), getRing(), getDescription());
     }
 
+    @Override
+    public String getHeader() {
+        return String.format("%s,%s,%s,%s,%s,%s",
+                "date", "radarId",  "name", "quadrant", "ring", "description");
+    }
+
     public String getName() {
         return name;
     }

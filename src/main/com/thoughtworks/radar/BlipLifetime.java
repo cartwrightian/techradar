@@ -21,6 +21,11 @@ public class BlipLifetime implements ToCSV {
         return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstRadarNum, lastRadarNum, lifetimeInDays);
     }
 
+    @Override
+    public String getHeader() {
+        return format("%s,%s,%s,%s,%s,%s", "id", "name", "quadrant", "firstRadarNum", "lastRadarNum", "lifetimeInDays");
+    }
+
     public BlipLifetime(String name, BlipId id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
                         int firstRadarNum, int lastRadarNum, Ring finalRing) {
         this.name = name;

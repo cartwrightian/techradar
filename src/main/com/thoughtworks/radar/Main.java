@@ -35,7 +35,7 @@ public class Main {
         newBlips(analyser);
         longestLived(radar, 10);
         cheatSheet(analyser);
-        mostMoves(radar, 10);
+        mostMoves(radar, 20);
     }
 
     private void cheatSheet(Analyser analyser) {

@@ -26,4 +26,10 @@ public class SimpleCSV  implements ToCSV {
         });
         return output.toString();
     }
+
+    @Override
+    public String getHeader() {
+        // assume caller of class adds header
+        return "";
+    }
 }
