@@ -36,8 +36,11 @@ public class Main {
         longestLived(radars, 10);
         cheatSheet(analyser);
         mostMoves(radars, 30);
+        allMoves(radars);
         gotStuck(radars);
     }
+
+
 
     private void gotStuck(Radars radars) {
         List nonMovers = radars.nonMovers();
@@ -106,6 +109,15 @@ public class Main {
             ResultsWriter quadrantWriter = getQuadrantWriter(baseName, quadrant);
             quadrantWriter.write(radar.mostMoves(filterByQuad(quadrant), limit));
         });
+    }
+
+    private void allMoves(Radars radars) {
+        String baseName = "allMoves";
+
+        ResultsWriter longestLivedWriter = getWriter(baseName +".csv");
+        int limit = radars.getBlips().size() + 1;
+        longestLivedWriter.write(radars.mostMoves(BlipFilter.All(), limit));
+
     }
 
     private void halflives(Analyser analyser) {

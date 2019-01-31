@@ -1,0 +1,15 @@
+*.class
+*.rpm
+tmp
+*.DS_Store
+*.swp
+*.out
+*.lock
+
+.env
+bin
+dist
+.gradle/
+build/
+data/*.csv
+output
