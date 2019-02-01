@@ -143,16 +143,27 @@ public class Analyser {
         return results;
     }
 
-    public String allWordsFromDescriptions() {
+    public String allWordsFromDescriptions(BlipFilter blipFilter) {
         StringBuilder results = new StringBuilder();
-        radars.getBlips().forEach(blip -> blip.getHistory().forEach(blipHistory ->
-            {results.append(" ").append(blipHistory.getDescription());}));
+        radars.getBlips().stream().filter(blipFilter::filter).forEach(blip -> blip.getHistory().forEach(blipHistory ->
+            {results.append(" ").append(filterText(blipHistory.getDescription()));}));
 
         return results.toString();
     }
 
+    private String filterText(String rawText) {
+        StringBuilder filtered = new StringBuilder();
+        String[] words = rawText.split(" ");
+        List<String> listOfWords = Arrays.asList(words);
+        listOfWords.stream().
+                filter(word -> !word.contains("<")).
+                filter(word -> !word.contains(">")).
+                map(word -> word + " ").forEach(item -> filtered.append(item));
+        return filtered.toString();
+    }
 
-    public List<SimpleCSV> counts() {
+
+    public List<SimpleCSV> counts(boolean firstRing) {
         List<SimpleCSV> counts = new LinkedList<>();
         SimpleCSV header = new SimpleCSV();
 
@@ -166,7 +177,7 @@ public class Analyser {
             SimpleCSV line = new SimpleCSV();
             line.add(quadrant.toString());
             for (Ring ring : Ring.values()) {
-                long count = radars.blipCount(new BlipFilter().allow(quadrant).allow(ring));
+                long count = radars.blipCount(new BlipFilter(firstRing).allow(quadrant).allow(ring));
                 line.add(Long.toString(count));
             }
             counts.add(line);
@@ -193,13 +204,13 @@ public class Analyser {
             line.add(number.toString());
 
             for (Ring ring : Ring.values()) {
-                BlipFilter filter = new BlipFilter().allow(ring).allow(Quadrant.values());
+                BlipFilter filter = new BlipFilter(true).allow(ring).allow(Quadrant.values());
                 Long count = radars.blipCount(date,filter);
                 line.add(count.toString());
             }
 
             for (Quadrant quadrant : Quadrant.values()) {
-                BlipFilter filter = new BlipFilter().allow(quadrant).allow(Ring.values());
+                BlipFilter filter = new BlipFilter(true).allow(quadrant).allow(Ring.values());
                 long count = radars.blipCount(date,filter);
                 line.add(Long.toString(count));
             }

@@ -7,14 +7,16 @@ import java.util.List;
 public class BlipFilter {
     private List<Ring> rings;
     private List<Quadrant> quadrants;
+    private boolean firstRing;
 
-    public BlipFilter() {
+    public BlipFilter(boolean firstRing) {
+        this.firstRing = firstRing;
         rings = new LinkedList<>();
         quadrants = new LinkedList<>();
     }
 
     public static BlipFilter All() {
-        return new BlipFilter().allow(Quadrant.values()).allow(Ring.values());
+        return new BlipFilter(true).allow(Quadrant.values()).allow(Ring.values());
     }
 
     public BlipFilter allow(Quadrant...toAdd) {
@@ -41,7 +43,12 @@ public class BlipFilter {
         if (!quadrants.contains(item.getQuadrant())) {
             return false;
         }
-        if (!rings.contains(item.firstRing())) {
+        return ringFilter(item);
+    }
+
+    private boolean ringFilter(Blip item) {
+        Ring ring = firstRing ? item.firstRing() : item.lastRing();
+        if (!rings.contains(ring)) {
             return false;
         }
         return true;

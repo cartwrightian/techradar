@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,7 +34,7 @@ public class AnalyserTest {
         Parser.RawBlip rawD = new Parser.RawBlip(BlipId.from(52), "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text1", 50);
         Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(52), "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 51);
         Parser.RawBlip rawF = new Parser.RawBlip(BlipId.from(52), "blipB", secondDate, Ring.Assess, Quadrant.techniques, "later text2", 52);
-        Parser.RawBlip rawG = new Parser.RawBlip(BlipId.from(52), "blipB", thirdDate, Ring.Assess, Quadrant.techniques, "later text3", 53);
+        Parser.RawBlip rawG = new Parser.RawBlip(BlipId.from(52), "blipB", thirdDate, Ring.Assess, Quadrant.techniques, "later text3 <ignore this/>", 53);
         Parser.RawBlip rawH = new Parser.RawBlip(BlipId.from(52), "blipB", fourthDate, Ring.Assess, Quadrant.techniques, "later text4", 54);
 
         Parser.RawBlip rawI = new Parser.RawBlip(BlipId.from(53), "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10);
@@ -52,12 +53,12 @@ public class AnalyserTest {
         radar.updateBlipHistories();
 
         analyser = new Analyser(radar);
-        blipFilter = new BlipFilter();
+        blipFilter = new BlipFilter(true);
     }
 
     @Test
     public void shouldCreateTextFromAllDescriptions() {
-        String allTheWords = analyser.allWordsFromDescriptions();
+        String allTheWords = analyser.allWordsFromDescriptions(BlipFilter.All());
 
         String[] words = allTheWords.split(" ");
 
@@ -70,6 +71,9 @@ public class AnalyserTest {
         assertTrue(listOfWords.contains("descA1"));
         assertTrue(listOfWords.contains("descA2"));
         assertTrue(listOfWords.contains("descA2"));
+
+        assertFalse(listOfWords.contains("<ignore"));
+        assertFalse(listOfWords.contains("this/>"));
 
     }
 

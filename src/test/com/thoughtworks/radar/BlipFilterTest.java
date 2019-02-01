@@ -17,7 +17,7 @@ public class BlipFilterTest {
     @Before
     public void beforeEachTestRuns() {
         date = LocalDate.now();
-        filter = new BlipFilter();
+        filter = new BlipFilter(true);
     }
 
     @Test
