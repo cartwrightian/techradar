@@ -61,7 +61,7 @@ public class RadarsTest {
         assertEquals(BlipId.from(4), secondResult.getId());
         assertEquals(0, secondResult.getNumberBlipMoves().intValue()); // never moved from adopt
 
-        List<Blip> nonMovers = radar.nonMovers();
+        List<Blip> nonMovers = radar.nonMovers(BlipFilter.All());
         assertEquals(1, nonMovers.size());
         assertEquals(BlipId.from(4), nonMovers.get(0).getId());
     }

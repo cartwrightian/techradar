@@ -29,7 +29,6 @@ public class Radars {
         // consolidate multiple entries for a blip into one blip with a history
         Blip blip;
         if (!blips.containsKey(id)) {
-            // todo Which version of blip to take description from? First? Last?
             blip = new Blip(id, rawBlip.getName(), rawBlip.getQuadrant());
             blips.put(id, blip);
         }
@@ -45,6 +44,7 @@ public class Radars {
     public void updateBlipHistories() {
         // edition -> things that happened in the edition
         Map<Integer, List<BlipHistory>> historyByEdition = new HashMap<>();
+
         if (historyToAdd.isEmpty()) {
             throw new RuntimeException("Call after add()'ing all of the blips");
         }
@@ -129,8 +129,10 @@ public class Radars {
                 collect(Collectors.toList());
     }
 
-    public List<Blip> nonMovers() {
-        return blips.values().stream().filter(blip->(blip.getNumberBlipMoves()==0)).collect(Collectors.toList());
+    public List<Blip> nonMovers(BlipFilter blipFilter) {
+        return blips.values().stream().
+                filter(blipFilter::filter).
+                filter(blip->(blip.getNumberBlipMoves()==0)).collect(Collectors.toList());
     }
 
     public interface EachEdition {

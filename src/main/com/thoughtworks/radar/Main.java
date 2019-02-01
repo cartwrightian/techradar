@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Main {
+    //// looks for blips jason at data/blips.json, this file is checked in
+    //// from inside TW can get blips json from https://www.thoughtworks.com/internal/api/radar/blips
 
     private final String folder;
 
@@ -40,12 +42,16 @@ public class Main {
         gotStuck(radars);
     }
 
-
-
     private void gotStuck(Radars radars) {
-        List nonMovers = radars.nonMovers();
+        // appeared, never moved
+        List nonMovers = radars.nonMovers(BlipFilter.All());
         ResultsWriter summaryWriter = getWriter("nonMovers.csv");
         summaryWriter.write(nonMovers);
+
+        Ring.foreach(ring -> {
+            ResultsWriter ringWriter = getRingWriter("nonMovers", ring);
+            ringWriter.write(radars.nonMovers(filterByRing(ring)));
+        });
     }
 
     private void cheatSheet(Analyser analyser) {
@@ -55,12 +61,12 @@ public class Main {
     }
 
     private void counts(Analyser analyser) {
-        // total blip counts
+        //// total blip counts
         ResultsWriter countsWriter = getWriter("counts.csv");
         List<SimpleCSV> counts = analyser.counts();
         countsWriter.write(counts);
 
-        // appearing blip counts
+        //// appearing blip counts
         ResultsWriter trendsWriter = getWriter("countsByEdition.csv");
         List<SimpleCSV> countByRadar = analyser.countByRadar();
         trendsWriter.write(countByRadar);
@@ -78,6 +84,7 @@ public class Main {
     }
 
     private void longestLived(Radars radar, int limit) {
+        //// longest lived, all, then by ring and quadrnt
         String baseName = "longestLived";
 
         ResultsWriter longestLivedWriter = getWriter(baseName +".csv");
@@ -95,6 +102,7 @@ public class Main {
     }
 
     private void mostMoves(Radars radar, int limit) {
+        //// most moves; all, then by ring and quadrnt
         String baseName = "mostMoves";
 
         ResultsWriter longestLivedWriter = getWriter(baseName +".csv");
@@ -112,6 +120,7 @@ public class Main {
     }
 
     private void allMoves(Radars radars) {
+        //// all blips that moved
         String baseName = "allMoves";
 
         ResultsWriter longestLivedWriter = getWriter(baseName +".csv");
@@ -121,6 +130,7 @@ public class Main {
     }
 
     private void halflives(Analyser analyser) {
+        /// time for 50% of blips from an edition to disappear
         Map<Integer, Quartiles> halfLives = analyser.findHalfLife(BlipFilter.All());
         ResultsWriter halflifeWriter = new ResultsWriter(Paths.get(folder, "halflife.csv"));
         halflifeWriter.writeSummary(halfLives);
@@ -137,7 +147,7 @@ public class Main {
     }
 
     private void decays(Analyser analyser) {
-        //// decays
+        //// decays, how long it takes blips to disappear
         ResultsWriter decayWriter = getWriter("decays.csv");
         Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(BlipFilter.All());
         decayWriter.write(decays);
