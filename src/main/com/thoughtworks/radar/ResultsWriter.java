@@ -29,6 +29,10 @@ public class ResultsWriter {
     }
 
     public void write(List<? extends ToCSV> items) {
+        if (items.size()==0) {
+            return;
+        }
+
         StringBuilder builder = new StringBuilder();
         String header = items.get(0).getHeader();
         if (!header.isEmpty()) {

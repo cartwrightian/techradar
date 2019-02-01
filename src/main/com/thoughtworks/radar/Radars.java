@@ -17,12 +17,19 @@ public class Radars {
         historyToAdd = new LinkedList<>();
     }
 
+    // warning, stateful class, see add() and updateBlipHistories()
     public List<Blip> getBlips() {
         List<Blip> result = new LinkedList<>();
         result.addAll(blips.values());
         return result;
     }
 
+    public List<Blip> getBlips(BlipFilter blipFilter) {
+        return blips.values().stream().filter(blipFilter::filter).collect(Collectors.toList());
+    }
+
+    // add raw blips, then afterwards call updateBlipHistories()
+    // stateful and a bit yuk, but there are circular dependencies between blips and blip history
     public void add(Parser.RawBlip rawBlip) {
         BlipId id = rawBlip.getId();
 
@@ -39,7 +46,6 @@ public class Radars {
         historyToAdd.add(blipHistory);
         dates.add(blipDate);
     }
-
 
     public void updateBlipHistories() {
         // edition -> things that happened in the edition

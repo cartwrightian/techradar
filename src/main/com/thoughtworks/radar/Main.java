@@ -7,10 +7,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Main {
     //// looks for blips jason at data/blips.json, this file is checked in
     //// from inside TW can get blips json from https://www.thoughtworks.com/internal/api/radar/blips
+
+    // TODO first, last, touched ring
+    // TODO N at random, on or off vote
+    // TODO export into google spreadsheet, up/down voting....??
+    // TODO filter based on history, i.e. match on initial and then on history of blip
 
     private final String folder;
 
@@ -39,10 +45,11 @@ public class Main {
         cheatSheet(analyser);
         mostMoves(radars, 30);
         allMoves(radars);
-        gotStuck(radars);
+        nonMovers(radars);
+        movedToHold(radars);
     }
 
-    private void gotStuck(Radars radars) {
+    private void nonMovers(Radars radars) {
         // appeared, never moved
         List nonMovers = radars.nonMovers(BlipFilter.All());
         ResultsWriter summaryWriter = getWriter("nonMovers.csv");
@@ -51,6 +58,19 @@ public class Main {
         Ring.foreach(ring -> {
             ResultsWriter ringWriter = getRingWriter("nonMovers", ring);
             ringWriter.write(radars.nonMovers(filterByRing(ring)));
+        });
+    }
+
+    private void movedToHold(Radars radars) {
+
+        BlipFilterOverHistory onHold = new BlipFilterOverHistory().allow(Ring.Hold);
+
+        Ring.foreach(ring -> {
+            if (ring!=Ring.Hold) {
+                List<Blip> ringBlips = radars.getBlips(filterByRing(ring));
+                ResultsWriter ringWriter = getRingWriter("movedToHoldFrom", ring);
+                ringWriter.write(ringBlips.stream().filter(onHold::filter).collect(Collectors.toList()));
+            }
         });
     }
 
