@@ -43,7 +43,12 @@ public class ResultsWriter {
     }
 
     private void writeBytesToFile(StringBuilder builder)  {
-        byte[] bytes = builder.toString().getBytes(Charsets.UTF_8);
+        String string = builder.toString();
+        writeStringToFile(string);
+    }
+
+    public void writeStringToFile(String string) {
+        byte[] bytes = string.getBytes(Charsets.UTF_8);
         try {
             Files.write(path, bytes, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {

@@ -47,6 +47,11 @@ public class Main {
         allMoves(radars);
         nonMovers(radars);
         movedToHold(radars);
+        allTextFromDescription(analyser);
+    }
+
+    private void allTextFromDescription(Analyser analyser) {
+        getWriter("words.txt").writeStringToFile(analyser.allWordsFromDescriptions());
     }
 
     private void nonMovers(Radars radars) {

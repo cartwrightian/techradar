@@ -4,10 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AnalyserTest {
 
@@ -23,15 +26,15 @@ public class AnalyserTest {
     @Before
     public void beforeEachTestRuns() {
         radar = new Radars();
-        Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(42), "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA", 30);
-        Parser.RawBlip rawB = new Parser.RawBlip(BlipId.from(42), "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA", 11);
-        Parser.RawBlip rawC = new Parser.RawBlip(BlipId.from(42), "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA", 40);
+        Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(42), "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA1", 30);
+        Parser.RawBlip rawB = new Parser.RawBlip(BlipId.from(42), "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA2", 11);
+        Parser.RawBlip rawC = new Parser.RawBlip(BlipId.from(42), "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA3", 40);
 
-        Parser.RawBlip rawD = new Parser.RawBlip(BlipId.from(52), "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text", 50);
+        Parser.RawBlip rawD = new Parser.RawBlip(BlipId.from(52), "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text1", 50);
         Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(52), "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 51);
-        Parser.RawBlip rawF = new Parser.RawBlip(BlipId.from(52), "blipB", secondDate, Ring.Assess, Quadrant.techniques, "later text", 52);
-        Parser.RawBlip rawG = new Parser.RawBlip(BlipId.from(52), "blipB", thirdDate, Ring.Assess, Quadrant.techniques, "later text", 53);
-        Parser.RawBlip rawH = new Parser.RawBlip(BlipId.from(52), "blipB", fourthDate, Ring.Assess, Quadrant.techniques, "later text", 54);
+        Parser.RawBlip rawF = new Parser.RawBlip(BlipId.from(52), "blipB", secondDate, Ring.Assess, Quadrant.techniques, "later text2", 52);
+        Parser.RawBlip rawG = new Parser.RawBlip(BlipId.from(52), "blipB", thirdDate, Ring.Assess, Quadrant.techniques, "later text3", 53);
+        Parser.RawBlip rawH = new Parser.RawBlip(BlipId.from(52), "blipB", fourthDate, Ring.Assess, Quadrant.techniques, "later text4", 54);
 
         Parser.RawBlip rawI = new Parser.RawBlip(BlipId.from(53), "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10);
 
@@ -53,6 +56,24 @@ public class AnalyserTest {
     }
 
     @Test
+    public void shouldCreateTextFromAllDescriptions() {
+        String allTheWords = analyser.allWordsFromDescriptions();
+
+        String[] words = allTheWords.split(" ");
+
+        List<String> listOfWords = Arrays.asList(words);
+        assertTrue(listOfWords.contains("text1"));
+        assertTrue(listOfWords.contains("text2"));
+        assertTrue(listOfWords.contains("text3"));
+        assertTrue(listOfWords.contains("text4"));
+
+        assertTrue(listOfWords.contains("descA1"));
+        assertTrue(listOfWords.contains("descA2"));
+        assertTrue(listOfWords.contains("descA2"));
+
+    }
+
+    @Test
     public void shouldCreateSummaryOfText() {
         List <SummaryText> summaryTexts = analyser.createSummaryText();
 
@@ -63,7 +84,7 @@ public class AnalyserTest {
         assertEquals("Jul 2000", summaryText.getDate());
         assertEquals("Assess", summaryText.getRing());
         assertEquals("techniques", summaryText.getQuadrant());
-        assertEquals("\"later text\"", summaryText.getDescription());
+        assertEquals("\"later text1\"", summaryText.getDescription());
 
         // should be 3 lines for second radar
         // summary text ordered by radar date then, if present, radarID
