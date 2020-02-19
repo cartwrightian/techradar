@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public class AnalyserTest {
     private LocalDate thirdDate = LocalDate.of(2017, 11, 24);
     private LocalDate fourthDate = LocalDate.of(2018, 10, 22);
     private LocalDate fifthDate = LocalDate.of(2019, 8, 19);
-    private BlipFilter blipFilter;
+    private BlipFilters blipFilters;
 
     @Before
     public void beforeEachTestRuns() {
@@ -53,12 +52,12 @@ public class AnalyserTest {
         radar.updateBlipHistories();
 
         analyser = new Analyser(radar);
-        blipFilter = new BlipFilter(true);
+        blipFilters = new BlipFilters(true);
     }
 
     @Test
     public void shouldCreateTextFromAllDescriptions() {
-        String allTheWords = analyser.allWordsFromDescriptions(BlipFilter.All());
+        String allTheWords = analyser.allWordsFromDescriptions(BlipFilters.All());
 
         String[] words = allTheWords.split(" ");
 
@@ -100,7 +99,7 @@ public class AnalyserTest {
     @Test
     public void shouldSummariseAmountNewPerRadar() {
         // Integer -> Ratio new to existing
-        Map<Integer, Double> amounts = analyser.summaryOfNew(BlipFilter.All());
+        Map<Integer, Double> amounts = analyser.summaryOfNew(BlipFilters.All());
 
         assertEquals((Double) 1.0, amounts.get(1));
         assertEquals((Double) (2.0/3.0), amounts.get(2));
@@ -111,7 +110,7 @@ public class AnalyserTest {
 
     @Test
     public void shouldSummariseBlipDecayFilterByFinalRing() {
-        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(blipFilter.allow(Quadrant.values()).allow(Ring.Adopt));
+        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(blipFilters.allow(Quadrant.values()).allow(Ring.Adopt));
 
         assertEquals(5,decay.size());
         assertEquals(5, decay.get(1).size());
@@ -127,7 +126,7 @@ public class AnalyserTest {
 
     @Test
     public void shouldSummariseBlipDecayAllQuadrants() {
-        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(BlipFilter.All());
+        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(BlipFilters.All());
 
         assertEquals(5,decay.size());
         assertEquals(5, decay.get(1).size());
@@ -154,7 +153,7 @@ public class AnalyserTest {
     @Test
     public void shouldSummariseBlipDecayFilterByQuad() {
         Map<Integer, List<Integer>> decay = analyser.summaryOfDecay(
-                blipFilter.allow(Quadrant.tools).allow(Ring.values()));
+                blipFilters.allow(Quadrant.tools).allow(Ring.values()));
 
         assertEquals(5, decay.get(1).size());
         assertEquals(5, decay.size());
@@ -213,7 +212,7 @@ public class AnalyserTest {
         }
         radar.updateBlipHistories();
         analyser = new Analyser(radar);
-        Map<Integer,Quartiles> halfLife = analyser.findHalfLife(BlipFilter.All());
+        Map<Integer,Quartiles> halfLife = analyser.findHalfLife(BlipFilters.All());
 
         // half gone by 100 days
         int firstRadarKey = Math.toIntExact(firstDate.toEpochDay());

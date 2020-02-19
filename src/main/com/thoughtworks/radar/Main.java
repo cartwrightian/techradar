@@ -47,12 +47,17 @@ public class Main {
         allMoves(radars);
         nonMovers(radars);
         movedToHold(radars);
-        assessToAdopt(radars);
+        ringToAdopt(radars, Ring.Assess);
+        ringToAdopt(radars, Ring.Trial);
+        firstRingAdopt(radars);
+
         allTextFromDescription(analyser);
     }
 
+
+
     private void allTextFromDescription(Analyser analyser) {
-        getWriter("words.txt").writeStringToFile(analyser.allWordsFromDescriptions(BlipFilter.All()));
+        getWriter("words.txt").writeStringToFile(analyser.allWordsFromDescriptions(BlipFilters.All()));
 
         Ring.foreach(ring -> {
             ResultsWriter writer = getWriter(String.format("%s-%s.txt", "words", ring.toString()));
@@ -67,7 +72,7 @@ public class Main {
 
     private void nonMovers(Radars radars) {
         // appeared, never moved
-        List nonMovers = radars.nonMovers(BlipFilter.All());
+        List<Blip> nonMovers = radars.nonMovers(BlipFilters.All());
         ResultsWriter summaryWriter = getWriter("nonMovers.csv");
         summaryWriter.write(nonMovers);
 
@@ -79,26 +84,36 @@ public class Main {
 
     private void movedToHold(Radars radars) {
 
-        BlipFilter onHold = new BlipFilter(false).allow(Ring.Hold).allow(Quadrant.values());
+        BlipFilter onHoldFilter = new BlipFilters(false).allow(Ring.Hold).allow(Quadrant.values());
 
         Ring.foreach(ring -> {
             if (ring!=Ring.Hold) {
                 List<Blip> ringBlips = radars.getBlips(filterByFirstRing(ring));
                 ResultsWriter ringWriter = getRingWriter("movedToHoldFrom", ring);
-                ringWriter.write(ringBlips.stream().filter(onHold::filter).collect(Collectors.toList()));
+                ringWriter.write(ringBlips.stream().filter(onHoldFilter::filter).collect(Collectors.toList()));
             }
         });
+
+        List<Blip> everInAdoptFadedInHold = radars.everInAdoptToHold();
+        ResultsWriter writer = getWriter("everAdoptFadedInHold.csv");
+        writer.write(everInAdoptFadedInHold);
+
     }
 
-    private void assessToAdopt(Radars radars) {
+    private void ringToAdopt(Radars radars, Ring ring) {
 
-        BlipFilter adopt = new BlipFilter(false).allow(Ring.Adopt).allow(Quadrant.values());
+        BlipFilter adopt = new BlipFilters(false).allow(Ring.Adopt).allow(Quadrant.values());
 
-        List<Blip> startedInAssess = radars.getBlips(filterByFirstRing(Ring.Assess));
-        ResultsWriter ringWriter = getRingWriter("movedToAdoptFrom", Ring.Assess);
-        List<Blip> finisgedInAdopt = startedInAssess.stream().filter(adopt::filter).collect(Collectors.toList());
-        ringWriter.write(finisgedInAdopt);
+        List<Blip> startedInRing = radars.getBlips(filterByFirstRing(ring));
+        ResultsWriter ringWriter = getRingWriter("movedToAdoptFrom", ring);
+        List<Blip> finishedInAdopt = startedInRing.stream().filter(adopt::filter).collect(Collectors.toList());
+        ringWriter.write(finishedInAdopt);
+    }
 
+    private void firstRingAdopt(Radars radars) {
+        List<Blip> startedInRing = radars.getBlips(filterByFirstRing(Ring.Adopt));
+        ResultsWriter ringWriter = getRingWriter("startedIn", Ring.Adopt);
+        ringWriter.write(startedInRing);
     }
 
     private void cheatSheet(Analyser analyser) {
@@ -122,7 +137,7 @@ public class Main {
     private void newBlips(Analyser analyser) {
         //// summary of new blips
         ResultsWriter newBlipsWriter = getWriter("newblips.csv");
-        newBlipsWriter.writeFigures(analyser.summaryOfNew(BlipFilter.All()));
+        newBlipsWriter.writeFigures(analyser.summaryOfNew(BlipFilters.All()));
 
         Quadrant.foreach(quadrant -> {
             ResultsWriter quadWriter = getQuadrantWriter("newblips", quadrant);
@@ -135,7 +150,7 @@ public class Main {
         String baseName = "longestLived";
 
         ResultsWriter longestLivedWriter = getWriter(baseName +".csv");
-        longestLivedWriter.write(radar.longestOnRadar(BlipFilter.All(), limit));
+        longestLivedWriter.write(radar.longestOnRadar(BlipFilters.All(), limit));
 
         Ring.foreach(ring -> {
             ResultsWriter ringWriter = getRingWriter(baseName, ring);
@@ -153,7 +168,7 @@ public class Main {
         String baseName = "mostMoves";
 
         ResultsWriter longestLivedWriter = getWriter(baseName +".csv");
-        longestLivedWriter.write(radar.mostMoves(BlipFilter.All(), limit));
+        longestLivedWriter.write(radar.mostMoves(BlipFilters.All(), limit));
 
         Ring.foreach(ring -> {
             ResultsWriter ringWriter = getRingWriter(baseName, ring);
@@ -172,13 +187,13 @@ public class Main {
 
         ResultsWriter longestLivedWriter = getWriter(baseName +".csv");
         int limit = radars.getBlips().size() + 1;
-        longestLivedWriter.write(radars.mostMoves(BlipFilter.All(), limit));
+        longestLivedWriter.write(radars.mostMoves(BlipFilters.All(), limit));
 
     }
 
     private void halflives(Analyser analyser) {
         /// time for 50% of blips from an edition to disappear
-        Map<Integer, Quartiles> halfLives = analyser.findHalfLife(BlipFilter.All());
+        Map<Integer, Quartiles> halfLives = analyser.findHalfLife(BlipFilters.All());
         ResultsWriter halflifeWriter = new ResultsWriter(Paths.get(folder, "halflife.csv"));
         halflifeWriter.writeSummary(halfLives);
 
@@ -196,7 +211,7 @@ public class Main {
     private void decays(Analyser analyser) {
         //// decays, how long it takes blips to disappear
         ResultsWriter decayWriter = getWriter("decays.csv");
-        Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(BlipFilter.All());
+        Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(BlipFilters.All());
         decayWriter.write(decays);
 
         Quadrant.foreach(quadrant ->  {
@@ -235,11 +250,11 @@ public class Main {
         return Paths.get(folder,filename);
     }
 
-    private BlipFilter filterByFirstRing(Ring ring) {
-        return new BlipFilter(true).allow(Quadrant.values()).allow(ring);
+    private BlipFilters filterByFirstRing(Ring ring) {
+        return new BlipFilters(true).allow(Quadrant.values()).allow(ring);
     }
 
-    private BlipFilter filterByQuad(Quadrant quadrant) {
-        return new BlipFilter(true).allow(quadrant).allow(Ring.values());
+    private BlipFilters filterByQuad(Quadrant quadrant) {
+        return new BlipFilters(true).allow(quadrant).allow(Ring.values());
     }
 }

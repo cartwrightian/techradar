@@ -8,16 +8,16 @@ import java.time.LocalDate;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 
-public class BlipFilterTest {
+public class BlipFiltersTest {
 
     private LocalDate date;
-    private BlipFilter filter;
+    private BlipFilters filter;
     BlipLifetime item = new BlipLifetime("name",BlipId.from(42), Quadrant.LanguagesAndFrameworks, date, date, 1,18, Ring.Adopt);
 
     @Before
     public void beforeEachTestRuns() {
         date = LocalDate.now();
-        filter = new BlipFilter(true);
+        filter = new BlipFilters(true);
     }
 
     @Test

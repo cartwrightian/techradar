@@ -27,7 +27,7 @@ public class Analyser {
         return results;
     }
 
-    public Map<Integer, List<Integer>> summaryOfDecay(BlipFilter blipFilter) {
+    public Map<Integer, List<Integer>> summaryOfDecay(BlipLifeTimeFilter blipFilters) {
 
         // edition -> number blips left ordred by edition
         HashMap<Integer, List<Integer>> result = new HashMap<>();
@@ -39,7 +39,7 @@ public class Analyser {
         radars.forEachEdition((edition, published) -> {
             ArrayList<Integer> stillLeft = initList(count);
             lifeTimes.stream().
-                    filter(time -> blipFilter.filter(time)).
+                    filter(time -> blipFilters.filter(time)).
                     filter(time -> (edition.equals(time.getFirstRadarNum()))).
                     map(BlipLifetime::getLastRadarNum).
                     forEach(lastRadar -> increment(stillLeft,edition, lastRadar));
@@ -65,10 +65,10 @@ public class Analyser {
         return result;
     }
 
-    public Map<Integer, Quartiles> findHalfLife(BlipFilter blipFilter) {
+    public Map<Integer, Quartiles> findHalfLife(BlipLifeTimeFilter blipFilters) {
         Map<Integer, Quartiles> results = new TreeMap<>();
 
-        Map<Integer, List<Integer>> summary = summaryOfDecay(blipFilter);
+        Map<Integer, List<Integer>> summary = summaryOfDecay(blipFilters);
         int radarCount = summary.size();
 
         // radars editions
@@ -106,11 +106,11 @@ public class Analyser {
     }
 
     // Integer -> Ratio new to existing
-    public Map<Integer, Double> summaryOfNew(BlipFilter blipFilter) {
+    public Map<Integer, Double> summaryOfNew(BlipLifeTimeFilter blipFilters) {
         TreeMap<Integer, Double> result = new TreeMap<>();
 
         List<BlipLifetime> filteredLifetimes = lifeTimes().stream().
-                filter(blipFilter::filter)
+                filter(blipFilters::filter)
                 .collect(Collectors.toList());
 
         // indexes
@@ -143,9 +143,9 @@ public class Analyser {
         return results;
     }
 
-    public String allWordsFromDescriptions(BlipFilter blipFilter) {
+    public String allWordsFromDescriptions(BlipFilters blipFilters) {
         StringBuilder results = new StringBuilder();
-        radars.getBlips().stream().filter(blipFilter::filter).forEach(blip -> blip.getHistory().forEach(blipHistory ->
+        radars.getBlips().stream().filter(blipFilters::filter).forEach(blip -> blip.getHistory().forEach(blipHistory ->
             {results.append(" ").append(filterText(blipHistory.getDescription()));}));
 
         return results.toString();
@@ -177,7 +177,7 @@ public class Analyser {
             SimpleCSV line = new SimpleCSV();
             line.add(quadrant.toString());
             for (Ring ring : Ring.values()) {
-                long count = radars.blipCount(new BlipFilter(firstRing).allow(quadrant).allow(ring));
+                long count = radars.blipCount(new BlipFilters(firstRing).allow(quadrant).allow(ring));
                 line.add(Long.toString(count));
             }
             counts.add(line);
@@ -204,13 +204,13 @@ public class Analyser {
             line.add(number.toString());
 
             for (Ring ring : Ring.values()) {
-                BlipFilter filter = new BlipFilter(true).allow(ring).allow(Quadrant.values());
+                BlipFilters filter = new BlipFilters(true).allow(ring).allow(Quadrant.values());
                 Long count = radars.blipCount(date,filter);
                 line.add(count.toString());
             }
 
             for (Quadrant quadrant : Quadrant.values()) {
-                BlipFilter filter = new BlipFilter(true).allow(quadrant).allow(Ring.values());
+                BlipFilters filter = new BlipFilters(true).allow(quadrant).allow(Ring.values());
                 long count = radars.blipCount(date,filter);
                 line.add(Long.toString(count));
             }

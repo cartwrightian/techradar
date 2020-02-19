@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Radars {
     // blip ID -> blip
@@ -19,8 +20,7 @@ public class Radars {
 
     // warning, stateful class, see add() and updateBlipHistories()
     public List<Blip> getBlips() {
-        List<Blip> result = new LinkedList<>();
-        result.addAll(blips.values());
+        List<Blip> result = new LinkedList<>(blips.values());
         return result;
     }
 
@@ -105,8 +105,8 @@ public class Radars {
         });
     }
 
-    public long blipCount(BlipFilter blipFilter) {
-        return blips.values().stream().filter(blipFilter::filter).count();
+    public long blipCount(BlipFilter blipFilters) {
+        return blips.values().stream().filter(blipFilters::filter).count();
     }
 
     public long blipCount(LocalDate date, BlipFilter blipFilter) {
@@ -143,5 +143,22 @@ public class Radars {
 
     public interface EachEdition {
         void edition(Integer number, LocalDate published);
+    }
+
+    public List<Blip> everInAdoptToHold() {
+
+        List<Blip> endedOnHold = blips.values().stream().filter(blip -> blip.lastRing()==Ring.Hold).collect(Collectors.toList());
+
+        Stream<Blip> everInAdopt = endedOnHold.stream().filter(this::wasEverInAdopt);
+
+        return everInAdopt.collect(Collectors.toList());
+
+    }
+
+    private boolean wasEverInAdopt(Blip blip) {
+        long touchedAdopt = blip.getHistory().stream().
+                filter(blipHistory -> blipHistory.getRing() == Ring.Adopt).
+                count();
+        return touchedAdopt > 0;
     }
 }

@@ -27,7 +27,7 @@ public class FullParseTest {
 
         Radars radars = new RadarFactory(jsonFromFile,parser).loadRadar();
 
-        assertEquals(19, radars.numberOfRadars());
+        assertEquals(21, radars.numberOfRadars());
         assertEquals(LocalDate.of(2010,1,1),radars.dateOfEdition(1));
         LocalDate latestEditionReleaseDate = LocalDate.of(2018, 11, 1);
         assertEquals(latestEditionReleaseDate,radars.dateOfEdition(19));
@@ -38,7 +38,7 @@ public class FullParseTest {
         });
 
         // number blips appeared in latest
-        assertEquals(73,radars.blipCount(latestEditionReleaseDate, BlipFilter.All()));
+        assertEquals(73,radars.blipCount(latestEditionReleaseDate, BlipFilters.All()));
 
         // aws appeared, faded, came back
         List<Blip> awsBlips = radars.getBlips().stream().filter(blip -> blip.getName().equals("AWS")).collect(Collectors.toList());
@@ -61,7 +61,7 @@ public class FullParseTest {
                 filter(blip -> (
                         blip.lastDate().toEpochDay() - blip.appearedDate().toEpochDay()) != blip.getDuration().toDays())
                 .collect(Collectors.toList());
-        assertEquals(39, fadedAtSomePoint.size());
+        assertEquals(63, fadedAtSomePoint.size());
 
         fadedAtSomePoint.forEach(blip -> System.out.println(blip.getName()));
 
