@@ -6,8 +6,6 @@ version '1.0-SNAPSHOT'
 
 mainClassName = 'com.thoughtworks.radar.Main'
 
-sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
 }

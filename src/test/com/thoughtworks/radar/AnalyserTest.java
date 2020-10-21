@@ -16,11 +16,11 @@ public class AnalyserTest {
 
     private Radars radar;
     private Analyser analyser;
-    private LocalDate firstDate = LocalDate.of(2000, 7, 17);
-    private LocalDate secondDate = LocalDate.of(2017, 6, 23);
-    private LocalDate thirdDate = LocalDate.of(2017, 11, 24);
-    private LocalDate fourthDate = LocalDate.of(2018, 10, 22);
-    private LocalDate fifthDate = LocalDate.of(2019, 8, 19);
+    private final LocalDate firstDate = LocalDate.of(2000, 7, 17);
+    private final LocalDate secondDate = LocalDate.of(2017, 6, 23);
+    private final LocalDate thirdDate = LocalDate.of(2017, 11, 24);
+    private final LocalDate fourthDate = LocalDate.of(2018, 10, 22);
+    private final LocalDate fifthDate = LocalDate.of(2019, 8, 19);
     private BlipFilters blipFilters;
 
     @Before
@@ -116,11 +116,11 @@ public class AnalyserTest {
         assertEquals(5, decay.get(1).size());
 
         List<Integer> first = decay.get(2);
-        assertEquals(new Integer(0), first.get(0));
-        assertEquals(new Integer(1), first.get(1));
-        assertEquals(new Integer(1), first.get(2));
-        assertEquals(new Integer(1), first.get(3));
-        assertEquals(new Integer(0), first.get(4));
+        assertEquals(Integer.valueOf(0), first.get(0));
+        assertEquals(Integer.valueOf(1), first.get(1));
+        assertEquals(Integer.valueOf(1), first.get(2));
+        assertEquals(Integer.valueOf(1), first.get(3));
+        assertEquals(Integer.valueOf(0), first.get(4));
 
     }
 
@@ -136,18 +136,18 @@ public class AnalyserTest {
         assertEquals(5, decay.get(4).size());
         assertEquals(5, decay.get(5).size());
 
-        assertEquals(new Integer(0), secondRadar.get(0));
-        assertEquals(new Integer(2), secondRadar.get(1));
-        assertEquals(new Integer(1), secondRadar.get(2));
-        assertEquals(new Integer(1), secondRadar.get(3));
-        assertEquals(new Integer(0), secondRadar.get(4));
+        assertEquals(Integer.valueOf(0), secondRadar.get(0));
+        assertEquals(Integer.valueOf(2), secondRadar.get(1));
+        assertEquals(Integer.valueOf(1), secondRadar.get(2));
+        assertEquals(Integer.valueOf(1), secondRadar.get(3));
+        assertEquals(Integer.valueOf(0), secondRadar.get(4));
 
         List<Integer> first = decay.get(1);
-        assertEquals(new Integer(1), first.get(0));
-        assertEquals(new Integer(1), first.get(1));
-        assertEquals(new Integer(1), first.get(2));
-        assertEquals(new Integer(1), first.get(3));
-        assertEquals(new Integer(1), first.get(4));
+        assertEquals(Integer.valueOf(1), first.get(0));
+        assertEquals(Integer.valueOf(1), first.get(1));
+        assertEquals(Integer.valueOf(1), first.get(2));
+        assertEquals(Integer.valueOf(1), first.get(3));
+        assertEquals(Integer.valueOf(1), first.get(4));
     }
 
     @Test
@@ -158,11 +158,11 @@ public class AnalyserTest {
         assertEquals(5, decay.get(1).size());
         assertEquals(5, decay.size());
         List<Integer> first = decay.get(1);
-        assertEquals(new Integer(0), first.get(0));
-        assertEquals(new Integer(0), first.get(1));
-        assertEquals(new Integer(0), first.get(2));
-        assertEquals(new Integer(0), first.get(3));
-        assertEquals(new Integer(0), first.get(4));
+        assertEquals(Integer.valueOf(0), first.get(0));
+        assertEquals(Integer.valueOf(0), first.get(1));
+        assertEquals(Integer.valueOf(0), first.get(2));
+        assertEquals(Integer.valueOf(0), first.get(3));
+        assertEquals(Integer.valueOf(0), first.get(4));
     }
 
     @Test

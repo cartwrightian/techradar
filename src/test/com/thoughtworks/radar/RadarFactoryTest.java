@@ -20,7 +20,7 @@ public class RadarFactoryTest {
         RadarFactory factor = new RadarFactory(loader, parser);
         Radars result = factor.loadRadar();
 
-        assertEquals(981,result.getBlips().size());
+        assertEquals(1097,result.getBlips().size());
 
         result.getBlips().forEach(blip -> assertTrue(blip.getHistory().size()>0));
     }

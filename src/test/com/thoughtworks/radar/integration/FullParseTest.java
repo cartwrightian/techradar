@@ -27,7 +27,7 @@ public class FullParseTest {
 
         Radars radars = new RadarFactory(jsonFromFile,parser).loadRadar();
 
-        assertEquals(21, radars.numberOfRadars());
+        assertEquals(23, radars.numberOfRadars());
         assertEquals(LocalDate.of(2010,1,1),radars.dateOfEdition(1));
         LocalDate latestEditionReleaseDate = LocalDate.of(2018, 11, 1);
         assertEquals(latestEditionReleaseDate,radars.dateOfEdition(19));
@@ -61,7 +61,7 @@ public class FullParseTest {
                 filter(blip -> (
                         blip.lastDate().toEpochDay() - blip.appearedDate().toEpochDay()) != blip.getDuration().toDays())
                 .collect(Collectors.toList());
-        assertEquals(63, fadedAtSomePoint.size());
+        assertEquals(105, fadedAtSomePoint.size());
 
         fadedAtSomePoint.forEach(blip -> System.out.println(blip.getName()));
 
