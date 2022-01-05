@@ -10,6 +10,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 // https://www.thoughtworks.com/internal/api/radar/blips
+// https://www.thoughtworks.com/caas/api/insights/radar/blips.en.json
 
 public class JsonFromFileTest {
 
