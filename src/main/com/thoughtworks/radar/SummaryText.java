@@ -12,7 +12,7 @@ public class SummaryText implements ToCSV, Comparable<SummaryText> {
     private final String description;
     private final int radarId;
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
 
     public SummaryText(String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
         this.name = name;

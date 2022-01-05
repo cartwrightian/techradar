@@ -1,6 +1,5 @@
 package com.thoughtworks.radar;
 
-import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -12,7 +11,7 @@ import static org.junit.Assert.*;
 public class RadarFactoryTest {
 
     @Test
-    public void shouldCreateFromFile() throws IOException, ParseException {
+    public void shouldCreateFromFile() throws IOException {
         Path path = Paths.get("data","blips.json");
 
         JsonFromFile loader = new JsonFromFile(path);

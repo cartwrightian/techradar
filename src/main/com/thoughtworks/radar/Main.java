@@ -1,6 +1,5 @@
 package com.thoughtworks.radar;
 
-import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,11 +23,11 @@ public class Main {
         this.folder = folder;
     }
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException {
         new Main("data").analyse();
     }
 
-    private void analyse() throws IOException, ParseException {
+    private void analyse() throws IOException {
         Radars radars = loadRadars();
         Analyser analyser = new Analyser(radars);
 
@@ -225,7 +224,7 @@ public class Main {
         });
     }
 
-    private Radars loadRadars() throws IOException, ParseException {
+    private Radars loadRadars() throws IOException {
         Path path = Paths.get(folder,"blips.json");
 
         JsonFromFile jsonFromFile = new JsonFromFile(path);

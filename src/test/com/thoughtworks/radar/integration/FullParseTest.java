@@ -1,7 +1,6 @@
 package com.thoughtworks.radar.integration;
 
 import com.thoughtworks.radar.*;
-import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ import static junit.framework.TestCase.assertEquals;
 public class FullParseTest {
 
     @Test
-    public void shouldLoadRadarDataAndCreateAnalysis() throws IOException, ParseException {
+    public void shouldLoadRadarDataAndCreateAnalysis() throws IOException {
         String folder = "data";
         Path path = Paths.get(folder,"blips.json");
 

@@ -1,42 +1,37 @@
 package com.thoughtworks.radar;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
+
 
 public class Parser {
 
-    public Radars parse(String rawJson) throws ParseException {
+    public Radars parse(String rawJson) throws IOException {
 
-        JSONParser jsonParser = new JSONParser();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        JSONArray parsed = (JSONArray)jsonParser.parse(rawJson);
-
-        List<JSONObject> radarJson = new LinkedList<>();
-        parsed.forEach(raw -> {
-            JSONObject item = (JSONObject) raw;
-            if (item.containsKey("blips")) {
-                radarJson.add(item);
-            }
-        });
+        JsonNode jsonNode = objectMapper.readTree(rawJson);
 
         Radars radars = new Radars();
-        radarJson.forEach(json -> {
-            String rawDate = (String) json.get("date");
+
+        jsonNode.forEach(radarNode -> {
+            JsonNode dateNode = radarNode.get("date");
+            String rawDate = dateNode.asText();
             LocalDate date = parseDate(rawDate);
 
-            JSONArray blipsList = (JSONArray) json.get("blips");
-            blipsList.forEach(blipJson -> {
-                RawBlip blip = parseItem((JSONObject) blipJson, date);
+            JsonNode blipsNode = radarNode.get("blips");
+            for (JsonNode blipNode : blipsNode) {
+                RawBlip blip = parseItem(blipNode, date);
                 radars.add(blip);
-            });
+            }
+
         });
+        
         radars.updateBlipHistories();
 
         return radars;
@@ -47,22 +42,17 @@ public class Parser {
         return LocalDate.parse(string+"-01", formatter);
     }
 
-    private RawBlip parseItem(JSONObject jsonObject, LocalDate date) {
-        String name = (String) jsonObject.get("name");
-        String rawRing = (String) jsonObject.get("ring");
-        String rawQuadrant = (String) jsonObject.get("quadrant");
-        BlipId id = BlipId.parse((String)jsonObject.get("id"));
-        String description = (String) jsonObject.get("description");
+    private RawBlip parseItem(JsonNode jsonObject, LocalDate date) {
+        String name = jsonObject.get("name").asText();
+        String rawRing = jsonObject.get("ring").asText();
+        String rawQuadrant = jsonObject.get("quadrant").asText();
+        BlipId id = BlipId.parse(jsonObject.get("id").asText());
+        String description = jsonObject.get("description").asText();
 
         // format of radar ID was changed at one point
         int radarId = -1;
-        Object maybeRadarId = jsonObject.get("radarId");
-        if (maybeRadarId!=null) {
-            if (maybeRadarId instanceof Long) {
-                radarId = Math.toIntExact((Long) maybeRadarId);
-            } else {
-                radarId = Integer.parseInt((String) maybeRadarId);
-            }
+        if (jsonObject.has("radarId")) {
+            radarId = jsonObject.get("radarId").asInt();
         }
 
         Ring ring = Ring.valueOf(rawRing);
@@ -78,7 +68,7 @@ public class Parser {
         private final Ring ring;
         private final String description;
         private final int radarId;
-        private Quadrant quadrant;
+        private final Quadrant quadrant;
 
         public RawBlip(BlipId id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
             this.id = id;

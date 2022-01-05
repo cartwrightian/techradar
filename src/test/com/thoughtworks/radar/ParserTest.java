@@ -1,18 +1,16 @@
 package com.thoughtworks.radar;
 
-import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.thoughtworks.radar.Ring.Trial;
-import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 
 public class ParserTest {
@@ -30,7 +28,7 @@ public class ParserTest {
             "{\"urlLabel\":\"\",\"radius\":\"\",\"quadrant\":\"" +
             "platforms\",\"lastModified\":\"\",\"description\":\"\",\"quadrantSortOrder\":\"3\",\"ring\":\"Adopt\",\"" +
             "ringSortOrder\":\"2\",\"id\":\"6661\",\"faded\":\"\",\"movement\":\"c\",\"name\":\"Android\",\"" +
-            "editStatus\":\"Include w/o Write Up\",\"type\":\"Blip\",\"theta\":\"\"}" +
+            "editStatus\":\"Include w/o Write Up\",\"type\":\"Blip\",\"theta\":\"\"}," +
             "{\"radarId\":\"105\",\"name\":\"WebAssembly\",\"radius\":\"290\",\"quadrant\":\"languages-and-frameworks\",\"" +
             "description\":\"<p><a href=\\\"http://webassembly.org/\\\"><strong>WebAssembly</strong></a> is a big step forward in " +
             "the capabilities of the browser as a code execution environment. Supported by all major browsers and backward compatible, " +
@@ -40,7 +38,7 @@ public class ParserTest {
             "When used with <a href=\\\"http://hacks.mozilla.org/2018/01/making-webassembly-even-faster-firefoxs-new-streaming-and-tiering-compiler" +
             "/\\\">Firefox’s new streaming compiler</a>, it also results in faster page initialization. Although it's still early days, this W3C " +
             "standard is definitely one to start exploring.</p>\",\"ring\":\"Assess\",\"id\":\"9999\",\"movement\":\"t\",\"theta\":\"355\"}" +
-            "]" +
+            "]," +
             "\"translated_locale\":\"en\",\"" +
             "last_modified\":\"2017-09-07T11:19:36+00:00\",\"last_modified_by\":\"wwwsuperuser\",\"id\":\"" +
             "2018-05/blips/2018_05\",\"content_category\":\"\"}]";
@@ -53,7 +51,7 @@ public class ParserTest {
     }
 
     @Test
-    public void shouldParseBlips() throws ParseException {
+    public void shouldParseBlips() throws IOException {
         Radars radar = parser.parse(example);
 
         List<Blip> blips = radar.getBlips();
@@ -77,16 +75,16 @@ public class ParserTest {
         assertEquals("WebAssembly", blips.get(3).getName());
 
         // check parsed radar id, which is not on all blips
-        assertEquals(105,blips.get(3).idOnRadar(2));
+        assertEquals(105, blips.get(3).idOnRadar(2));
 
-        List<BlipHistory> blipHistory = new LinkedList<>();
-        blipHistory.addAll(blip.getHistory());
+        List<BlipHistory> blipHistory = new LinkedList<>(blip.getHistory());
 
         assertEquals(2, blipHistory.size());
         BlipHistory entryA = blipHistory.get(0);
         assertEquals(Trial, entryA.getRing());
         assertEquals(2010, entryA.getDate().getYear());
         assertEquals(Month.JANUARY, entryA.getDate().getMonth());
+
         BlipHistory entryB = blipHistory.get(1);
         assertEquals(Ring.Adopt, entryB.getRing());
         assertEquals(2010, entryB.getDate().getYear());

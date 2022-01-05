@@ -1,6 +1,5 @@
 package com.thoughtworks.radar;
 
-import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 
@@ -13,7 +12,7 @@ public class RadarFactory {
         this.parser = parser;
     }
 
-    public Radars loadRadar() throws IOException, ParseException {
+    public Radars loadRadar() throws IOException {
         String text = jsonFromFile.load();
         return parser.parse(text);
     }

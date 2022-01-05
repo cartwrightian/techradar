@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 
-public class SummaryTest {
+public class SummaryTextTest {
 
     @Test
     public void shouldCreate() {
@@ -23,7 +23,8 @@ public class SummaryTest {
 
     @Test
     public void shouldRemoveMarkup() {
-        SummaryText text = new SummaryText("name", LocalDate.of(1962,12,1),Ring.Assess, Quadrant.platforms,
+        SummaryText text = new SummaryText("name", LocalDate.of(1962,12,1),
+                Ring.Assess, Quadrant.platforms,
                 "<p><strong>without</strong> <a href=\"https://somewhere.net/place\">markup</a> <p>text</p></p>", 12);
         assertEquals("\"without markup text\"", text.getDescription());
     }
