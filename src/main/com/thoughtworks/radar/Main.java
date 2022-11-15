@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class Main {
     //// looks for blips jason at data/blips.json, this file is checked in
     //// from inside TW can get blips json from https://www.thoughtworks.com/internal/api/radar/blips
+    //// new url https://www.thoughtworks.com/caas/api/insights/radar/blips.en.json
 
     // TODO first, last, touched ring
     // TODO N at random, on or off vote
