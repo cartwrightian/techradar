@@ -1,5 +1,10 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.Blip;
+import com.thoughtworks.radar.domain.BlipHistory;
+import com.thoughtworks.radar.domain.BlipId;
+import com.thoughtworks.radar.domain.Ring;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

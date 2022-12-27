@@ -1,5 +1,8 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.Quadrant;
+import com.thoughtworks.radar.domain.Ring;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;

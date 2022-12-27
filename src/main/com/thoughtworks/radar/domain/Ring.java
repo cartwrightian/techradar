@@ -1,4 +1,4 @@
-package com.thoughtworks.radar;
+package com.thoughtworks.radar.domain;
 
 import java.util.function.Consumer;
 

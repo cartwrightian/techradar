@@ -1,5 +1,6 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,7 +10,7 @@ import java.time.Month;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.thoughtworks.radar.Ring.Trial;
+import static com.thoughtworks.radar.domain.Ring.Trial;
 import static org.junit.Assert.assertEquals;
 
 

@@ -1,5 +1,7 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.Quadrant;
+import com.thoughtworks.radar.domain.Ring;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -10,7 +12,7 @@ public class SummaryTextTest {
 
     @Test
     public void shouldCreate() {
-        SummaryText text = new SummaryText("name", LocalDate.of(1962,12,1),Ring.Assess,
+        SummaryText text = new SummaryText("name", LocalDate.of(1962,12,1), Ring.Assess,
                 Quadrant.platforms,"description",12);
 
         assertEquals("name", text.getName());

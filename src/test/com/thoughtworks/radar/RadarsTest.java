@@ -1,5 +1,9 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.Blip;
+import com.thoughtworks.radar.domain.BlipId;
+import com.thoughtworks.radar.domain.Quadrant;
+import com.thoughtworks.radar.domain.Ring;
 import org.junit.Before;
 import org.junit.Test;
 

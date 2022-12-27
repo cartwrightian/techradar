@@ -3,6 +3,9 @@ package com.thoughtworks.radar;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.radar.domain.BlipId;
+import com.thoughtworks.radar.domain.Quadrant;
+import com.thoughtworks.radar.domain.Ring;
 
 import java.io.IOException;
 import java.time.LocalDate;

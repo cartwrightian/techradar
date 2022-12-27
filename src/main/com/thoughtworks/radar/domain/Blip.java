@@ -1,4 +1,6 @@
-package com.thoughtworks.radar;
+package com.thoughtworks.radar.domain;
+
+import com.thoughtworks.radar.ToCSV;
 
 import java.time.Duration;
 import java.time.LocalDate;

@@ -1,5 +1,9 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.Blip;
+import com.thoughtworks.radar.domain.Quadrant;
+import com.thoughtworks.radar.domain.Ring;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

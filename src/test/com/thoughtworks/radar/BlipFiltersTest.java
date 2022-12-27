@@ -1,5 +1,8 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.BlipId;
+import com.thoughtworks.radar.domain.Quadrant;
+import com.thoughtworks.radar.domain.Ring;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +15,7 @@ public class BlipFiltersTest {
 
     private LocalDate date;
     private BlipFilters filter;
-    BlipLifetime item = new BlipLifetime("name",BlipId.from(42), Quadrant.LanguagesAndFrameworks, date,
+    BlipLifetime item = new BlipLifetime("name", BlipId.from(42), Quadrant.LanguagesAndFrameworks, date,
             date, 1,18, Ring.Adopt);
 
     @Before

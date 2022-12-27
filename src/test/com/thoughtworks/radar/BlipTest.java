@@ -1,5 +1,6 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.*;
 import org.junit.Test;
 
 import java.time.LocalDate;

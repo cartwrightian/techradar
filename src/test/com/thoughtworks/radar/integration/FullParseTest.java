@@ -1,6 +1,8 @@
 package com.thoughtworks.radar.integration;
 
 import com.thoughtworks.radar.*;
+import com.thoughtworks.radar.domain.Blip;
+import com.thoughtworks.radar.domain.BlipHistory;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -1,6 +1,10 @@
 package com.thoughtworks.radar;
 
 
+import com.thoughtworks.radar.domain.Blip;
+import com.thoughtworks.radar.domain.Quadrant;
+import com.thoughtworks.radar.domain.Ring;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;

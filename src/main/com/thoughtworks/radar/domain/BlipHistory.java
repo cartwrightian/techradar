@@ -1,4 +1,4 @@
-package com.thoughtworks.radar;
+package com.thoughtworks.radar.domain;
 
 import java.time.LocalDate;
 import java.util.Objects;

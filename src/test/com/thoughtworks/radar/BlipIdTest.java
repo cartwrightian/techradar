@@ -1,5 +1,6 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.BlipId;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
