@@ -1,11 +1,12 @@
 package com.thoughtworks.radar;
 
 import com.thoughtworks.radar.domain.BlipId;
+import junit.framework.TestCase;
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class BlipIdTest {
 
@@ -14,23 +15,23 @@ public class BlipIdTest {
         BlipId blipIdA = BlipId.from("a");
         BlipId blipIdB = BlipId.from("b");
 
-        assertTrue(blipIdA.equals(blipIdA));
-        assertFalse(blipIdA.equals(blipIdB));
+        assertEquals(blipIdA, blipIdA);
+        assertNotEquals(blipIdA, blipIdB);
 
         BlipId blipIdC = BlipId.from("b");
-        assertTrue(blipIdB.equals(blipIdC));
+        assertEquals(blipIdB, blipIdC);
 
         BlipId blipIdD = BlipId.from(42);
         BlipId blipIdE = BlipId.from(43);
-        assertTrue(blipIdD.equals(blipIdD));
-        assertFalse(blipIdD.equals(blipIdE));
-        assertFalse(blipIdA.equals(blipIdD));
+        assertEquals(blipIdD, blipIdD);
+        assertNotEquals(blipIdD, blipIdE);
+        assertNotEquals(blipIdA, blipIdD);
 
         BlipId blipIdF = BlipId.from(42);
-        assertTrue(blipIdD.equals(blipIdF));
+        assertEquals(blipIdD, blipIdF);
 
         BlipId blipIdG = BlipId.from("42");
-        assertTrue(blipIdG.equals(blipIdF));
+        assertEquals(blipIdG, blipIdF);
 
     }
 

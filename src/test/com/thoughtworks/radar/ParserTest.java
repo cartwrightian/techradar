@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 
 public class ParserTest {
-    private static String example = "[{\"date\":\"2010-01\",\"blips\":[{\"urlLabel\":\"\",\"radius\":\"\",\"quadrant\":\"" +
+    private static final String example = "[{\"date\":\"2010-01\",\"blips\":[{\"urlLabel\":\"\",\"radius\":\"\",\"quadrant\":\"" +
             "platforms\",\"lastModified\":\"\",\"description\":\"\",\"quadrantSortOrder\":\"3\",\"ring\":\"Trial\",\"" +
             "ringSortOrder\":\"2\",\"id\":\"6661\",\"faded\":\"\",\"movement\":\"c\",\"name\":\"Android\",\"" +
             "editStatus\":\"Include w/o Write Up\",\"type\":\"Blip\",\"theta\":\"\"},{\"urlLabel\":\"\",\"radius\":\"\",\"" +

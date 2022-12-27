@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Analyser {
-    private Radars radars;
+    private final Radars radars;
 
     public Analyser(Radars radars) {
         this.radars = radars;
@@ -42,7 +42,7 @@ public class Analyser {
         radars.forEachEdition((edition, published) -> {
             ArrayList<Integer> stillLeft = initList(count);
             lifeTimes.stream().
-                    filter(time -> blipFilters.filter(time)).
+                    filter(blipFilters::filter).
                     filter(time -> (edition.equals(time.getFirstRadarNum()))).
                     map(BlipLifetime::getLastRadarNum).
                     forEach(lastRadar -> increment(stillLeft,edition, lastRadar));
@@ -141,9 +141,7 @@ public class Analyser {
             sorted.add(summaryText);
         }));
 
-        LinkedList<SummaryText> results = new LinkedList<>();
-        results.addAll(sorted);
-        return results;
+        return new LinkedList<>(sorted);
     }
 
     public String allWordsFromDescriptions(BlipFilters blipFilters) {
@@ -161,7 +159,7 @@ public class Analyser {
         listOfWords.stream().
                 filter(word -> !word.contains("<")).
                 filter(word -> !word.contains(">")).
-                map(word -> word + " ").forEach(item -> filtered.append(item));
+                map(word -> word + " ").forEach(filtered::append);
         return filtered.toString();
     }
 
@@ -208,8 +206,8 @@ public class Analyser {
 
             for (Ring ring : Ring.values()) {
                 BlipFilters filter = new BlipFilters(true).allow(ring).allow(Quadrant.values());
-                Long count = radars.blipCount(date,filter);
-                line.add(count.toString());
+                long count = radars.blipCount(date,filter);
+                line.add(Long.toString(count));
             }
 
             for (Quadrant quadrant : Quadrant.values()) {
