@@ -4,8 +4,8 @@ package com.thoughtworks.radar;
 import java.io.IOException;
 
 public class RadarFactory {
-    private JsonFromFile jsonFromFile;
-    private Parser parser;
+    private final JsonFromFile jsonFromFile;
+    private final Parser parser;
 
     public RadarFactory(JsonFromFile jsonFromFile, Parser parser) {
         this.jsonFromFile = jsonFromFile;

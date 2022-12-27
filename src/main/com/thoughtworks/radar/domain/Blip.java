@@ -10,9 +10,10 @@ public class Blip implements Comparable<Blip>, ToCSV {
     private final BlipId id;
     private final String name;
     private final String formatForCSV = "%s, \"%s\", %s, %s, %s, %s, %s, %s";
-    private Quadrant quadrant;
+    private final Quadrant quadrant;
     // date -> history, in date order
-    private SortedMap<Integer,BlipHistory> history;
+    private final SortedMap<Integer,BlipHistory> history;
+
     private LocalDate appeared;
     private LocalDate lastDate;
     private Ring lastRing;

@@ -13,9 +13,9 @@ import java.util.stream.Stream;
 
 public class Radars {
     // blip ID -> blip
-    private SortedMap<BlipId,Blip> blips;
-    private SortedSet<LocalDate> dates;
-    private List<BlipHistory> historyToAdd;
+    private final SortedMap<BlipId,Blip> blips;
+    private final SortedSet<LocalDate> dates;
+    private final List<BlipHistory> historyToAdd;
 
     public Radars() {
         blips = new TreeMap<>();
