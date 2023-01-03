@@ -49,8 +49,8 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return UniqueBlipId.compare(this.id, other.id);
     }
 
-    public Collection<BlipEntry> getHistory() {
-        return history.values();
+    public List<BlipEntry> getHistory() {
+        return new ArrayList<>(history.values());
     }
 
     public void addHistory(Volume volume, BlipEntry blipEntry) {

@@ -1,5 +1,6 @@
 package com.thoughtworks.radar.domain;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.thoughtworks.radar.Database.UniqueBlipIdPersister;
@@ -16,7 +17,7 @@ public class BlipEntry {
     @DatabaseField(canBeNull = false)
     private Ring ring;
 
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false, dataType = DataType.LONG_STRING)
     private String description;
 
     @DatabaseField(canBeNull = false)

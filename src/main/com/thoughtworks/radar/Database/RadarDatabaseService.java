@@ -33,13 +33,18 @@ public class RadarDatabaseService {
         VolumeRepository volumeRepos = radars.getVolumeRepository();
         saveVolumes(volumeRepos.getVolumes());
         saveBlips(radars.getBlips());
+        saveBlipEntries(radars.getBlipEntries());
+    }
+
+    private void saveBlipEntries(List<BlipEntry> blipEntries) throws SQLException {
+        Dao<BlipEntry, Long> entryDao = getEntryDao();
+        entryDao.create(blipEntries);
     }
 
     private void saveVolumes(List<Volume> volumes) throws SQLException {
         Dao<Volume, Integer> volumeDao = getVolumeDao();
         volumeDao.create(volumes);
     }
-
 
     private void saveBlips(List<Blip> blips) throws SQLException {
         Dao<Blip, Integer> dao = getBlipDao();
@@ -48,17 +53,23 @@ public class RadarDatabaseService {
 
     public Radars load() throws SQLException {
         VolumeRepository volumeRepository = loadRepository();
-        BlipRepository blipRepository = new BlipRepository();
 
-        loadBlips(blipRepository);
+        BlipRepository blipRepository = loadBlips();
 
-        Radars radars = new Radars(volumeRepository, blipRepository);
+        loadBlipHistoryInto(volumeRepository, blipRepository);
 
-        return radars;
+        return new Radars(volumeRepository, blipRepository);
     }
 
-    private void loadBlips(BlipRepository blipRepository) {
-        // todo
+    private void loadBlipHistoryInto(VolumeRepository volumeRepository, BlipRepository blipRepository) throws SQLException {
+        List<BlipEntry> allHistory = getEntryDao().queryForAll();
+
+        blipRepository.updateHistory(allHistory, volumeRepository);
+    }
+
+    private BlipRepository loadBlips() throws SQLException {
+        List<Blip> blipsWithoutHistory = getBlipDao().queryForAll();
+        return new BlipRepository(blipsWithoutHistory);
     }
 
     private VolumeRepository loadRepository() throws SQLException {
@@ -76,5 +87,9 @@ public class RadarDatabaseService {
 
     private Dao<Blip, Integer> getBlipDao() throws SQLException {
         return DaoManager.createDao(connectionSource, Blip.class);
+    }
+
+    private Dao<BlipEntry, Long> getEntryDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, BlipEntry.class);
     }
 }

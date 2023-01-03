@@ -19,6 +19,11 @@ public class BlipRepository {
         blips = new TreeMap<>();
     }
 
+    public BlipRepository(List<Blip> list) {
+        this.blips = new TreeMap<>();
+        list.forEach(blip -> blips.put(blip.getId(), blip));
+    }
+
     public List<Blip> getAll() {
         return new LinkedList<>(blips.values());
     }
@@ -42,5 +47,14 @@ public class BlipRepository {
 
         BlipEntry blipEntry = new BlipEntry(uniqueBlipId, volume, rawBlip.getQuadrant(), rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId());
         blip.addHistory(volume, blipEntry);
+    }
+
+    public void updateHistory(List<BlipEntry> blipEntries, VolumeRepository volumeRepository) {
+        blipEntries.forEach(blipEntry -> {
+            UniqueBlipId uniqueId = blipEntry.getUniqueId();
+            Volume volume = volumeRepository.getVolumeFor(blipEntry.getDate());
+            Blip blip = blips.get(uniqueId);
+            blip.addHistory(volume, blipEntry);
+        });
     }
 }
