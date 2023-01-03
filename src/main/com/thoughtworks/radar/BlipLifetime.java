@@ -1,9 +1,6 @@
 package com.thoughtworks.radar;
 
-import com.thoughtworks.radar.domain.UniqueBlipId;
-import com.thoughtworks.radar.domain.Quadrant;
-import com.thoughtworks.radar.domain.Ring;
-import com.thoughtworks.radar.domain.Volume;
+import com.thoughtworks.radar.domain.*;
 
 import java.time.LocalDate;
 
@@ -17,16 +14,9 @@ public class BlipLifetime implements ToCSV {
     private final Quadrant quadrant;
     private final Ring finalRing;
 
-    @Override
-    public String toCSV() {
-        long epochDay = firstVolume.getPublicationDate().toEpochDay();
-        long lifetimeInDays = firstFadedVolume.getPublicationDate().toEpochDay()- epochDay;
-        return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstVolume, firstFadedVolume, lifetimeInDays);
-    }
-
-    @Override
-    public String getHeader() {
-        return format("%s,%s,%s,%s,%s,%s", "id", "name", "quadrant", "firstRadarNum", "lastRadarNum", "lifetimeInDays");
+    public BlipLifetime(Blip blip) {
+        this(blip.getName(), blip.getId(), blip.getFirstQuadrant(), blip.getFirstVolume(),
+                blip.firstFadedVolume(), blip.fadedRing());
     }
 
     public BlipLifetime(String name, UniqueBlipId id, Quadrant quadrant,
@@ -38,6 +28,20 @@ public class BlipLifetime implements ToCSV {
         this.firstFadedVolume = firstFadeVolume;
         this.finalRing = finalRing;
     }
+
+    @Override
+    public String toCSV() {
+        long epochDay = firstVolume.getPublicationDate().toEpochDay();
+        long lifetimeInDays = firstFadedVolume.getPublicationDate().toEpochDay() - epochDay;
+        return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstVolume, firstFadedVolume, lifetimeInDays);
+    }
+
+    @Override
+    public String getHeader() {
+        return format("%s,%s,%s,%s,%s,%s", "id", "name", "quadrant", "firstRadarNum", "lastRadarNum", "lifetimeInDays");
+    }
+
+
 
     public LocalDate getAppearedDate() {
         return firstVolume.getPublicationDate();

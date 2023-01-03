@@ -17,18 +17,8 @@ public class Analyser {
 
     // pass in filter
     public List<BlipLifetime> lifeTimes() {
-
-        List<BlipLifetime> results = new LinkedList<>();
-
-        radars.getBlips().forEach(blip -> {
-            Volume firstVolume = blip.getFirstVolume();
-            Volume firstFaded = blip.firstFadedVolume();
-            BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getFirstQuadrant(),
-                    firstVolume, firstFaded, blip.fadedRing());
-            results.add(blipLifetime);
-        });
-
-        return results;
+        return radars.getBlips().stream().
+                map(BlipLifetime::new).collect(Collectors.toList());
     }
 
     public Map<Volume, List<Integer>> summaryOfDecay(BlipLifeTimeFilter blipFilters) {
