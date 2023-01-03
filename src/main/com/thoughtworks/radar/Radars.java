@@ -50,9 +50,9 @@ public class Radars {
         return volumeRepository.dateOfEdition(editionNumber);
     }
 
-    public void forEachEdition(EachEdition eachEdition) {
+    public void forEachEdition(EachVolume eachVolume) {
         List<Volume> volumes = volumeRepository.getVolumes();
-        volumes.forEach(eachEdition::edition);
+        volumes.forEach(eachVolume::volume);
     }
 
     public long blipCount(BlipFilter blipFilters) {
@@ -103,8 +103,8 @@ public class Radars {
         return blipRepository.stream().flatMap(blip -> blip.getHistory().stream()).collect(Collectors.toList());
     }
 
-    public interface EachEdition {
-        void edition(Volume volume);
+    public interface EachVolume {
+        void volume(Volume volume);
     }
 
     public List<Blip> everInAdoptToHold() {
