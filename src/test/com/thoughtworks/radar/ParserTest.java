@@ -1,6 +1,7 @@
 package com.thoughtworks.radar;
 
 import com.thoughtworks.radar.domain.*;
+import com.thoughtworks.radar.repository.VolumeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

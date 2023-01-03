@@ -1,6 +1,8 @@
 package com.thoughtworks.radar;
 
 import com.thoughtworks.radar.domain.*;
+import com.thoughtworks.radar.repository.BlipRepository;
+import com.thoughtworks.radar.repository.VolumeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +44,7 @@ public class RadarsTest {
         Set<LocalDate> dates = Set.of(firstDate, secondDate, thirdDate, fourthDate, fifthDate);
         volumeRepository = new VolumeRepository(dates);
 
-        radar = new Radars(volumeRepository);
+        radar = new Radars(volumeRepository, new BlipRepository());
         rawA = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
         rawB = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
         rawC = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);

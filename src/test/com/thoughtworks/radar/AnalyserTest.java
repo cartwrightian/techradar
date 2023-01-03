@@ -4,6 +4,8 @@ import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 import com.thoughtworks.radar.domain.Volume;
+import com.thoughtworks.radar.repository.BlipRepository;
+import com.thoughtworks.radar.repository.VolumeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +37,7 @@ public class AnalyserTest {
     public void beforeEachTestRuns() {
         Set<LocalDate> dates = Set.of(firstDate, secondDate, thirdDate, fourthDate, fifthDate);
         volumeRepository = new VolumeRepository(dates);
-        Radars radar = new Radars(volumeRepository);
+        Radars radar = new Radars(volumeRepository, new BlipRepository());
 
         volume1 = volumeRepository.getVolumeFor(firstDate);
         volume2 = volumeRepository.getVolumeFor(secondDate);
@@ -215,7 +217,7 @@ public class AnalyserTest {
         Set<LocalDate> dates = Set.of(firstDate, secondDate, thirdDate, fourthDate, fifthDate, otherDateA, otherDateB);
         VolumeRepository otherVolumeRepository = new VolumeRepository(dates);
 
-        Radars radar = new Radars(otherVolumeRepository);
+        Radars radar = new Radars(otherVolumeRepository, new BlipRepository());
 
         for (int blipNumber = 0; blipNumber < 100; blipNumber++) {
             Parser.RawBlip rawA = new Parser.RawBlip(UniqueBlipId.from(blipNumber), "blip"+blipNumber, firstDate,

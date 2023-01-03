@@ -7,6 +7,8 @@ import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 import com.thoughtworks.radar.domain.Volume;
+import com.thoughtworks.radar.repository.BlipRepository;
+import com.thoughtworks.radar.repository.VolumeRepository;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -24,10 +26,11 @@ public class Parser {
         Set<LocalDate> dates = parseDates(objectMapper, rawJson);
 
         VolumeRepository volumeRepository = new VolumeRepository(dates);
+        BlipRepository blipRepository = new BlipRepository();
 
         JsonNode jsonNode = objectMapper.readTree(rawJson);
 
-        Radars radars = new Radars(volumeRepository);
+        Radars radars = new Radars(volumeRepository, blipRepository);
 
         jsonNode.forEach(radarNode -> {
             JsonNode dateNode = radarNode.get("date");

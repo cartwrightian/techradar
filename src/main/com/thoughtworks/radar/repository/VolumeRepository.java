@@ -1,4 +1,4 @@
-package com.thoughtworks.radar;
+package com.thoughtworks.radar.repository;
 
 import com.thoughtworks.radar.domain.Volume;
 
@@ -18,7 +18,6 @@ public class VolumeRepository {
             Volume volume = new Volume(volumeNumber, publicationDate);
             volumes.put(publicationDate, volume);
         }
-
     }
 
     public Volume getVolumeFor(LocalDate date) {

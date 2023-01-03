@@ -5,6 +5,7 @@ import com.thoughtworks.radar.domain.Blip;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 import com.thoughtworks.radar.domain.Volume;
+import com.thoughtworks.radar.file.RadarFileService;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,7 +35,10 @@ public class Main {
     }
 
     private void analyse() throws IOException {
-        Radars radars = loadRadars();
+
+        RadarFileService fileService = new RadarFileService(folder);
+        Radars radars = fileService.loadRadars();
+
         Analyser analyser = new Analyser(radars);
 
         // raw csv
@@ -58,8 +62,6 @@ public class Main {
 
         allTextFromDescription(analyser);
     }
-
-
 
     private void allTextFromDescription(Analyser analyser) {
         getWriter("words.txt").writeStringToFile(analyser.allWordsFromDescriptions(BlipFilters.All()));
@@ -230,14 +232,6 @@ public class Main {
         });
     }
 
-    private Radars loadRadars() throws IOException {
-        Path path = Paths.get(folder,"blips.json");
-
-        JsonFromFile jsonFromFile = new JsonFromFile(path);
-        Parser parser = new Parser();
-
-        return new RadarFactory(jsonFromFile,parser).loadRadar();
-    }
 
     private ResultsWriter getWriter(String filename) {
         return new ResultsWriter(getPath(folder, filename));

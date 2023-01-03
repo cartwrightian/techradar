@@ -1,6 +1,8 @@
 package com.thoughtworks.radar;
 
 import com.thoughtworks.radar.domain.*;
+import com.thoughtworks.radar.repository.BlipRepository;
+import com.thoughtworks.radar.repository.VolumeRepository;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -9,38 +11,27 @@ import java.util.stream.Stream;
 
 public class Radars {
     // blip ID -> blip
-    private final SortedMap<UniqueBlipId, Blip> blips;
+    private final BlipRepository blipRepository;
     private final VolumeRepository volumeRepository;
 
-    public Radars(VolumeRepository volumeRepository) {
+    public Radars(VolumeRepository volumeRepository, BlipRepository blipRepository) {
         this.volumeRepository = volumeRepository;
-        blips = new TreeMap<>();
+        this.blipRepository = blipRepository;
     }
 
     // warning, stateful class, see add() and updateBlipHistories()
     public List<Blip> getBlips() {
-        return new LinkedList<>(blips.values());
+        return blipRepository.getAll();
     }
 
     public List<Blip> getBlips(BlipFilter blipFilter) {
-        return blips.values().stream().filter(blipFilter::filter).collect(Collectors.toList());
+        return blipRepository.stream().filter(blipFilter::filter).collect(Collectors.toList());
     }
 
-    // add raw blips, then afterwards call updateBlipHistories()
-    // stateful and a bit yuk, but there are circular dependencies between blips and blip history
     public void add(Parser.RawBlip rawBlip) {
-        UniqueBlipId uniqueBlipId = rawBlip.getId();
-
-        // consolidate multiple entries for a blip into one blip with a history
-        if (!blips.containsKey(uniqueBlipId)) {
-            blips.put(uniqueBlipId, new Blip(uniqueBlipId, rawBlip.getName()));
-        }
-        Blip blip = blips.get(uniqueBlipId);
-
         LocalDate blipDate = rawBlip.getDate();
         Volume volume = volumeRepository.getVolumeFor(blipDate);
-        BlipEntry blipEntry = new BlipEntry(uniqueBlipId, volume, rawBlip.getQuadrant(), rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId());
-        blip.addHistory(volume, blipEntry);
+        blipRepository.add(volume, rawBlip);
     }
 
     public int numberOfRadars() {
@@ -52,7 +43,7 @@ public class Radars {
     }
 
     public List<Blip> blipsVisibleOn(Volume volume) {
-        return blips.values().stream().filter(blip -> blip.visibleOn(volume)).collect(Collectors.toList());
+        return blipRepository.stream().filter(blip -> blip.visibleOn(volume)).collect(Collectors.toList());
     }
 
     public LocalDate dateOfEdition(int editionNumber) {
@@ -65,11 +56,11 @@ public class Radars {
     }
 
     public long blipCount(BlipFilter blipFilters) {
-        return blips.values().stream().filter(blipFilters::filter).count();
+        return blipRepository.stream().filter(blipFilters::filter).count();
     }
 
     public long blipCount(Volume volume, BlipFilter blipFilter) {
-        return blips.values().stream().
+        return blipRepository.stream().
                 filter(blip -> blip.appearedDate().isEqual(volume.getPublicationDate())).
                 filter(blipFilter::filter).
                 count();
@@ -87,7 +78,7 @@ public class Radars {
     }
 
     private List<Blip> filterAndSort(BlipFilter blipFilter, Comparator<? super Blip> comparator, int limit) {
-        return blips.values().stream().
+        return blipRepository.stream().
                 filter(blipFilter::filter).
                 sorted(comparator).
                 limit(limit).
@@ -95,7 +86,7 @@ public class Radars {
     }
 
     public List<Blip> nonMovers(BlipFilter blipFilter) {
-        return blips.values().stream().
+        return blipRepository.stream().
                 filter(blipFilter::filter).
                 filter(blip->(blip.getNumberBlipMoves()==0)).collect(Collectors.toList());
     }
@@ -105,7 +96,11 @@ public class Radars {
     }
 
     public Blip getBlip(UniqueBlipId blipId) {
-        return blips.get(blipId);
+        return blipRepository.get(blipId);
+    }
+
+    public List<BlipEntry> getBlipEntries() {
+        return blipRepository.stream().flatMap(blip -> blip.getHistory().stream()).collect(Collectors.toList());
     }
 
     public interface EachEdition {
@@ -114,7 +109,7 @@ public class Radars {
 
     public List<Blip> everInAdoptToHold() {
 
-        List<Blip> endedOnHold = blips.values().stream().filter(blip -> blip.lastRing()==Ring.Hold).collect(Collectors.toList());
+        List<Blip> endedOnHold = blipRepository.stream().filter(blip -> blip.lastRing()==Ring.Hold).collect(Collectors.toList());
 
         Stream<Blip> everInAdopt = endedOnHold.stream().filter(this::wasEverInAdopt);
 

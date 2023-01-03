@@ -66,14 +66,13 @@ public class BlipEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BlipEntry that = (BlipEntry) o;
-        return idOnThisRadar == that.idOnThisRadar &&
-                Objects.equals(blipId, that.blipId);
+        BlipEntry blipEntry = (BlipEntry) o;
+        return volume.equals(blipEntry.volume) && blipId.equals(blipEntry.blipId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idOnThisRadar, blipId);
+        return Objects.hash(volume, blipId);
     }
 
     public Quadrant getQuadrant() {
