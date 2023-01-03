@@ -36,3 +36,14 @@ sourceSets {
 test {
     useJUnitPlatform()
 }
+
+task createDB(type:JavaExec, dependsOn:classes) {
+    mainClass = 'com.thoughtworks.radar.Database.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    args 'data', "jdbc:h2:$projectDir/database"
+}
+
+task sql(type:JavaExec, dependsOn:classes) {
+    mainClass = 'org.h2.tools.Console'
+    classpath = sourceSets.main.runtimeClasspath
+}

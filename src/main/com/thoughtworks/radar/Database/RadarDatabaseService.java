@@ -36,6 +36,12 @@ public class RadarDatabaseService {
         saveBlipEntries(radars.getBlipEntries());
     }
 
+    public void clean() throws SQLException {
+        TableUtils.dropTable(connectionSource, BlipEntry.class, false);
+        TableUtils.dropTable(connectionSource, Blip.class, false);
+        TableUtils.dropTable(connectionSource, Volume.class, false);
+    }
+
     private void saveBlipEntries(List<BlipEntry> blipEntries) throws SQLException {
         Dao<BlipEntry, Long> entryDao = getEntryDao();
         entryDao.create(blipEntries);
@@ -92,4 +98,6 @@ public class RadarDatabaseService {
     private Dao<BlipEntry, Long> getEntryDao() throws SQLException {
         return DaoManager.createDao(connectionSource, BlipEntry.class);
     }
+
+
 }
