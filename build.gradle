@@ -11,11 +11,9 @@ repositories {
 }
 
 dependencies {
-    //compile group: 'org.apache.clerezza.ext', name: 'org.json.simple', version: '0.4'
-    implementation('com.fasterxml.jackson.core:jackson-core:2.13.1')
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+    implementation('com.fasterxml.jackson.core:jackson-core:2.14.0')
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.0'
     implementation('commons-io:commons-io:2.11.0')
-    //testImplementation ('junit:junit:4.12')
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0',
         'org.junit.platform:junit-platform-launcher:1.9.0'
 }
