@@ -24,9 +24,9 @@ public class BlipTest {
         UniqueBlipId blipId = UniqueBlipId.from(42);
         Quadrant quadrant = Quadrant.tools;
         Blip blip = new Blip(blipId, "LifeTheUniverseEtc");
-        BlipEntry historyA = new BlipEntry(blipId, firstDate, quadrant, Ring.Assess, "descA", 1);
-        BlipEntry historyB = new BlipEntry(blipId, secondDate, quadrant, Ring.Trial, "descB", 33);
-        BlipEntry historyC = new BlipEntry(blipId, thirdDate, quadrant, Ring.Adopt, "descC", 12);
+        BlipEntry historyA = new BlipEntry(blipId, volume1, quadrant, Ring.Assess, "descA", 1);
+        BlipEntry historyB = new BlipEntry(blipId, volume2, quadrant, Ring.Trial, "descB", 33);
+        BlipEntry historyC = new BlipEntry(blipId, volume3, quadrant, Ring.Adopt, "descC", 12);
 
         blip.addHistory(volume1, historyA);
         blip.addHistory(volume2, historyB);
@@ -56,8 +56,8 @@ public class BlipTest {
         assertEquals(blip.fadedRing(),Ring.Adopt);
         assertEquals(thirdDate, blip.firstFadedDate());
 
-        blip.addHistory(volume5, new BlipEntry(blipId, volume5.getPublicationDate(), quadrant, Ring.Adopt, "descC", 12));
-        blip.addHistory(volume6, new BlipEntry(blipId, volume6.getPublicationDate(), quadrant, Ring.Adopt, "descC", 12));
+        blip.addHistory(volume5, new BlipEntry(blipId, volume5, quadrant, Ring.Adopt, "descC", 12));
+        blip.addHistory(volume6, new BlipEntry(blipId, volume6, quadrant, Ring.Adopt, "descC", 12));
 
         // still in same ring
         assertEquals(2, blip.getNumberBlipMoves());
@@ -85,8 +85,8 @@ public class BlipTest {
         Volume volume1 = new Volume(1, firstDate);
         Volume volume2 = new Volume(2, secondDate);
 
-        BlipEntry historyA = new BlipEntry(blipId, firstDate, quadrant, Ring.Assess, "textPresent", 1);
-        BlipEntry historyB = new BlipEntry(blipId, secondDate, quadrant, Ring.Trial, "", 33);
+        BlipEntry historyA = new BlipEntry(blipId, volume1, quadrant, Ring.Assess, "textPresent", 1);
+        BlipEntry historyB = new BlipEntry(blipId, volume2, quadrant, Ring.Trial, "", 33);
 
         blip.addHistory(volume1, historyA);
         blip.addHistory(volume2, historyB);

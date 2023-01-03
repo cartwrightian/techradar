@@ -2,7 +2,6 @@ package com.thoughtworks.radar.domain;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.thoughtworks.radar.Database.LocalDatePersister;
 import com.thoughtworks.radar.Database.UniqueBlipIdPersister;
 
 import java.time.LocalDate;
@@ -11,8 +10,8 @@ import java.util.Objects;
 @DatabaseTable(tableName = "blip_history")
 public class BlipEntry {
 
-    @DatabaseField(canBeNull = false, persisterClass = LocalDatePersister.class)
-    private LocalDate date;
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh=true)
+    private Volume volume;
 
     @DatabaseField(canBeNull = false)
     private Ring ring;
@@ -29,9 +28,9 @@ public class BlipEntry {
     @DatabaseField(canBeNull = false)
     private Quadrant quadrant;
 
-    public BlipEntry(UniqueBlipId uniqueId, LocalDate date, Quadrant quadrant, Ring ring, String description, int idOnThisRadar) {
+    public BlipEntry(UniqueBlipId uniqueId, Volume volume, Quadrant quadrant, Ring ring, String description, int idOnThisRadar) {
         this.blipId = uniqueId;
-        this.date = date;
+        this.volume = volume;
         this.quadrant = quadrant;
         this.ring = ring;
         this.description = description;
@@ -48,7 +47,7 @@ public class BlipEntry {
     }
 
     public LocalDate getDate() {
-        return date;
+        return volume.getPublicationDate();
     }
 
     public String getDescription() {
@@ -84,7 +83,7 @@ public class BlipEntry {
     @Override
     public String toString() {
         return "BlipHistory{" +
-                "date=" + date +
+                "volume=" + volume +
                 ", ring=" + ring +
                 ", description='" + description + '\'' +
                 ", idOnThisRadar=" + idOnThisRadar +

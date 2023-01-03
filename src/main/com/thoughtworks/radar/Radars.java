@@ -29,17 +29,17 @@ public class Radars {
     // add raw blips, then afterwards call updateBlipHistories()
     // stateful and a bit yuk, but there are circular dependencies between blips and blip history
     public void add(Parser.RawBlip rawBlip) {
-        UniqueBlipId blipId = rawBlip.getId();
+        UniqueBlipId uniqueBlipId = rawBlip.getId();
 
         // consolidate multiple entries for a blip into one blip with a history
-        if (!blips.containsKey(blipId)) {
-            blips.put(blipId, new Blip(blipId, rawBlip.getName()));
+        if (!blips.containsKey(uniqueBlipId)) {
+            blips.put(uniqueBlipId, new Blip(uniqueBlipId, rawBlip.getName()));
         }
-        Blip blip = blips.get(blipId);
+        Blip blip = blips.get(uniqueBlipId);
 
         LocalDate blipDate = rawBlip.getDate();
-        BlipEntry blipEntry = new BlipEntry(blipId, blipDate, rawBlip.getQuadrant(), rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId());
         Volume volume = volumeRepository.getVolumeFor(blipDate);
+        BlipEntry blipEntry = new BlipEntry(uniqueBlipId, volume, rawBlip.getQuadrant(), rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId());
         blip.addHistory(volume, blipEntry);
     }
 
