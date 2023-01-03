@@ -1,11 +1,25 @@
 package com.thoughtworks.radar.domain;
 
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.thoughtworks.radar.Database.LocalDatePersister;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
+@DatabaseTable(tableName = "volumes")
 public class Volume implements Comparable<Volume> {
-    private final int number;
-    private final LocalDate publicationDate;
+
+    @DatabaseField(canBeNull = false, id = true)
+    private int number;
+
+    @DatabaseField(canBeNull = false, persisterClass = LocalDatePersister.class)
+    private LocalDate publicationDate;
+
+    Volume() {
+        // for db
+    }
 
     public Volume(int number, LocalDate publicationDate) {
         this.number = number;

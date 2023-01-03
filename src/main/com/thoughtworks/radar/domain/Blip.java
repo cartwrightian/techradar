@@ -1,5 +1,7 @@
 package com.thoughtworks.radar.domain;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.thoughtworks.radar.ToCSV;
 
 import java.time.Duration;
@@ -7,9 +9,15 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@DatabaseTable(tableName = "blips")
 public class Blip implements Comparable<Blip>, ToCSV {
-    private final UniqueBlipId id;
-    private final String name;
+
+    @DatabaseField(canBeNull = false, id = true)
+    private UniqueBlipId id;
+
+    @DatabaseField(canBeNull = false)
+    private String name;
+
     private final String formatForCSV = "%s, \"%s\", %s, %s, %s, %s, %s, %s";
 
     // date -> history, in volume order
@@ -19,6 +27,11 @@ public class Blip implements Comparable<Blip>, ToCSV {
         this.id = id;
         this.name = name;
         history = new TreeMap<>();
+    }
+
+    Blip() {
+        history = new TreeMap<>();
+        // for DB
     }
 
     public String getName() {

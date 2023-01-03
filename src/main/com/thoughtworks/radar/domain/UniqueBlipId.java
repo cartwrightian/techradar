@@ -1,26 +1,18 @@
 package com.thoughtworks.radar.domain;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class UniqueBlipId implements Comparable<UniqueBlipId> {
     // was an int initially but became string on later radars
-    private final Optional<Integer> intId;
-    private final Optional<String> stringId;
+    private final int id;
 
     private UniqueBlipId(int i) {
-        intId = Optional.of(i);
-        stringId = Optional.empty();
-    }
-
-    private UniqueBlipId(String text) {
-        stringId = Optional.of(text);
-        intId =Optional.empty();
+        id = i;
     }
 
     @Override
     public String toString() {
-        return intId.map(Object::toString).orElseGet(stringId::get);
+        return Integer.toString(id);
     }
 
     public static UniqueBlipId parse(String raw) {
@@ -29,7 +21,7 @@ public class UniqueBlipId implements Comparable<UniqueBlipId> {
             return UniqueBlipId.from(intId);
         }
         catch (NumberFormatException failedToParse) {
-            return UniqueBlipId.from(raw);
+            throw new RuntimeException("All blip ids are now numeric");
         }
     }
 
@@ -42,48 +34,45 @@ public class UniqueBlipId implements Comparable<UniqueBlipId> {
     }
 
     public static UniqueBlipId from(String text) {
-        return new UniqueBlipId(text);
+        return parse(text);
     }
 
     @Override
     public int compareTo(UniqueBlipId other) {
-        if (intId.isPresent()) {
-            Integer id = intId.get();
-            if (other.intId.isPresent()) {
-                return Integer.compare(id, other.intId.get());
-            }
-            if (other.stringId.isPresent()) {
-                return id.toString().compareTo(other.stringId.get());
-            }
-        }
-        if (stringId.isPresent()) {
-            String id = stringId.get();
-            if (other.stringId.isPresent()) {
-                return id.compareTo(other.stringId.get());
-            }
-            if (other.intId.isPresent()) {
-                return id.compareTo(other.intId.get().toString());
-            }
-        }
-        return 0;
+        return Integer.compare(id, other.id);
+
+//        if (intId.isPresent()) {
+//            Integer id = intId.get();
+//            if (other.intId.isPresent()) {
+//                return Integer.compare(id, other.intId.get());
+//            }
+//            if (other.stringId.isPresent()) {
+//                return id.toString().compareTo(other.stringId.get());
+//            }
+//        }
+//        if (stringId.isPresent()) {
+//            String id = stringId.get();
+//            if (other.stringId.isPresent()) {
+//                return id.compareTo(other.stringId.get());
+//            }
+//            if (other.intId.isPresent()) {
+//                return id.compareTo(other.intId.get().toString());
+//            }
+//        }
+//        return 0;
     }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UniqueBlipId blipId = (UniqueBlipId) o;
-        return (this.compareTo(blipId)==0);
+        UniqueBlipId that = (UniqueBlipId) o;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        if (intId.isPresent()) {
-            return Objects.hash(intId.get());
-        }
-        if (stringId.isPresent()) {
-            return Objects.hash(stringId.get());
-        }
-        return Objects.hash(intId,stringId);
+        return Objects.hash(id);
     }
 }
