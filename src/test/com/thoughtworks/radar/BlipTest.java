@@ -18,8 +18,8 @@ public class BlipTest {
         Volume volume1 = new Volume(1, firstDate);
         Volume volume2 = new Volume(2, secondDate);
         Volume volume3 = new Volume(3, thirdDate);
-        Volume volume5 = new Volume(5, firstDate.plusYears(3));
-        Volume volume6 = new Volume(6, firstDate.plusYears(4));
+        Volume volume5 = new Volume(5, firstDate.plusYears(4));
+        Volume volume6 = new Volume(6, firstDate.plusYears(5));
 
         UniqueBlipId blipId = UniqueBlipId.from(42);
         Quadrant quadrant = Quadrant.tools;
@@ -51,10 +51,10 @@ public class BlipTest {
         assertEquals(firstUntilThird, blip.getDuration().toDays(), blip.getDuration().toString());
 
         assertEquals(Ring.Adopt,blip.fadedRing());
-        assertEquals(thirdDate, blip.firstFadedDate());
+        assertEquals(volume3, blip.firstFadedVolume());
 
         assertEquals(blip.fadedRing(),Ring.Adopt);
-        assertEquals(thirdDate, blip.firstFadedDate());
+        assertEquals(volume3, blip.firstFadedVolume());
 
         blip.addHistory(volume5, new BlipEntry(blipId, volume5, quadrant, Ring.Adopt, "descC", 12));
         blip.addHistory(volume6, new BlipEntry(blipId, volume6, quadrant, Ring.Adopt, "descC", 12));
@@ -66,7 +66,7 @@ public class BlipTest {
 
         // first fade still the same
         assertEquals(blip.fadedRing(),Ring.Adopt);
-        assertEquals(thirdDate, blip.firstFadedDate());
+        assertEquals(volume3, blip.firstFadedVolume());
 
         // duration only when on radar
         long fiveUntilSix = volume6.getPublicationDate().toEpochDay()-volume5.getPublicationDate().toEpochDay();

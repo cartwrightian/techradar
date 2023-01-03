@@ -10,20 +10,18 @@ import java.time.LocalDate;
 import static java.lang.String.format;
 
 public class BlipLifetime implements ToCSV {
-    //private final LocalDate appeared;
-    private final LocalDate lastSeen;
     private final String name;
     private final UniqueBlipId id;
     private final Volume firstVolume;
-    private final Volume lastRadarNum;
+    private final Volume firstFadedVolume;
     private final Quadrant quadrant;
     private final Ring finalRing;
 
     @Override
     public String toCSV() {
         long epochDay = firstVolume.getPublicationDate().toEpochDay();
-        long lifetimeInDays = lastSeen.toEpochDay()- epochDay;
-        return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstVolume, lastRadarNum, lifetimeInDays);
+        long lifetimeInDays = firstFadedVolume.getPublicationDate().toEpochDay()- epochDay;
+        return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstVolume, firstFadedVolume, lifetimeInDays);
     }
 
     @Override
@@ -31,15 +29,13 @@ public class BlipLifetime implements ToCSV {
         return format("%s,%s,%s,%s,%s,%s", "id", "name", "quadrant", "firstRadarNum", "lastRadarNum", "lifetimeInDays");
     }
 
-    public BlipLifetime(String name, UniqueBlipId id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
-                        Volume firstVolume, Volume lastRadarNum, Ring finalRing) {
+    public BlipLifetime(String name, UniqueBlipId id, Quadrant quadrant,
+                        Volume firstVolume, Volume firstFadeVolume, Ring finalRing) {
         this.name = name;
         this.id = id;
         this.quadrant = quadrant;
-        //this.appeared = appeared;
-        this.lastSeen = lastSeen;
         this.firstVolume = firstVolume;
-        this.lastRadarNum = lastRadarNum;
+        this.firstFadedVolume = firstFadeVolume;
         this.finalRing = finalRing;
     }
 
@@ -48,15 +44,15 @@ public class BlipLifetime implements ToCSV {
     }
 
     public LocalDate getLastSeen() {
-        return lastSeen;
+        return firstFadedVolume.getPublicationDate();
     }
 
     public Volume getFirstVolume() {
         return firstVolume;
     }
 
-    public Volume getLastRadarNum() {
-        return lastRadarNum;
+    public Volume getFirstFadedVolume() {
+        return firstFadedVolume;
     }
 
     public String getName() {

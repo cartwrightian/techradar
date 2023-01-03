@@ -194,7 +194,7 @@ public class AnalyserTest {
         assertEquals(LocalDate.of(2017,6,23), blipLifetimeA.getAppearedDate());
         assertEquals(LocalDate.of(2018,10,22), blipLifetimeA.getLastSeen());
         assertEquals(volume2, blipLifetimeA.getFirstVolume());
-        assertEquals(volume4, blipLifetimeA.getLastRadarNum());
+        assertEquals(volume4, blipLifetimeA.getFirstFadedVolume());
         assertEquals("blipA", blipLifetimeA.getName());
         assertEquals(UniqueBlipId.from(42), blipLifetimeA.getId());
         assertEquals(Quadrant.tools, blipLifetimeA.getQuadrant());
@@ -203,7 +203,7 @@ public class AnalyserTest {
         assertEquals(secondDate, blipLifetimeB.getAppearedDate());
         assertEquals(secondDate, blipLifetimeB.getLastSeen());
         assertEquals(volume2, blipLifetimeB.getFirstVolume());
-        assertEquals(volume2, blipLifetimeB.getLastRadarNum());
+        assertEquals(volume2, blipLifetimeB.getFirstFadedVolume());
         assertEquals("blipC", blipLifetimeB.getName());
         assertEquals(UniqueBlipId.from(53), blipLifetimeB.getId());
         assertEquals(Quadrant.LanguagesAndFrameworks, blipLifetimeB.getQuadrant());

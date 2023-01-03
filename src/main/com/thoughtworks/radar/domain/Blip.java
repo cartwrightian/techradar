@@ -153,14 +153,14 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return Duration.ofDays(duration);
     }
 
-    private Volume firstFadedVolume() {
+    public Volume firstFadedVolume() {
         List<Volume> volumesInOrder = new ArrayList<>(history.keySet());
         Volume firstFaded = volumesInOrder.get(0);
 
         for (int i = 1; i < volumesInOrder.size(); i++) {
             Volume current = volumesInOrder.get(i);
             if (current.getNumber()-firstFaded.getNumber() > 1) {
-                return current;
+                return firstFaded;
             }
             firstFaded = current;
         }
@@ -169,10 +169,6 @@ public class Blip implements Comparable<Blip>, ToCSV {
 
     private BlipEntry firstFaded() {
         return history.get(firstFadedVolume());
-    }
-
-    public LocalDate firstFadedDate() {
-        return firstFadedVolume().getPublicationDate();
     }
 
     public Ring fadedRing() {

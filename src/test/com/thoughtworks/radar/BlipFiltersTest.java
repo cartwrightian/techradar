@@ -26,8 +26,8 @@ public class BlipFiltersTest {
 
         Volume volume1 = new Volume(1, date);
         Volume volume18 = new Volume(18, date.plusYears(10));
-        blipLifetime = new BlipLifetime("name", UniqueBlipId.from(42), Quadrant.LanguagesAndFrameworks, date,
-                date, volume1,volume18, Ring.Adopt);
+        blipLifetime = new BlipLifetime("name", UniqueBlipId.from(42), Quadrant.LanguagesAndFrameworks,
+                volume1,volume18, Ring.Adopt);
     }
 
     @Test
