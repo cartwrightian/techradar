@@ -3,7 +3,7 @@ package com.thoughtworks.radar.domain;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class BlipHistory {
+public class BlipEntry {
     private final LocalDate date;
     private final Ring ring;
     private final String description;
@@ -11,7 +11,7 @@ public class BlipHistory {
     private final UniqueBlipId blipId;
     private final Quadrant quadrant;
 
-    public BlipHistory(UniqueBlipId uniqueId, LocalDate date, Quadrant quadrant, Ring ring, String description, int idOnThisRadar) {
+    public BlipEntry(UniqueBlipId uniqueId, LocalDate date, Quadrant quadrant, Ring ring, String description, int idOnThisRadar) {
         this.blipId = uniqueId;
         this.date = date;
         this.quadrant = quadrant;
@@ -44,7 +44,7 @@ public class BlipHistory {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BlipHistory that = (BlipHistory) o;
+        BlipEntry that = (BlipEntry) o;
         return idOnThisRadar == that.idOnThisRadar &&
                 Objects.equals(blipId, that.blipId);
     }
@@ -56,5 +56,17 @@ public class BlipHistory {
 
     public Quadrant getQuadrant() {
         return quadrant;
+    }
+
+    @Override
+    public String toString() {
+        return "BlipHistory{" +
+                "date=" + date +
+                ", ring=" + ring +
+                ", description='" + description + '\'' +
+                ", idOnThisRadar=" + idOnThisRadar +
+                ", blipId=" + blipId +
+                ", quadrant=" + quadrant +
+                '}';
     }
 }

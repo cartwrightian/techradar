@@ -86,15 +86,15 @@ public class ParserTest {
 
         assertEquals(105, blips.get(3).idOnRadar(volume2));
 
-        List<BlipHistory> blipHistory = new LinkedList<>(blip.getHistory());
+        List<BlipEntry> blipEntry = new LinkedList<>(blip.getHistory());
 
-        assertEquals(2, blipHistory.size());
-        BlipHistory entryA = blipHistory.get(0);
+        assertEquals(2, blipEntry.size());
+        BlipEntry entryA = blipEntry.get(0);
         assertEquals(Trial, entryA.getRing());
         assertEquals(2010, entryA.getDate().getYear());
         assertEquals(Month.JANUARY, entryA.getDate().getMonth());
 
-        BlipHistory entryB = blipHistory.get(1);
+        BlipEntry entryB = blipEntry.get(1);
         assertEquals(Ring.Adopt, entryB.getRing());
         assertEquals(2010, entryB.getDate().getYear());
         assertEquals(Month.AUGUST, entryB.getDate().getMonth());

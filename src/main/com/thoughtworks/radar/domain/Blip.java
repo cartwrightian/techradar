@@ -13,7 +13,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
     private final String formatForCSV = "%s, \"%s\", %s, %s, %s, %s, %s, %s";
 
     // date -> history, in volume order
-    private final SortedMap<Volume, BlipHistory> history;
+    private final SortedMap<Volume, BlipEntry> history;
 
     public Blip(UniqueBlipId id, String name) {
         this.id = id;
@@ -34,12 +34,15 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return UniqueBlipId.compare(this.id, other.id);
     }
 
-    public Collection<BlipHistory> getHistory() {
+    public Collection<BlipEntry> getHistory() {
         return history.values();
     }
 
-    public void addHistory(Volume volume, BlipHistory blipHistory) {
-        history.put(volume, blipHistory);
+    public void addHistory(Volume volume, BlipEntry blipEntry) {
+        if (!volume.getPublicationDate().equals(blipEntry.getDate())) {
+            throw new RuntimeException("Date mismatch on volume and history for " + volume.getPublicationDate() + " and " + blipEntry.getDate());
+        }
+        history.put(volume, blipEntry);
     }
 
     @Override
@@ -67,7 +70,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return getFirstEntry().getQuadrant();
     }
 
-    private BlipHistory getLastEntry() {
+    private BlipEntry getLastEntry() {
         Volume lastVolume = history.lastKey();
         return history.get(lastVolume);
     }
@@ -76,7 +79,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return getLastEntry().getRing();
     }
 
-    private BlipHistory getFirstEntry() {
+    private BlipEntry getFirstEntry() {
         Volume firstVolume = history.firstKey();
         return history.get(firstVolume);
     }
@@ -88,7 +91,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
     public String getDescription() {
         // description can be blank, so use the last none empty one we see
         List<String> descriptions = history.values().
-                stream().map(BlipHistory::getDescription).
+                stream().map(BlipEntry::getDescription).
                 filter(text -> !text.isEmpty()).
                 collect(Collectors.toList());
         if (descriptions.isEmpty()) {
@@ -109,22 +112,22 @@ public class Blip implements Comparable<Blip>, ToCSV {
     }
 
     public Duration getDuration() {
-        Iterator<Map.Entry<Volume, BlipHistory>> iter = history.entrySet().iterator();
+        Iterator<Map.Entry<Volume, BlipEntry>> iter = history.entrySet().iterator();
 
-        Map.Entry<Volume, BlipHistory> first = iter.next();
+        Map.Entry<Volume, BlipEntry> first = iter.next();
         Volume previousVolume = first.getKey();
         LocalDate previousDate = previousVolume.getPublicationDate();
 
         long duration = 0L;
         while (iter.hasNext()) {
-            Map.Entry<Volume, BlipHistory> current = iter.next();
+            Map.Entry<Volume, BlipEntry> current = iter.next();
             Volume currentVolume = current.getKey();
             LocalDate currentDate = current.getValue().getDate();
 
             // only count if present from one radar to the next
-            if (currentVolume.getNumber()-previousVolume.getNumber()==1) {
-                long gap = currentDate.toEpochDay()-previousDate.toEpochDay();
-                duration = duration + gap;
+            if (currentVolume.getNumber() - previousVolume.getNumber() == 1) {
+                long days = currentDate.toEpochDay()-previousDate.toEpochDay();
+                duration = duration + days;
             }
             previousVolume = currentVolume;
             previousDate = currentDate;
@@ -132,46 +135,30 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return Duration.ofDays(duration);
     }
 
-    public LocalDate firstFadedDate() {
-        Iterator<Map.Entry<Volume, BlipHistory>> iter = history.entrySet().iterator();
-        Map.Entry<Volume, BlipHistory> first = iter.next();
-        Volume previousEdition = first.getKey();
-        LocalDate firstFadedDate = previousEdition.getPublicationDate();
+    private Volume firstFadedVolume() {
+        List<Volume> volumesInOrder = new ArrayList<>(history.keySet());
+        Volume firstFaded = volumesInOrder.get(0);
 
-        while (iter.hasNext()) {
-            Map.Entry<Volume, BlipHistory> current = iter.next();
-            Volume currentEdition = current.getKey();
-
-            if (currentEdition.getNumber()-previousEdition.getNumber()==1) {
-                firstFadedDate = current.getValue().getDate();
-            } else {
-                break;
+        for (int i = 1; i < volumesInOrder.size(); i++) {
+            Volume current = volumesInOrder.get(i);
+            if (current.getNumber()-firstFaded.getNumber() > 1) {
+                return current;
             }
-            previousEdition = currentEdition;
+            firstFaded = current;
         }
+        return firstFaded;
+    }
 
-        return firstFadedDate;
+    private BlipEntry firstFaded() {
+        return history.get(firstFadedVolume());
+    }
+
+    public LocalDate firstFadedDate() {
+        return firstFadedVolume().getPublicationDate();
     }
 
     public Ring fadedRing() {
-        Iterator<Map.Entry<Volume, BlipHistory>> iter = history.entrySet().iterator();
-        Map.Entry<Volume, BlipHistory> first = iter.next();
-        Volume previousEdition = first.getKey();
-        Ring fadedRing = first.getValue().getRing();
-
-        while (iter.hasNext()) {
-            Map.Entry<Volume, BlipHistory> current = iter.next();
-            Volume currentEdition = current.getKey();
-
-            if (currentEdition.getNumber()-previousEdition.getNumber()==1) {
-                fadedRing = current.getValue().getRing();
-            } else {
-                break;
-            }
-            previousEdition = currentEdition;
-        }
-
-        return fadedRing;
+        return firstFaded().getRing();
     }
 
     @Override
@@ -196,7 +183,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
 
     public Integer getNumberBlipMoves() {
         int moves = 0;
-        List<Ring> rings = history.values().stream().map(BlipHistory::getRing).collect(Collectors.toList());
+        List<Ring> rings = history.values().stream().map(BlipEntry::getRing).collect(Collectors.toList());
         Ring previous = rings.get(0);
         for (int i = 1; i < rings.size(); i++) {
             Ring current = rings.get(i);

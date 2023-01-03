@@ -9,16 +9,12 @@ import java.util.stream.Stream;
 
 public class Radars {
     // blip ID -> blip
-    private final SortedMap<UniqueBlipId,Blip> blips;
-    //private final SortedSet<LocalDate> dates;
-    //private final List<BlipHistory> historyToAdd;
+    private final SortedMap<UniqueBlipId, Blip> blips;
     private final VolumeRepository volumeRepository;
 
     public Radars(VolumeRepository volumeRepository) {
         this.volumeRepository = volumeRepository;
         blips = new TreeMap<>();
-//        dates = new TreeSet<>();
-        //historyToAdd = new LinkedList<>();
     }
 
     // warning, stateful class, see add() and updateBlipHistories()
@@ -42,9 +38,9 @@ public class Radars {
         Blip blip = blips.get(blipId);
 
         LocalDate blipDate = rawBlip.getDate();
-        BlipHistory blipHistory = new BlipHistory(blipId, blipDate, rawBlip.getQuadrant(), rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId());
+        BlipEntry blipEntry = new BlipEntry(blipId, blipDate, rawBlip.getQuadrant(), rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId());
         Volume volume = volumeRepository.getVolumeFor(blipDate);
-        blip.addHistory(volume, blipHistory);
+        blip.addHistory(volume, blipEntry);
     }
 
     public int numberOfRadars() {
@@ -53,11 +49,6 @@ public class Radars {
 
     public Volume getEditionFrom(LocalDate date) {
         return volumeRepository.getVolumeFor(date);
-//        if (dates.contains(date)) {
-//            return dates.headSet(date).size()+1;
-//        } else {
-//            throw new IndexOutOfBoundsException("No radar with date "+date);
-//        }
     }
 
     public List<Blip> blipsVisibleOn(Volume volume) {
@@ -66,27 +57,11 @@ public class Radars {
 
     public LocalDate dateOfEdition(int editionNumber) {
         return volumeRepository.dateOfEdition(editionNumber);
-//        if (editionNumber>dates.size()) {
-//            throw new IndexOutOfBoundsException("No radar with edition number "+editionNumber);
-//        }
-//
-//        Iterator<LocalDate> iterator = dates.iterator();
-//        LocalDate next = iterator.next();
-//        for (int i = 1; i < editionNumber; i++) {
-//            next = iterator.next();
-//        }
-//        return next;
-
     }
 
     public void forEachEdition(EachEdition eachEdition) {
         List<Volume> volumes = volumeRepository.getVolumes();
         volumes.forEach(eachEdition::edition);
-//        AtomicInteger count = new AtomicInteger(0);
-//        dates.forEach(date -> {
-//            count.incrementAndGet();
-//            eachEdition.edition(count.get(),date);
-//        });
     }
 
     public long blipCount(BlipFilter blipFilters) {

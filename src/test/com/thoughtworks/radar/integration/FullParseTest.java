@@ -2,7 +2,7 @@ package com.thoughtworks.radar.integration;
 
 import com.thoughtworks.radar.*;
 import com.thoughtworks.radar.domain.Blip;
-import com.thoughtworks.radar.domain.BlipHistory;
+import com.thoughtworks.radar.domain.BlipEntry;
 import com.thoughtworks.radar.domain.Volume;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ public class FullParseTest {
         Radars radars = new RadarFactory(jsonFromFile,parser).loadRadar();
 
         assertEquals(27, radars.numberOfRadars());
-        assertEquals(LocalDate.of(2010,1,1),radars.dateOfEdition(1));
+        assertEquals(LocalDate.of(2010,1,1), radars.dateOfEdition(1));
 
         LocalDate latestEditionReleaseDate = LocalDate.of(2018, 11, 1);
         Volume latestVolume = new Volume(27, latestEditionReleaseDate);
@@ -49,7 +49,7 @@ public class FullParseTest {
         assertEquals(1, awsBlips.size());
 
         Blip aws = awsBlips.get(0);
-        Collection<BlipHistory> awsHistory = aws.getHistory();
+        Collection<BlipEntry> awsHistory = aws.getHistory();
 
         assertEquals(3, awsHistory.size());
 
