@@ -1,5 +1,6 @@
 package com.thoughtworks.radar.repository;
 
+import com.thoughtworks.radar.BlipFilter;
 import com.thoughtworks.radar.Parser;
 import com.thoughtworks.radar.domain.Blip;
 import com.thoughtworks.radar.domain.BlipEntry;
@@ -30,6 +31,10 @@ public class BlipRepository {
 
     public Stream<Blip> stream() {
         return blips.values().stream();
+    }
+
+    public Stream<Blip> filter(BlipFilter blipFilter) {
+        return blips.values().stream().filter(blipFilter::filter);
     }
 
     public Blip get(UniqueBlipId blipId) {

@@ -21,10 +21,11 @@ public class Analyser {
         List<BlipLifetime> results = new LinkedList<>();
 
         radars.getBlips().forEach(blip -> {
+            Volume firstVolume = blip.getFirstVolume();
             LocalDate appearedDate = blip.appearedDate();
             LocalDate firstFaded = blip.firstFadedDate();
             BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getFirstQuadrant(), appearedDate,
-                    firstFaded, radars.getEditionFrom(appearedDate), radars.getEditionFrom(firstFaded), blip.fadedRing());
+                    firstFaded, firstVolume, radars.getEditionFrom(firstFaded), blip.fadedRing());
             results.add(blipLifetime);
         });
 
@@ -45,7 +46,7 @@ public class Analyser {
             ArrayList<Integer> stillLeft = initList(count);
             lifeTimes.stream().
                     filter(blipFilters::filter).
-                    filter(blipLifetime -> (volume.equals(blipLifetime.getFirstRadarNum()))).
+                    filter(blipLifetime -> (volume.equals(blipLifetime.getFirstVolume()))).
                     map(BlipLifetime::getLastRadarNum).
                     forEach(lastRadar -> increment(stillLeft, volumeNumber, lastRadar));
             result.put(volume, stillLeft);
@@ -124,11 +125,11 @@ public class Analyser {
             final int volumeNumber = volume.getNumber();
 
             Double countNew = (double) filteredLifetimes.stream().
-                    filter(item -> volume.equals(item.getFirstRadarNum())).
+                    filter(item -> volume.equals(item.getFirstVolume())).
                     count();
 
             Double countAll = (double) filteredLifetimes.stream().
-                    filter(item -> Volume.greaterOrEquals(volume, item.getFirstRadarNum()) &&
+                    filter(item -> Volume.greaterOrEquals(volume, item.getFirstVolume()) &&
                         Volume.lessThanOrEquals(volume, item.getLastRadarNum())).
 //                    filter(item -> (volumeNumber >= item.getFirstRadarNum().getNumber()
 //                            && volumeNumber <= item.getLastRadarNum().getNumber())).

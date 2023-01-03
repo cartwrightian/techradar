@@ -2,7 +2,6 @@ package com.thoughtworks.radar.domain;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.thoughtworks.radar.Database.LocalDatePersister;
 import com.thoughtworks.radar.Database.UniqueBlipIdPersister;
 import com.thoughtworks.radar.ToCSV;
 
@@ -77,6 +76,10 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return getFirstEntry().getDate();
     }
 
+    public Volume getFirstVolume() {
+        return history.firstKey();
+    }
+
     public LocalDate lastDate() {
         return getLastEntry().getDate();
     }
@@ -95,7 +98,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
     }
 
     private BlipEntry getFirstEntry() {
-        Volume firstVolume = history.firstKey();
+        Volume firstVolume = getFirstVolume();
         return history.get(firstVolume);
     }
 

@@ -43,7 +43,7 @@ public class Radars {
     }
 
     public List<Blip> blipsVisibleOn(Volume volume) {
-        return blipRepository.stream().filter(blip -> blip.visibleOn(volume)).collect(Collectors.toList());
+        return blipRepository.filter(blip -> blip.visibleOn(volume)).collect(Collectors.toList());
     }
 
     public LocalDate dateOfEdition(int editionNumber) {
@@ -56,12 +56,12 @@ public class Radars {
     }
 
     public long blipCount(BlipFilter blipFilters) {
-        return blipRepository.stream().filter(blipFilters::filter).count();
+        return blipRepository.filter(blipFilters).count();
     }
 
     public long blipCount(Volume volume, BlipFilter blipFilter) {
-        return blipRepository.stream().
-                filter(blip -> blip.appearedDate().isEqual(volume.getPublicationDate())).
+        return blipRepository.
+                filter(blip -> blip.getFirstVolume().equals(volume)).
                 filter(blipFilter::filter).
                 count();
     }
@@ -72,23 +72,24 @@ public class Radars {
     }
 
     public List<Blip> mostMoves(BlipFilter blipFilter, int limit) {
-        Comparator<? super Blip> comparitor =
+        Comparator<? super Blip> comparator =
                 (Comparator<Blip>) (blipA, blipB) -> blipB.getNumberBlipMoves().compareTo(blipA.getNumberBlipMoves());
-        return filterAndSort(blipFilter, comparitor, limit);
+        return filterAndSort(blipFilter, comparator, limit);
     }
 
     private List<Blip> filterAndSort(BlipFilter blipFilter, Comparator<? super Blip> comparator, int limit) {
-        return blipRepository.stream().
-                filter(blipFilter::filter).
+        return blipRepository.
+                filter(blipFilter).
                 sorted(comparator).
                 limit(limit).
                 collect(Collectors.toList());
     }
 
     public List<Blip> nonMovers(BlipFilter blipFilter) {
-        return blipRepository.stream().
-                filter(blipFilter::filter).
-                filter(blip->(blip.getNumberBlipMoves()==0)).collect(Collectors.toList());
+        return blipRepository.
+                filter(blipFilter).
+                filter(blip->(blip.getNumberBlipMoves()==0)).
+                collect(Collectors.toList());
     }
 
     public VolumeRepository getVolumeRepository() {
@@ -118,9 +119,6 @@ public class Radars {
     }
 
     private boolean wasEverInAdopt(Blip blip) {
-        long touchedAdopt = blip.getHistory().stream().
-                filter(blipHistory -> blipHistory.getRing() == Ring.Adopt).
-                count();
-        return touchedAdopt > 0;
+        return blip.getHistory().stream().anyMatch(blipEntry -> blipEntry.getRing()==Ring.Adopt);
     }
 }

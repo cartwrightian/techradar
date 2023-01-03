@@ -34,7 +34,6 @@ public class FullParseTest {
         assertEquals(LocalDate.of(2010,1,1), radars.dateOfEdition(1));
 
         LocalDate latestEditionReleaseDate = LocalDate.of(2018, 11, 1);
-        Volume latestVolume = new Volume(27, latestEditionReleaseDate);
 
         assertEquals(latestEditionReleaseDate, radars.dateOfEdition(19));
         assertEquals(19, radars.getEditionFrom(latestEditionReleaseDate).getNumber());
@@ -42,6 +41,8 @@ public class FullParseTest {
         radars.forEachEdition(System.out::println);
 
         // number blips appeared in latest
+        Volume latestVolume = radars.getEditionFrom(latestEditionReleaseDate);
+        assertEquals(19, latestVolume.getNumber());
         assertEquals(73, radars.blipCount(latestVolume, BlipFilters.All()));
 
         // aws appeared, faded, came back

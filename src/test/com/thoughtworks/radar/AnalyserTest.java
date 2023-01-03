@@ -193,7 +193,7 @@ public class AnalyserTest {
         BlipLifetime blipLifetimeA = result.get(0);
         assertEquals(LocalDate.of(2017,6,23), blipLifetimeA.getAppearedDate());
         assertEquals(LocalDate.of(2018,10,22), blipLifetimeA.getLastSeen());
-        assertEquals(volume2, blipLifetimeA.getFirstRadarNum());
+        assertEquals(volume2, blipLifetimeA.getFirstVolume());
         assertEquals(volume4, blipLifetimeA.getLastRadarNum());
         assertEquals("blipA", blipLifetimeA.getName());
         assertEquals(UniqueBlipId.from(42), blipLifetimeA.getId());
@@ -202,7 +202,7 @@ public class AnalyserTest {
         BlipLifetime blipLifetimeB = result.get(2);
         assertEquals(secondDate, blipLifetimeB.getAppearedDate());
         assertEquals(secondDate, blipLifetimeB.getLastSeen());
-        assertEquals(volume2, blipLifetimeB.getFirstRadarNum());
+        assertEquals(volume2, blipLifetimeB.getFirstVolume());
         assertEquals(volume2, blipLifetimeB.getLastRadarNum());
         assertEquals("blipC", blipLifetimeB.getName());
         assertEquals(UniqueBlipId.from(53), blipLifetimeB.getId());

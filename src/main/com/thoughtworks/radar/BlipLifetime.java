@@ -10,20 +10,20 @@ import java.time.LocalDate;
 import static java.lang.String.format;
 
 public class BlipLifetime implements ToCSV {
-    private final LocalDate appeared ;
+    //private final LocalDate appeared;
     private final LocalDate lastSeen;
     private final String name;
     private final UniqueBlipId id;
-    private final Volume firstRadarNum;
+    private final Volume firstVolume;
     private final Volume lastRadarNum;
     private final Quadrant quadrant;
     private final Ring finalRing;
 
     @Override
     public String toCSV() {
-        long epochDay = appeared.toEpochDay();
+        long epochDay = firstVolume.getPublicationDate().toEpochDay();
         long lifetimeInDays = lastSeen.toEpochDay()- epochDay;
-        return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstRadarNum, lastRadarNum, lifetimeInDays);
+        return format("%s,\"%s\",%s,%s,%s,%s",id, name, quadrant, firstVolume, lastRadarNum, lifetimeInDays);
     }
 
     @Override
@@ -32,27 +32,27 @@ public class BlipLifetime implements ToCSV {
     }
 
     public BlipLifetime(String name, UniqueBlipId id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
-                        Volume firstRadarNum, Volume lastRadarNum, Ring finalRing) {
+                        Volume firstVolume, Volume lastRadarNum, Ring finalRing) {
         this.name = name;
         this.id = id;
         this.quadrant = quadrant;
-        this.appeared = appeared;
+        //this.appeared = appeared;
         this.lastSeen = lastSeen;
-        this.firstRadarNum = firstRadarNum;
+        this.firstVolume = firstVolume;
         this.lastRadarNum = lastRadarNum;
         this.finalRing = finalRing;
     }
 
     public LocalDate getAppearedDate() {
-        return appeared;
+        return firstVolume.getPublicationDate();
     }
 
     public LocalDate getLastSeen() {
         return lastSeen;
     }
 
-    public Volume getFirstRadarNum() {
-        return firstRadarNum;
+    public Volume getFirstVolume() {
+        return firstVolume;
     }
 
     public Volume getLastRadarNum() {
