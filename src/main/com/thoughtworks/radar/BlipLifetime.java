@@ -3,6 +3,7 @@ package com.thoughtworks.radar;
 import com.thoughtworks.radar.domain.BlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
+import com.thoughtworks.radar.domain.Volume;
 
 import java.time.LocalDate;
 
@@ -11,12 +12,12 @@ import static java.lang.String.format;
 public class BlipLifetime implements ToCSV {
     private final LocalDate appeared ;
     private final LocalDate lastSeen;
-    private String name;
-    private BlipId id;
-    private int firstRadarNum;
-    private int lastRadarNum;
-    private Quadrant quadrant;
-    private Ring finalRing;
+    private final String name;
+    private final BlipId id;
+    private final Volume firstRadarNum;
+    private final Volume lastRadarNum;
+    private final Quadrant quadrant;
+    private final Ring finalRing;
 
     @Override
     public String toCSV() {
@@ -31,7 +32,7 @@ public class BlipLifetime implements ToCSV {
     }
 
     public BlipLifetime(String name, BlipId id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
-                        int firstRadarNum, int lastRadarNum, Ring finalRing) {
+                        Volume firstRadarNum, Volume lastRadarNum, Ring finalRing) {
         this.name = name;
         this.id = id;
         this.quadrant = quadrant;
@@ -50,11 +51,11 @@ public class BlipLifetime implements ToCSV {
         return lastSeen;
     }
 
-    public int getFirstRadarNum() {
+    public Volume getFirstRadarNum() {
         return firstRadarNum;
     }
 
-    public int getLastRadarNum() {
+    public Volume getLastRadarNum() {
         return lastRadarNum;
     }
 
@@ -73,4 +74,5 @@ public class BlipLifetime implements ToCSV {
     public Ring getFinalRing() {
         return finalRing;
     }
+
 }

@@ -3,7 +3,8 @@ package com.thoughtworks.radar.integration;
 import com.thoughtworks.radar.*;
 import com.thoughtworks.radar.domain.Blip;
 import com.thoughtworks.radar.domain.BlipHistory;
-import org.junit.Test;
+import com.thoughtworks.radar.domain.Volume;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -14,7 +15,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class FullParseTest {
 
@@ -30,16 +32,17 @@ public class FullParseTest {
 
         assertEquals(27, radars.numberOfRadars());
         assertEquals(LocalDate.of(2010,1,1),radars.dateOfEdition(1));
-        LocalDate latestEditionReleaseDate = LocalDate.of(2018, 11, 1);
-        assertEquals(latestEditionReleaseDate,radars.dateOfEdition(19));
-        assertEquals(19,radars.getEditionFrom(latestEditionReleaseDate));
 
-        radars.forEachEdition((count,date) -> {
-                System.out.println(count+" "+date.toString());
-        });
+        LocalDate latestEditionReleaseDate = LocalDate.of(2018, 11, 1);
+        Volume latestVolume = new Volume(27, latestEditionReleaseDate);
+
+        assertEquals(latestEditionReleaseDate, radars.dateOfEdition(19));
+        assertEquals(19, radars.getEditionFrom(latestEditionReleaseDate).getNumber());
+
+        radars.forEachEdition(System.out::println);
 
         // number blips appeared in latest
-        assertEquals(73,radars.blipCount(latestEditionReleaseDate, BlipFilters.All()));
+        assertEquals(73, radars.blipCount(latestVolume, BlipFilters.All()));
 
         // aws appeared, faded, came back
         List<Blip> awsBlips = radars.getBlips().stream().filter(blip -> blip.getName().equals("AWS")).collect(Collectors.toList());

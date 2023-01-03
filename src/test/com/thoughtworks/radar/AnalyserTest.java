@@ -3,21 +3,20 @@ package com.thoughtworks.radar;
 import com.thoughtworks.radar.domain.BlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
-import org.junit.Before;
-import org.junit.Test;
+import com.thoughtworks.radar.domain.Volume;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AnalyserTest {
 
-    private Radars radar;
     private Analyser analyser;
     private final LocalDate firstDate = LocalDate.of(2000, 7, 17);
     private final LocalDate secondDate = LocalDate.of(2017, 6, 23);
@@ -25,10 +24,25 @@ public class AnalyserTest {
     private final LocalDate fourthDate = LocalDate.of(2018, 10, 22);
     private final LocalDate fifthDate = LocalDate.of(2019, 8, 19);
     private BlipFilters blipFilters;
+    private VolumeRepository volumeRepository;
+    private Volume volume1;
+    private Volume volume2;
+    private Volume volume3;
+    private Volume volume4;
+    private Volume volume5;
 
-    @Before
+    @BeforeEach
     public void beforeEachTestRuns() {
-        radar = new Radars();
+        Set<LocalDate> dates = Set.of(firstDate, secondDate, thirdDate, fourthDate, fifthDate);
+        volumeRepository = new VolumeRepository(dates);
+        Radars radar = new Radars(volumeRepository);
+
+        volume1 = volumeRepository.getVolumeFor(firstDate);
+        volume2 = volumeRepository.getVolumeFor(secondDate);
+        volume3 = volumeRepository.getVolumeFor(thirdDate);
+        volume4 = volumeRepository.getVolumeFor(fourthDate);
+        volume5 = volumeRepository.getVolumeFor(fifthDate);
+
         Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(42), "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA1", 30);
         Parser.RawBlip rawB = new Parser.RawBlip(BlipId.from(42), "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA2", 11);
         Parser.RawBlip rawC = new Parser.RawBlip(BlipId.from(42), "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA3", 40);
@@ -52,7 +66,7 @@ public class AnalyserTest {
 
         radar.add(rawI);
 
-        radar.updateBlipHistories();
+        //radar.updateBlipHistories();
 
         analyser = new Analyser(radar);
         blipFilters = new BlipFilters(true);
@@ -113,12 +127,12 @@ public class AnalyserTest {
 
     @Test
     public void shouldSummariseBlipDecayFilterByFinalRing() {
-        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(blipFilters.allow(Quadrant.values()).allow(Ring.Adopt));
+        Map<Volume,List<Integer>> decay = analyser.summaryOfDecay(blipFilters.allow(Quadrant.values()).allow(Ring.Adopt));
 
         assertEquals(5,decay.size());
-        assertEquals(5, decay.get(1).size());
+        assertEquals(5, decay.get(volume1).size());
 
-        List<Integer> first = decay.get(2);
+        List<Integer> first = decay.get(volume2);
         assertEquals(Integer.valueOf(0), first.get(0));
         assertEquals(Integer.valueOf(1), first.get(1));
         assertEquals(Integer.valueOf(1), first.get(2));
@@ -129,15 +143,15 @@ public class AnalyserTest {
 
     @Test
     public void shouldSummariseBlipDecayAllQuadrants() {
-        Map<Integer,List<Integer>> decay = analyser.summaryOfDecay(BlipFilters.All());
+        Map<Volume,List<Integer>> decay = analyser.summaryOfDecay(BlipFilters.All());
 
         assertEquals(5,decay.size());
-        assertEquals(5, decay.get(1).size());
-        List<Integer> secondRadar = decay.get(2);
+        assertEquals(5, decay.get(volume1).size());
+        List<Integer> secondRadar = decay.get(volume2);
         assertEquals(5, secondRadar.size());
-        assertEquals(5, decay.get(3).size());
-        assertEquals(5, decay.get(4).size());
-        assertEquals(5, decay.get(5).size());
+        assertEquals(5, decay.get(volume3).size());
+        assertEquals(5, decay.get(volume4).size());
+        assertEquals(5, decay.get(volume5).size());
 
         assertEquals(Integer.valueOf(0), secondRadar.get(0));
         assertEquals(Integer.valueOf(2), secondRadar.get(1));
@@ -145,7 +159,7 @@ public class AnalyserTest {
         assertEquals(Integer.valueOf(1), secondRadar.get(3));
         assertEquals(Integer.valueOf(0), secondRadar.get(4));
 
-        List<Integer> first = decay.get(1);
+        List<Integer> first = decay.get(volume1);
         assertEquals(Integer.valueOf(1), first.get(0));
         assertEquals(Integer.valueOf(1), first.get(1));
         assertEquals(Integer.valueOf(1), first.get(2));
@@ -155,12 +169,12 @@ public class AnalyserTest {
 
     @Test
     public void shouldSummariseBlipDecayFilterByQuad() {
-        Map<Integer, List<Integer>> decay = analyser.summaryOfDecay(
+        Map<Volume, List<Integer>> decay = analyser.summaryOfDecay(
                 blipFilters.allow(Quadrant.tools).allow(Ring.values()));
 
-        assertEquals(5, decay.get(1).size());
+        assertEquals(5, decay.get(volume1).size());
         assertEquals(5, decay.size());
-        List<Integer> first = decay.get(1);
+        List<Integer> first = decay.get(volume1);
         assertEquals(Integer.valueOf(0), first.get(0));
         assertEquals(Integer.valueOf(0), first.get(1));
         assertEquals(Integer.valueOf(0), first.get(2));
@@ -177,8 +191,8 @@ public class AnalyserTest {
         BlipLifetime blipLifetimeA = result.get(0);
         assertEquals(LocalDate.of(2017,6,23), blipLifetimeA.getAppearedDate());
         assertEquals(LocalDate.of(2018,10,22), blipLifetimeA.getLastSeen());
-        assertEquals(2, blipLifetimeA.getFirstRadarNum());
-        assertEquals(4, blipLifetimeA.getLastRadarNum());
+        assertEquals(volume2, blipLifetimeA.getFirstRadarNum());
+        assertEquals(volume4, blipLifetimeA.getLastRadarNum());
         assertEquals("blipA", blipLifetimeA.getName());
         assertEquals(BlipId.from(42), blipLifetimeA.getId());
         assertEquals(Quadrant.tools, blipLifetimeA.getQuadrant());
@@ -186,8 +200,8 @@ public class AnalyserTest {
         BlipLifetime blipLifetimeB = result.get(2);
         assertEquals(secondDate, blipLifetimeB.getAppearedDate());
         assertEquals(secondDate, blipLifetimeB.getLastSeen());
-        assertEquals(2, blipLifetimeB.getFirstRadarNum());
-        assertEquals(2, blipLifetimeB.getLastRadarNum());
+        assertEquals(volume2, blipLifetimeB.getFirstRadarNum());
+        assertEquals(volume2, blipLifetimeB.getLastRadarNum());
         assertEquals("blipC", blipLifetimeB.getName());
         assertEquals(BlipId.from(53), blipLifetimeB.getId());
         assertEquals(Quadrant.LanguagesAndFrameworks, blipLifetimeB.getQuadrant());
@@ -195,25 +209,32 @@ public class AnalyserTest {
 
     @Test
     public void shouldCalcHalfLifeForBlips() {
-        Radars radar = new Radars();
+        LocalDate otherDateA = firstDate.plusDays(100);
+        LocalDate otherDateB = firstDate.plusDays(200);
+
+        Set<LocalDate> dates = Set.of(firstDate, secondDate, thirdDate, fourthDate, fifthDate, otherDateA, otherDateB);
+        VolumeRepository otherVolumeRepository = new VolumeRepository(dates);
+
+        Radars radar = new Radars(otherVolumeRepository);
+
         for (int blipNumber = 0; blipNumber < 100; blipNumber++) {
             Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber, firstDate,
                     Ring.Assess, Quadrant.tools, "desc", blipNumber);
             radar.add(rawA);
             if (blipNumber<49) {
                 Parser.RawBlip later = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber,
-                        firstDate.plusDays(100), Ring.Adopt,
+                        otherDateA, Ring.Adopt,
                         Quadrant.tools, "desc", 41-blipNumber);
                 radar.add(later);
             }
             if (blipNumber<24) {
                 Parser.RawBlip later = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber,
-                        firstDate.plusDays(200), Ring.Adopt,
+                        otherDateB, Ring.Adopt,
                         Quadrant.tools, "desc", 41-blipNumber);
                 radar.add(later);
             }
         }
-        radar.updateBlipHistories();
+        //radar.updateBlipHistories();
         analyser = new Analyser(radar);
         Map<Integer,Quartiles> halfLife = analyser.findHalfLife(BlipFilters.All());
 

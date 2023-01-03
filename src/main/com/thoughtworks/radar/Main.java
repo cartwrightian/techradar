@@ -4,6 +4,7 @@ package com.thoughtworks.radar;
 import com.thoughtworks.radar.domain.Blip;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
+import com.thoughtworks.radar.domain.Volume;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -215,7 +216,7 @@ public class Main {
     private void decays(Analyser analyser) {
         //// decays, how long it takes blips to disappear
         ResultsWriter decayWriter = getWriter("decays.csv");
-        Map<Integer, List<Integer>> decays = analyser.summaryOfDecay(BlipFilters.All());
+        Map<Volume, List<Integer>> decays = analyser.summaryOfDecay(BlipFilters.All());
         decayWriter.write(decays);
 
         Quadrant.foreach(quadrant ->  {

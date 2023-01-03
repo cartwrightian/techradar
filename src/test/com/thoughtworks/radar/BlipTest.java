@@ -1,13 +1,11 @@
 package com.thoughtworks.radar;
 
 import com.thoughtworks.radar.domain.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BlipTest {
 
@@ -17,37 +15,47 @@ public class BlipTest {
         LocalDate secondDate = firstDate.plusDays(365); // LocalDate.of(2011, 12, 24);
         LocalDate thirdDate = secondDate.plusDays(1000);
 
+        Volume volume1 = new Volume(1, firstDate);
+        Volume volume2 = new Volume(2, secondDate);
+        Volume volume3 = new Volume(3, thirdDate);
+
         BlipId blipId = BlipId.from(42);
         Blip blip = new Blip(blipId, "LifeTheUniverseEtc", Quadrant.tools);
         BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "descA", 1);
         BlipHistory historyB = new BlipHistory(blipId, secondDate, Ring.Trial, "descB", 33);
         BlipHistory historyC = new BlipHistory(blipId, thirdDate, Ring.Adopt, "descC", 12);
 
-        blip.addHistory(1,historyA);
-        blip.addHistory(2,historyB);
-        blip.addHistory(3,historyC);
+        blip.addHistory(volume1, historyA);
+        blip.addHistory(volume2, historyB);
+        blip.addHistory(volume3, historyC);
 
         assertEquals(firstDate, blip.appearedDate());
         assertEquals(thirdDate, blip.lastDate());
+        assertEquals(2, blip.getNumberBlipMoves());
         assertEquals(Ring.Adopt, blip.lastRing());
         assertEquals(Ring.Assess, blip.firstRing());
         assertEquals("descC", blip.getDescription());
 
-        assertTrue(blip.visibleOn(1));
-        assertTrue(blip.visibleOn(2));
-        assertTrue(blip.visibleOn(3));
+        assertTrue(blip.visibleOn(volume1));
+        assertTrue(blip.visibleOn(volume2));
+        assertTrue(blip.visibleOn(volume3));
 
-        assertFalse(blip.visibleOn(5));
+        Volume volume5 = new Volume(5, thirdDate.plusDays(1000));
+        assertFalse(blip.visibleOn(volume5));
 
-        assertEquals(33, blip.idOnRadar(2));
-        assertEquals(1, blip.idOnRadar(1));
+        assertEquals(33, blip.idOnRadar(volume2));
+        assertEquals(1, blip.idOnRadar(volume1));
         assertEquals(1365, blip.getDuration().toDays());
 
         assertEquals(Ring.Adopt,blip.fadedRing());
         assertEquals(thirdDate, blip.firstFadedDate());
 
-        blip.addHistory(5,new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12));
-        blip.addHistory(6,new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12));
+        Volume volume6 = new Volume(6, thirdDate.plusDays(2000));
+
+        blip.addHistory(volume5, new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12));
+        blip.addHistory(volume6, new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12));
+
+        assertEquals(2, blip.getNumberBlipMoves());
 
         assertEquals(blip.fadedRing(),Ring.Adopt);
         assertEquals(thirdDate, blip.firstFadedDate());
@@ -60,12 +68,18 @@ public class BlipTest {
     public void shouldKeepPreviousDescriptionIfNewOneIsEmpty() {
         BlipId blipId = BlipId.from(42);
         Blip blip = new Blip(blipId, "LifeTheUniverseEtc", Quadrant.tools);
-        LocalDate firstDate = LocalDate.of(2010, 12, 24);
-        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "textPresent", 1);
-        BlipHistory historyB = new BlipHistory(blipId, firstDate.plusDays(42), Ring.Trial, "", 33);
 
-        blip.addHistory(1,historyA);
-        blip.addHistory(2,historyB);
+        LocalDate firstDate = LocalDate.of(2010, 12, 24);
+        LocalDate secondDate = firstDate.plusDays(42);
+
+        Volume volume1 = new Volume(1, firstDate);
+        Volume volume2 = new Volume(2, secondDate);
+
+        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "textPresent", 1);
+        BlipHistory historyB = new BlipHistory(blipId, secondDate, Ring.Trial, "", 33);
+
+        blip.addHistory(volume1, historyA);
+        blip.addHistory(volume2, historyB);
 
         assertEquals("textPresent", blip.getDescription());
     }

@@ -1,22 +1,23 @@
 package com.thoughtworks.radar;
 
-import com.thoughtworks.radar.domain.Blip;
-import com.thoughtworks.radar.domain.BlipId;
-import com.thoughtworks.radar.domain.Quadrant;
-import com.thoughtworks.radar.domain.Ring;
-import org.junit.Before;
-import org.junit.Test;
+import com.thoughtworks.radar.domain.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class RadarsTest {
     private LocalDate secondDate;
     private LocalDate firstDate;
     private LocalDate thirdDate;
     private LocalDate fourthDate;
+    private LocalDate fifthDate;
 
     private Radars radar;
     private Parser.RawBlip rawA;
@@ -28,22 +29,28 @@ public class RadarsTest {
     private Parser.RawBlip rawF;
     private Parser.RawBlip rawG;
 
-    @Before
-    public void beforeEachTestRuns() {
-        firstDate = LocalDate.of(2017, 6, 23);
-        secondDate = firstDate.plusDays(20);
-        thirdDate = firstDate.plusDays(100);
-        fourthDate = firstDate.plusDays(110);
+    private VolumeRepository volumeRepository;
 
-        radar = new Radars();
+    @BeforeEach
+    public void beforeEachTestRuns() {
+        firstDate = LocalDate.of(2017, 6, 5);
+        secondDate = LocalDate.of(2017, 7, 10);
+        thirdDate = LocalDate.of(2017, 8, 15);
+        fourthDate = LocalDate.of(2017, 11, 20);
+        fifthDate = LocalDate.of(2022, 1, 31);
+
+        Set<LocalDate> dates = Set.of(firstDate, secondDate, thirdDate, fourthDate, fifthDate);
+        volumeRepository = new VolumeRepository(dates);
+
+        radar = new Radars(volumeRepository);
         rawA = new Parser.RawBlip(BlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
         rawB = new Parser.RawBlip(BlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
         rawC = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
 
         rawD = new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
 
-        rawE = new Parser.RawBlip(BlipId.from(5), "blipC", secondDate, Ring.Trial, Quadrant.techniques, "desc", 51);
-        rawF = new Parser.RawBlip(BlipId.from(5), "blipC", thirdDate, Ring.Adopt, Quadrant.techniques, "desc", 52);
+        rawE = new Parser.RawBlip(BlipId.from(5), "blipC", secondDate, Ring.Adopt, Quadrant.techniques, "desc", 51);
+        rawF = new Parser.RawBlip(BlipId.from(5), "blipC", thirdDate, Ring.Hold, Quadrant.techniques, "desc", 52);
         rawG = new Parser.RawBlip(BlipId.from(5), "blipC", fourthDate, Ring.Hold, Quadrant.techniques, "desc", 53);
 
         radar.add(rawA);
@@ -54,30 +61,59 @@ public class RadarsTest {
         radar.add(rawF);
         radar.add(rawG);
 
-        radar.updateBlipHistories();
+        //radar.updateBlipHistories();
+    }
+
+    @Test
+    void shouldHaveExpectedMoveCount() {
+        Blip blip1 = radar.getBlip(BlipId.from(1));
+        assertEquals(2, blip1.getNumberBlipMoves());
+
+        Blip blip2 = radar.getBlip(BlipId.from(4));
+        assertEquals(0, blip2.getNumberBlipMoves());
+
+        Blip blip3 = radar.getBlip(BlipId.from(5));
+        assertEquals(1, blip3.getNumberBlipMoves());
+    }
+
+    @Test
+    public void shouldHaveExpectedVolumeNumbers() {
+        assertEquals(1, volumeRepository.getVolumeFor(firstDate).getNumber());
+        assertEquals(2, volumeRepository.getVolumeFor(secondDate).getNumber());
+        assertEquals(3, volumeRepository.getVolumeFor(thirdDate).getNumber());
+        assertEquals(4, volumeRepository.getVolumeFor(fourthDate).getNumber());
     }
 
     @Test
     public void shouldFindMostMovedAndNonMovers() {
         // not a move, same ring
-        Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate.plusDays(10), Ring.Adopt, Quadrant.tools, "desc", 88);
-        radar.add(rawE);
-        // lots of none moving history
-        for (int i = 20; i <200; i=i+20) {
-            radar.add(new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate.plusDays(i), Ring.Adopt, Quadrant.tools, "desc", i));
-        }
-        radar.updateBlipHistories();
+        Parser.RawBlip rawX = new Parser.RawBlip(BlipId.from(1), "blipA", fifthDate, Ring.Adopt, Quadrant.tools, "desc", 33);
+        radar.add(rawX);
 
-        List<Blip> mostMoves = radar.mostMoves(BlipFilters.All(), 2);
+        // 5 moves
+        BlipId blipId = BlipId.from(52);
+        radar.add(new Parser.RawBlip(blipId, "blipZ", firstDate, Ring.Adopt, Quadrant.tools, "desc", 71));
+        radar.add(new Parser.RawBlip(blipId, "blipZ", secondDate, Ring.Trial, Quadrant.tools, "desc", 72));
+        radar.add(new Parser.RawBlip(blipId, "blipZ", thirdDate, Ring.Assess, Quadrant.tools, "desc", 73));
+        radar.add(new Parser.RawBlip(blipId, "blipZ", fourthDate, Ring.Hold, Quadrant.tools, "desc", 74));
+        radar.add(new Parser.RawBlip(blipId, "blipZ", fifthDate, Ring.Assess, Quadrant.tools, "desc", 75));
 
-        assertEquals(2, mostMoves.size());
-        Blip firstResult = mostMoves.get(0);
-        Blip secondResult = mostMoves.get(1);
+        //radar.updateBlipHistories();
 
-        assertEquals(BlipId.from(1), firstResult.getId());
-        assertEquals(2, firstResult.getNumberBlipMoves().intValue());
-        assertEquals(BlipId.from(5), secondResult.getId());
-        assertEquals(2, secondResult.getNumberBlipMoves().intValue()); // never moved from adopt
+        Blip added = radar.getBlip(blipId);
+        assertEquals(4, added.getNumberBlipMoves());
+
+        List<BlipId> mostMoves = radar.mostMoves(BlipFilters.All(), 10).stream().map(Blip::getId).collect(Collectors.toList());
+
+        assertEquals(4, mostMoves.size());
+        BlipId firstResult = mostMoves.get(0);
+        BlipId secondResult = mostMoves.get(1);
+
+        assertEquals(blipId, firstResult, mostMoves.toString());
+        //assertEquals(2, firstResult.getNumberBlipMoves().intValue());
+
+        assertEquals(BlipId.from(1), secondResult, mostMoves.toString());
+        //assertEquals(2, secondResult.getNumberBlipMoves().intValue()); // never moved from adopt
 
         List<Blip> nonMovers = radar.nonMovers(BlipFilters.All());
         assertEquals(1, nonMovers.size());
@@ -88,18 +124,27 @@ public class RadarsTest {
     public void shouldGetLongestOnRadar() {
         List<Blip> result = radar.longestOnRadar(BlipFilters.All(), 2);
         assertEquals(2, result.size());
-        assertEquals(22, result.get(0).idOnRadar(1));
-        assertEquals(11, result.get(0).idOnRadar(2));
+
+//        Volume volume1 = volumeRepository.getVolumeFor(firstDate);
+//        Volume volume2 = volumeRepository.getVolumeFor(secondDate);
+//
+//        Blip firstOldest = result.get(0);
+
+        // longest not oldest
+
+        assertEquals(BlipId.from(5), result.get(0).getId(), result.toString());
+        assertEquals(BlipId.from(1), result.get(1).getId(), result.toString());
     }
 
     @Test
     public void shouldAddBlipsAndIndexRadars() {
-        assertEquals(4, radar.numberOfRadars());
+        assertEquals(5, radar.numberOfRadars());
 
-        assertEquals(1, radar.getEditionFrom(firstDate));
-        assertEquals(2, radar.getEditionFrom(secondDate));
-        assertEquals(3, radar.getEditionFrom(thirdDate));
-        assertEquals(4, radar.getEditionFrom(fourthDate));
+        assertEquals(1, radar.getEditionFrom(firstDate).getNumber());
+        assertEquals(2, radar.getEditionFrom(secondDate).getNumber());
+        assertEquals(3, radar.getEditionFrom(thirdDate).getNumber());
+        assertEquals(4, radar.getEditionFrom(fourthDate).getNumber());
+        assertEquals(5, radar.getEditionFrom(fifthDate).getNumber());
 
         assertEquals(firstDate, radar.dateOfEdition(1));
         assertEquals(secondDate, radar.dateOfEdition(2));
@@ -115,12 +160,15 @@ public class RadarsTest {
 
     @Test
     public void shouldGetByDate() {
-        List<Blip> blips = radar.blipsVisibleOn(1);
+        Volume volume1 = volumeRepository.getVolumeFor(firstDate);
+        Volume volume3 = volumeRepository.getVolumeFor(thirdDate);
+
+        List<Blip> blips = radar.blipsVisibleOn(volume1);
         assertEquals(1, blips.size());
         assertEquals(Quadrant.tools, blips.get(0).getQuadrant());
         assertEquals(Ring.Assess, blips.get(0).firstRing());
 
-        blips = radar.blipsVisibleOn(3);
+        blips = radar.blipsVisibleOn(volume3);
         assertEquals(3, blips.size());
         assertEquals(BlipId.from(1), blips.get(0).getId());
         assertEquals(BlipId.from(4), blips.get(1).getId());

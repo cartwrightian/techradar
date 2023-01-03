@@ -1,8 +1,8 @@
 package com.thoughtworks.radar;
 
 import com.thoughtworks.radar.domain.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.thoughtworks.radar.domain.Ring.Trial;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ParserTest {
@@ -46,7 +46,7 @@ public class ParserTest {
 
     private Parser parser;
 
-    @Before
+    @BeforeEach
     public void beforeEachTestRuns() {
         parser = new Parser();
     }
@@ -54,6 +54,11 @@ public class ParserTest {
     @Test
     public void shouldParseBlips() throws IOException {
         Radars radar = parser.parse(example);
+
+        VolumeRepository volumeRepository = radar.getVolumeRepository();
+
+        List<Volume> volumes = volumeRepository.getVolumes();
+        assertEquals(2, volumes.size());
 
         List<Blip> blips = radar.getBlips();
 
@@ -76,7 +81,10 @@ public class ParserTest {
         assertEquals("WebAssembly", blips.get(3).getName());
 
         // check parsed radar id, which is not on all blips
-        assertEquals(105, blips.get(3).idOnRadar(2));
+        LocalDate date = LocalDate.of(2010,8,1);
+        Volume volume2 = new Volume(2, date);
+
+        assertEquals(105, blips.get(3).idOnRadar(volume2));
 
         List<BlipHistory> blipHistory = new LinkedList<>(blip.getHistory());
 

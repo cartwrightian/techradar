@@ -1,13 +1,13 @@
 package com.thoughtworks.radar;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // https://www.thoughtworks.com/internal/api/radar/blips
 // https://www.thoughtworks.com/caas/api/insights/radar/blips.en.json

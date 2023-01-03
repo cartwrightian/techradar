@@ -5,33 +5,24 @@ import com.thoughtworks.radar.ToCSV;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Blip implements Comparable<Blip>, ToCSV {
     private final BlipId id;
     private final String name;
     private final String formatForCSV = "%s, \"%s\", %s, %s, %s, %s, %s, %s";
     private final Quadrant quadrant;
-    // date -> history, in date order
-    private final SortedMap<Integer,BlipHistory> history;
 
-    private LocalDate appeared;
-    private LocalDate lastDate;
-    private Ring lastRing;
-    private Ring firstRing;
-    private String description;
-    private int blipMoves;
-    private int lastEdition = Integer.MIN_VALUE;
+    // date -> history, in volume order
+    private final SortedMap<Volume, BlipHistory> history;
+
+    private Volume lastEdition;
 
     public Blip(BlipId id, String name, Quadrant quadrant) {
         this.id = id;
         this.name = name;
         this.quadrant = quadrant;
         history = new TreeMap<>();
-        appeared = LocalDate.MAX;
-        lastDate = LocalDate.MIN;
-        this.description = "";
-        blipMoves = 0;
-        lastRing=null;
     }
 
     public String getName() {
@@ -51,26 +42,13 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return history.values();
     }
 
-    public void addHistory(int edition, BlipHistory blipHistory) {
-        history.put(edition, blipHistory);
-        LocalDate date = blipHistory.getDate();
-        if (date.isAfter(lastDate)) {
-            lastDate = date;
-            if ((lastRing!=null) && (!blipHistory.getRing().equals(lastRing))) {
-                blipMoves++;
-            }
-            lastRing = blipHistory.getRing();
-            // use the latest version of description
-            if (!blipHistory.getDescription().isEmpty()) {
-                description = blipHistory.getDescription();
-            }
-        }
-        if (date.isBefore(appeared)) {
-            firstRing = blipHistory.getRing();
-            appeared = date;
-        }
-        if (edition>lastEdition) {
-            lastEdition = edition;
+    public void addHistory(Volume volume, BlipHistory blipHistory) {
+        history.put(volume, blipHistory);
+
+        if (lastEdition==null) {
+            lastEdition = volume;
+        } else if (volume.getPublicationDate().isAfter(lastEdition.getPublicationDate())) {
+            lastEdition = volume;
         }
     }
 
@@ -88,75 +66,93 @@ public class Blip implements Comparable<Blip>, ToCSV {
     }
 
     public LocalDate appearedDate() {
-        return appeared;
+        return getFirstEntry().getDate();
     }
 
     public LocalDate lastDate() {
-        return lastDate;
+        return getLastEntry().getDate();
     }
 
     public Quadrant getQuadrant() {
         return quadrant;
     }
 
+    private BlipHistory getLastEntry() {
+        Volume lastVolume = history.lastKey();
+        return history.get(lastVolume);
+    }
+
     public Ring lastRing() {
-        return lastRing;
+        return getLastEntry().getRing();
+    }
+
+    private BlipHistory getFirstEntry() {
+        Volume firstVolume = history.firstKey();
+        return history.get(firstVolume);
     }
 
     public Ring firstRing() {
-        return firstRing;
+        return getFirstEntry().getRing();
     }
 
     public String getDescription() {
-        return description;
-    }
-
-    public boolean visibleOn(int edition) {
-        if (!history.containsKey(edition)) {
-            return false;
+        // description can be blank, so use the last none empty one we see
+        List<String> descriptions = history.values().
+                stream().map(BlipHistory::getDescription).
+                filter(text -> !text.isEmpty()).
+                collect(Collectors.toList());
+        if (descriptions.isEmpty()) {
+            throw new RuntimeException("No validate descriptions found for " + this);
         }
-        return history.containsKey(edition);
+        return descriptions.get(descriptions.size()-1);
     }
 
-    public int idOnRadar(int edition) {
-        return history.get(edition).getIdOfBlipOnThisRadar();
+    public boolean visibleOn(Volume volume) {
+        return history.containsKey(volume);
+    }
+
+    public int idOnRadar(Volume volume) {
+        if (!history.containsKey(volume)) {
+            throw new RuntimeException("Could not find blip history for volume " + volume + " on blip " + this);
+        }
+        return history.get(volume).getIdOfBlipOnThisRadar();
     }
 
     public Duration getDuration() {
-        Iterator<Map.Entry<Integer, BlipHistory>> iter = history.entrySet().iterator();
+        Iterator<Map.Entry<Volume, BlipHistory>> iter = history.entrySet().iterator();
 
-        Map.Entry<Integer, BlipHistory> first = iter.next();
-        Integer previousEdition = first.getKey();
-        LocalDate previousDate = first.getValue().getDate();
+        Map.Entry<Volume, BlipHistory> first = iter.next();
+        Volume previousVolume = first.getKey();
+        LocalDate previousDate = previousVolume.getPublicationDate();
 
         long duration = 0L;
         while (iter.hasNext()) {
-            Map.Entry<Integer, BlipHistory> current = iter.next();
-            Integer currentEdition = current.getKey();
+            Map.Entry<Volume, BlipHistory> current = iter.next();
+            Volume currentVolume = current.getKey();
             LocalDate currentDate = current.getValue().getDate();
 
             // only count if present from one radar to the next
-            if (currentEdition-previousEdition==1) {
+            if (currentVolume.getNumber()-previousVolume.getNumber()==1) {
                 long gap = currentDate.toEpochDay()-previousDate.toEpochDay();
                 duration = duration + gap;
             }
-            previousEdition = currentEdition;
+            previousVolume = currentVolume;
             previousDate = currentDate;
         }
         return Duration.ofDays(duration);
     }
 
     public LocalDate firstFadedDate() {
-        Iterator<Map.Entry<Integer, BlipHistory>> iter = history.entrySet().iterator();
-        Map.Entry<Integer, BlipHistory> first = iter.next();
-        Integer previousEdition = first.getKey();
-        LocalDate firstFadedDate = first.getValue().getDate();
+        Iterator<Map.Entry<Volume, BlipHistory>> iter = history.entrySet().iterator();
+        Map.Entry<Volume, BlipHistory> first = iter.next();
+        Volume previousEdition = first.getKey();
+        LocalDate firstFadedDate = previousEdition.getPublicationDate();
 
         while (iter.hasNext()) {
-            Map.Entry<Integer, BlipHistory> current = iter.next();
-            Integer currentEdition = current.getKey();
+            Map.Entry<Volume, BlipHistory> current = iter.next();
+            Volume currentEdition = current.getKey();
 
-            if (currentEdition-previousEdition==1) {
+            if (currentEdition.getNumber()-previousEdition.getNumber()==1) {
                 firstFadedDate = current.getValue().getDate();
             } else {
                 break;
@@ -168,16 +164,16 @@ public class Blip implements Comparable<Blip>, ToCSV {
     }
 
     public Ring fadedRing() {
-        Iterator<Map.Entry<Integer, BlipHistory>> iter = history.entrySet().iterator();
-        Map.Entry<Integer, BlipHistory> first = iter.next();
-        Integer previousEdition = first.getKey();
+        Iterator<Map.Entry<Volume, BlipHistory>> iter = history.entrySet().iterator();
+        Map.Entry<Volume, BlipHistory> first = iter.next();
+        Volume previousEdition = first.getKey();
         Ring fadedRing = first.getValue().getRing();
 
         while (iter.hasNext()) {
-            Map.Entry<Integer, BlipHistory> current = iter.next();
-            Integer currentEdition = current.getKey();
+            Map.Entry<Volume, BlipHistory> current = iter.next();
+            Volume currentEdition = current.getKey();
 
-            if (currentEdition-previousEdition==1) {
+            if (currentEdition.getNumber()-previousEdition.getNumber()==1) {
                 fadedRing = current.getValue().getRing();
             } else {
                 break;
@@ -191,7 +187,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
     @Override
     public String toCSV() {
         return String.format(formatForCSV,
-                id, name, quadrant, getDuration().toDays(), firstRing, lastRing, blipMoves, getNumberEditions());
+                id, name, quadrant, getDuration().toDays(), firstRing(), lastRing(), getNumberBlipMoves(), getNumberEditions());
     }
 
     private int getNumberEditions() {
@@ -204,12 +200,33 @@ public class Blip implements Comparable<Blip>, ToCSV {
                 "id", "name", "quadrant", "duration", "firstRing", "lastRing", "blipMoves", "editions");
     }
 
-    public Ring ringFor(int edition) {
-        return history.get(edition).getRing();
+    public Ring ringFor(Volume volume) {
+        return history.get(volume).getRing();
     }
 
-
     public Integer getNumberBlipMoves() {
-        return blipMoves;
+        int moves = 0;
+        List<Ring> rings = history.values().stream().map(BlipHistory::getRing).collect(Collectors.toList());
+        Ring previous = rings.get(0);
+        for (int i = 1; i < rings.size(); i++) {
+            Ring current = rings.get(i);
+            if (current!=previous) {
+                moves = moves + 1;
+            }
+            previous = current;
+        }
+        return moves;
+    }
+
+    @Override
+    public String toString() {
+        return "Blip{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", formatForCSV='" + formatForCSV + '\'' +
+                ", quadrant=" + quadrant +
+                ", history=" + history +
+                ", lastEdition=" + lastEdition +
+                '}';
     }
 }

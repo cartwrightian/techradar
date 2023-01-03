@@ -1,5 +1,6 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.Volume;
 import org.apache.commons.io.Charsets;
 
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class ResultsWriter {
         }
     }
 
-    public void write(Map<Integer, List<Integer>> decays) {
+    public void write(Map<Volume, List<Integer>> decays) {
         StringBuilder builder = new StringBuilder();
         // header
         builder.append("\"\"");

@@ -6,10 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.radar.domain.BlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
+import com.thoughtworks.radar.domain.Volume;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class Parser {
@@ -18,14 +21,20 @@ public class Parser {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
+        Set<LocalDate> dates = parseDates(objectMapper, rawJson);
+
+        VolumeRepository volumeRepository = new VolumeRepository(dates);
+
         JsonNode jsonNode = objectMapper.readTree(rawJson);
 
-        Radars radars = new Radars();
+        Radars radars = new Radars(volumeRepository);
 
         jsonNode.forEach(radarNode -> {
             JsonNode dateNode = radarNode.get("date");
             String rawDate = dateNode.asText();
             LocalDate date = parseDate(rawDate);
+
+            Volume volume = volumeRepository.getVolumeFor(date);
 
             JsonNode blipsNode = radarNode.get("blips");
             for (JsonNode blipNode : blipsNode) {
@@ -35,9 +44,26 @@ public class Parser {
 
         });
         
-        radars.updateBlipHistories();
+        //radars.updateBlipHistories();
 
         return radars;
+    }
+
+    private Set<LocalDate> parseDates(ObjectMapper objectMapper, String rawJson) throws IOException {
+        JsonNode jsonNode = objectMapper.readTree(rawJson);
+
+        HashSet<LocalDate> results = new HashSet<>();
+
+        jsonNode.forEach(radarNode -> {
+            JsonNode dateNode = radarNode.get("date");
+            String rawDate = dateNode.asText();
+            LocalDate date = parseDate(rawDate);
+
+            results.add(date);
+
+        });
+
+        return results;
     }
 
     public LocalDate parseDate(String string) {
