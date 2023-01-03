@@ -9,10 +9,12 @@ public class BlipHistory {
     private final String description;
     private final int idOfBlipOnThisRadar;
     private final BlipId blipId;
+    private final Quadrant quadrant;
 
-    public BlipHistory(BlipId blipId, LocalDate date, Ring ring, String description, int rawRadarId) {
+    public BlipHistory(BlipId blipId, LocalDate date, Quadrant quadrant, Ring ring, String description, int rawRadarId) {
         this.blipId = blipId;
         this.date = date;
+        this.quadrant = quadrant;
         this.ring = ring;
         this.description = description;
         this.idOfBlipOnThisRadar = rawRadarId;
@@ -52,4 +54,7 @@ public class BlipHistory {
         return Objects.hash(idOfBlipOnThisRadar, blipId);
     }
 
+    public Quadrant getQuadrant() {
+        return quadrant;
+    }
 }

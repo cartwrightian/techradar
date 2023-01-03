@@ -125,13 +125,6 @@ public class RadarsTest {
         List<Blip> result = radar.longestOnRadar(BlipFilters.All(), 2);
         assertEquals(2, result.size());
 
-//        Volume volume1 = volumeRepository.getVolumeFor(firstDate);
-//        Volume volume2 = volumeRepository.getVolumeFor(secondDate);
-//
-//        Blip firstOldest = result.get(0);
-
-        // longest not oldest
-
         assertEquals(BlipId.from(5), result.get(0).getId(), result.toString());
         assertEquals(BlipId.from(1), result.get(1).getId(), result.toString());
     }
@@ -165,7 +158,7 @@ public class RadarsTest {
 
         List<Blip> blips = radar.blipsVisibleOn(volume1);
         assertEquals(1, blips.size());
-        assertEquals(Quadrant.tools, blips.get(0).getQuadrant());
+        assertEquals(Quadrant.tools, blips.get(0).getFirstQuadrant());
         assertEquals(Ring.Assess, blips.get(0).firstRing());
 
         blips = radar.blipsVisibleOn(volume3);

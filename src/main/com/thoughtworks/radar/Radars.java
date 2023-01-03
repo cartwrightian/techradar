@@ -37,36 +37,15 @@ public class Radars {
 
         // consolidate multiple entries for a blip into one blip with a history
         if (!blips.containsKey(blipId)) {
-            blips.put(blipId, new Blip(blipId, rawBlip.getName(), rawBlip.getQuadrant()));
+            blips.put(blipId, new Blip(blipId, rawBlip.getName()));
         }
         Blip blip = blips.get(blipId);
 
         LocalDate blipDate = rawBlip.getDate();
-        BlipHistory blipHistory = new BlipHistory(blipId, blipDate, rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId());
+        BlipHistory blipHistory = new BlipHistory(blipId, blipDate, rawBlip.getQuadrant(), rawBlip.getRing(), rawBlip.getDescription(), rawBlip.getRadarId());
         Volume volume = volumeRepository.getVolumeFor(blipDate);
         blip.addHistory(volume, blipHistory);
     }
-
-//    public void updateBlipHistories() {
-//        // edition -> things that happened in the edition
-//        Map<Volume, List<BlipHistory>> historyByEdition = new HashMap<>();
-//
-//        if (historyToAdd.isEmpty()) {
-//            throw new RuntimeException("Call after add()'ing all of the blips");
-//        }
-//        historyToAdd.forEach(blipHistory -> {
-//            //int edition = getEditionFrom(blipHistory.getDate());
-//            Volume volume = volumeRepository.getVolumeFor(blipHistory.getDate());
-//            if (!historyByEdition.containsKey(volume)) {
-//                historyByEdition.put(volume, new LinkedList<>());
-//            }
-//            historyByEdition.get(volume).add(blipHistory);
-//        });
-//        historyByEdition.forEach((volume, historyList)-> {
-//            historyList.forEach(history -> { blips.get(history.getBlipId()).addHistory(volume, history);});
-//        });
-//        historyToAdd.clear();
-//    }
 
     public int numberOfRadars() {
         return volumeRepository.size();

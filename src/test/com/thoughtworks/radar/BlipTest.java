@@ -20,10 +20,11 @@ public class BlipTest {
         Volume volume3 = new Volume(3, thirdDate);
 
         BlipId blipId = BlipId.from(42);
-        Blip blip = new Blip(blipId, "LifeTheUniverseEtc", Quadrant.tools);
-        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "descA", 1);
-        BlipHistory historyB = new BlipHistory(blipId, secondDate, Ring.Trial, "descB", 33);
-        BlipHistory historyC = new BlipHistory(blipId, thirdDate, Ring.Adopt, "descC", 12);
+        Quadrant quadrant = Quadrant.tools;
+        Blip blip = new Blip(blipId, "LifeTheUniverseEtc");
+        BlipHistory historyA = new BlipHistory(blipId, firstDate, quadrant, Ring.Assess, "descA", 1);
+        BlipHistory historyB = new BlipHistory(blipId, secondDate, quadrant, Ring.Trial, "descB", 33);
+        BlipHistory historyC = new BlipHistory(blipId, thirdDate, quadrant, Ring.Adopt, "descC", 12);
 
         blip.addHistory(volume1, historyA);
         blip.addHistory(volume2, historyB);
@@ -52,8 +53,8 @@ public class BlipTest {
 
         Volume volume6 = new Volume(6, thirdDate.plusDays(2000));
 
-        blip.addHistory(volume5, new BlipHistory(blipId, thirdDate.plusDays(100), Ring.Adopt, "descC", 12));
-        blip.addHistory(volume6, new BlipHistory(blipId, thirdDate.plusDays(200), Ring.Adopt, "descC", 12));
+        blip.addHistory(volume5, new BlipHistory(blipId, thirdDate.plusDays(100), quadrant, Ring.Adopt, "descC", 12));
+        blip.addHistory(volume6, new BlipHistory(blipId, thirdDate.plusDays(200), quadrant, Ring.Adopt, "descC", 12));
 
         assertEquals(2, blip.getNumberBlipMoves());
 
@@ -67,7 +68,8 @@ public class BlipTest {
     @Test
     public void shouldKeepPreviousDescriptionIfNewOneIsEmpty() {
         BlipId blipId = BlipId.from(42);
-        Blip blip = new Blip(blipId, "LifeTheUniverseEtc", Quadrant.tools);
+        Quadrant quadrant = Quadrant.tools;
+        Blip blip = new Blip(blipId, "LifeTheUniverseEtc");
 
         LocalDate firstDate = LocalDate.of(2010, 12, 24);
         LocalDate secondDate = firstDate.plusDays(42);
@@ -75,8 +77,8 @@ public class BlipTest {
         Volume volume1 = new Volume(1, firstDate);
         Volume volume2 = new Volume(2, secondDate);
 
-        BlipHistory historyA = new BlipHistory(blipId, firstDate, Ring.Assess, "textPresent", 1);
-        BlipHistory historyB = new BlipHistory(blipId, secondDate, Ring.Trial, "", 33);
+        BlipHistory historyA = new BlipHistory(blipId, firstDate, quadrant, Ring.Assess, "textPresent", 1);
+        BlipHistory historyB = new BlipHistory(blipId, secondDate, quadrant, Ring.Trial, "", 33);
 
         blip.addHistory(volume1, historyA);
         blip.addHistory(volume2, historyB);

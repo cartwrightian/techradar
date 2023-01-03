@@ -46,7 +46,7 @@ public class BlipFilters implements BlipLifeTimeFilter, BlipFilter {
 
     @Override
     public boolean filter(Blip item) {
-        if (!quadrants.contains(item.getQuadrant())) {
+        if (!quadrants.contains(item.getFirstQuadrant())) {
             return false;
         }
         return ringFilter(item);

@@ -11,17 +11,15 @@ public class Blip implements Comparable<Blip>, ToCSV {
     private final BlipId id;
     private final String name;
     private final String formatForCSV = "%s, \"%s\", %s, %s, %s, %s, %s, %s";
-    private final Quadrant quadrant;
 
     // date -> history, in volume order
     private final SortedMap<Volume, BlipHistory> history;
 
     private Volume lastEdition;
 
-    public Blip(BlipId id, String name, Quadrant quadrant) {
+    public Blip(BlipId id, String name) {
         this.id = id;
         this.name = name;
-        this.quadrant = quadrant;
         history = new TreeMap<>();
     }
 
@@ -73,8 +71,8 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return getLastEntry().getDate();
     }
 
-    public Quadrant getQuadrant() {
-        return quadrant;
+    public Quadrant getFirstQuadrant() {
+        return getFirstEntry().getQuadrant();
     }
 
     private BlipHistory getLastEntry() {
@@ -187,7 +185,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
     @Override
     public String toCSV() {
         return String.format(formatForCSV,
-                id, name, quadrant, getDuration().toDays(), firstRing(), lastRing(), getNumberBlipMoves(), getNumberEditions());
+                id, name, getFirstQuadrant(), getDuration().toDays(), firstRing(), lastRing(), getNumberBlipMoves(), getNumberEditions());
     }
 
     private int getNumberEditions() {
@@ -224,9 +222,12 @@ public class Blip implements Comparable<Blip>, ToCSV {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", formatForCSV='" + formatForCSV + '\'' +
-                ", quadrant=" + quadrant +
                 ", history=" + history +
                 ", lastEdition=" + lastEdition +
                 '}';
+    }
+
+    public Quadrant quadrantFor(Volume volume) {
+        return history.get(volume).getQuadrant();
     }
 }

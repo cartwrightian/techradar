@@ -23,7 +23,7 @@ public class Analyser {
         radars.getBlips().forEach(blip -> {
             LocalDate appearedDate = blip.appearedDate();
             LocalDate firstFaded = blip.firstFadedDate();
-            BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getQuadrant(), appearedDate,
+            BlipLifetime blipLifetime = new BlipLifetime(blip.getName(), blip.getId(), blip.getFirstQuadrant(), appearedDate,
                     firstFaded, radars.getEditionFrom(appearedDate), radars.getEditionFrom(firstFaded), blip.fadedRing());
             results.add(blipLifetime);
         });
@@ -146,7 +146,7 @@ public class Analyser {
         SortedSet<SummaryText> sorted = new TreeSet<>();
 
         radars.forEachEdition(volume -> radars.blipsVisibleOn(volume).forEach(blip -> {
-            SummaryText summaryText = new SummaryText(blip.getName(), volume.getPublicationDate(), blip.ringFor(volume), blip.getQuadrant(),
+            SummaryText summaryText = new SummaryText(blip.getName(), volume.getPublicationDate(), blip.ringFor(volume), blip.quadrantFor(volume),
                     blip.getDescription(), blip.idOnRadar(volume));
             sorted.add(summaryText);
         }));
