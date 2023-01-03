@@ -9,6 +9,7 @@ import com.thoughtworks.radar.domain.BlipEntry;
 import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Volume;
 import com.thoughtworks.radar.file.RadarFileService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,13 +37,12 @@ public class RadarDatabaseServiceTest {
 
     }
 
-    @BeforeEach
+    @AfterEach
     void afterEachTest() throws Exception {
-        connectionSource = new JdbcPooledConnectionSource("jdbc:h2:mem:myDb");
 
-        TableUtils.dropTable(connectionSource, BlipEntry.class, true);
-        TableUtils.dropTable(connectionSource, Blip.class, true);
-        TableUtils.dropTable(connectionSource, Volume.class, true);
+        TableUtils.dropTable(connectionSource, BlipEntry.class, false);
+        TableUtils.dropTable(connectionSource, Blip.class, false);
+        TableUtils.dropTable(connectionSource, Volume.class, false);
 
         connectionSource.close();
     }
