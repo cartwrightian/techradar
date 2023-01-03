@@ -1,15 +1,33 @@
 package com.thoughtworks.radar.domain;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.thoughtworks.radar.Database.LocalDatePersister;
+import com.thoughtworks.radar.Database.UniqueBlipIdPersister;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
+@DatabaseTable(tableName = "blip_history")
 public class BlipEntry {
-    private final LocalDate date;
-    private final Ring ring;
-    private final String description;
-    private final int idOnThisRadar;
-    private final UniqueBlipId blipId;
-    private final Quadrant quadrant;
+
+    @DatabaseField(canBeNull = false, persisterClass = LocalDatePersister.class)
+    private LocalDate date;
+
+    @DatabaseField(canBeNull = false)
+    private Ring ring;
+
+    @DatabaseField(canBeNull = false)
+    private String description;
+
+    @DatabaseField(canBeNull = false)
+    private int idOnThisRadar;
+
+    @DatabaseField(canBeNull = false, persisterClass = UniqueBlipIdPersister.class)
+    private UniqueBlipId blipId;
+
+    @DatabaseField(canBeNull = false)
+    private Quadrant quadrant;
 
     public BlipEntry(UniqueBlipId uniqueId, LocalDate date, Quadrant quadrant, Ring ring, String description, int idOnThisRadar) {
         this.blipId = uniqueId;
@@ -18,6 +36,11 @@ public class BlipEntry {
         this.ring = ring;
         this.description = description;
         this.idOnThisRadar = idOnThisRadar;
+    }
+
+    // db support
+    BlipEntry() {
+
     }
 
     public Ring getRing() {
