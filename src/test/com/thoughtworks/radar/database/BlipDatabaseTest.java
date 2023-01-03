@@ -32,16 +32,16 @@ public class BlipDatabaseTest {
     }
 
     @Test
-    void saveVolume() throws SQLException {
+    void persistBlip() throws SQLException {
 
         UniqueBlipId uniqueId = UniqueBlipId.from("1232");
         Blip blip = new Blip(uniqueId, "blip name");
 
-        Dao<Blip, Integer> volumesDao = DaoManager.createDao(connectionSource, Blip.class);
+        Dao<Blip, UniqueBlipId> volumesDao = DaoManager.createDao(connectionSource, Blip.class);
 
         volumesDao.create(blip);
 
-        Blip result = volumesDao.queryForId(1232);
+        Blip result = volumesDao.queryForId(uniqueId);
 
         assertEquals(blip.getId(), result.getId());
         assertEquals(blip.getName(), result.getName());

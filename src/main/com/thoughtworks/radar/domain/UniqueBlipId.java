@@ -40,26 +40,6 @@ public class UniqueBlipId implements Comparable<UniqueBlipId> {
     @Override
     public int compareTo(UniqueBlipId other) {
         return Integer.compare(id, other.id);
-
-//        if (intId.isPresent()) {
-//            Integer id = intId.get();
-//            if (other.intId.isPresent()) {
-//                return Integer.compare(id, other.intId.get());
-//            }
-//            if (other.stringId.isPresent()) {
-//                return id.toString().compareTo(other.stringId.get());
-//            }
-//        }
-//        if (stringId.isPresent()) {
-//            String id = stringId.get();
-//            if (other.stringId.isPresent()) {
-//                return id.compareTo(other.stringId.get());
-//            }
-//            if (other.intId.isPresent()) {
-//                return id.compareTo(other.intId.get().toString());
-//            }
-//        }
-//        return 0;
     }
 
 
@@ -74,5 +54,10 @@ public class UniqueBlipId implements Comparable<UniqueBlipId> {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    // DB support
+    public Integer getUnderlyingId() {
+        return id;
     }
 }

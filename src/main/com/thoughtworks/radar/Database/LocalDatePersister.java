@@ -14,9 +14,9 @@ import java.time.ZoneOffset;
 
 
 public class LocalDatePersister extends BaseDataType {
+    private final LocalTime localTime = LocalTime.of(0,0);
 
     private static final LocalDatePersister singleTon = new LocalDatePersister();
-    private final LocalTime localTime = LocalTime.of(0,0);
 
     public static LocalDatePersister getSingleton() {
         return singleTon;

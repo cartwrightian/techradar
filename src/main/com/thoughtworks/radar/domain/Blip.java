@@ -2,6 +2,8 @@ package com.thoughtworks.radar.domain;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.thoughtworks.radar.Database.LocalDatePersister;
+import com.thoughtworks.radar.Database.UniqueBlipIdPersister;
 import com.thoughtworks.radar.ToCSV;
 
 import java.time.Duration;
@@ -12,7 +14,7 @@ import java.util.stream.Collectors;
 @DatabaseTable(tableName = "blips")
 public class Blip implements Comparable<Blip>, ToCSV {
 
-    @DatabaseField(canBeNull = false, id = true)
+    @DatabaseField(canBeNull = false, persisterClass = UniqueBlipIdPersister.class, id=true)
     private UniqueBlipId id;
 
     @DatabaseField(canBeNull = false)
