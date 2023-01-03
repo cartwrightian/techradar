@@ -3,54 +3,50 @@ package com.thoughtworks.radar.domain;
 import java.util.Objects;
 import java.util.Optional;
 
-public class BlipId implements Comparable<BlipId> {
+public class UniqueBlipId implements Comparable<UniqueBlipId> {
     // was an int initially but became string on later radars
-    private Optional<Integer> intId;
-    private Optional<String> stringId;
+    private final Optional<Integer> intId;
+    private final Optional<String> stringId;
 
-    private BlipId(int i) {
+    private UniqueBlipId(int i) {
         intId = Optional.of(i);
         stringId = Optional.empty();
     }
 
-    private BlipId(String text) {
+    private UniqueBlipId(String text) {
         stringId = Optional.of(text);
         intId =Optional.empty();
     }
 
     @Override
     public String toString() {
-        if (intId.isPresent()) {
-            return intId.get().toString();
-        } else {
-            return stringId.get();
-        }
+        return intId.map(Object::toString).orElseGet(stringId::get);
     }
 
-    public static BlipId parse(String raw) {
+    public static UniqueBlipId parse(String raw) {
         try {
             int intId = Integer.parseInt(raw);
-            return BlipId.from(intId);
+            return UniqueBlipId.from(intId);
         }
         catch (NumberFormatException failedToParse) {
-            return BlipId.from(raw);
+            return UniqueBlipId.from(raw);
         }
     }
 
-    public static int compare(BlipId idA, BlipId idB) {
+    public static int compare(UniqueBlipId idA, UniqueBlipId idB) {
         return idA.compareTo(idB);
     }
 
-    public static BlipId from(int i) {
-        return new BlipId(i);
+    public static UniqueBlipId from(int i) {
+        return new UniqueBlipId(i);
     }
 
-    public static BlipId from(String text) {
-        return new BlipId(text);
+    public static UniqueBlipId from(String text) {
+        return new UniqueBlipId(text);
     }
 
     @Override
-    public int compareTo(BlipId other) {
+    public int compareTo(UniqueBlipId other) {
         if (intId.isPresent()) {
             Integer id = intId.get();
             if (other.intId.isPresent()) {
@@ -76,7 +72,7 @@ public class BlipId implements Comparable<BlipId> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BlipId blipId = (BlipId) o;
+        UniqueBlipId blipId = (UniqueBlipId) o;
         return (this.compareTo(blipId)==0);
     }
 

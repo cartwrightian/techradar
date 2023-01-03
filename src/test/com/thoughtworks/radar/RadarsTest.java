@@ -43,15 +43,15 @@ public class RadarsTest {
         volumeRepository = new VolumeRepository(dates);
 
         radar = new Radars(volumeRepository);
-        rawA = new Parser.RawBlip(BlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
-        rawB = new Parser.RawBlip(BlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
-        rawC = new Parser.RawBlip(BlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
+        rawA = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
+        rawB = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
+        rawC = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
 
-        rawD = new Parser.RawBlip(BlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
+        rawD = new Parser.RawBlip(UniqueBlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
 
-        rawE = new Parser.RawBlip(BlipId.from(5), "blipC", secondDate, Ring.Adopt, Quadrant.techniques, "desc", 51);
-        rawF = new Parser.RawBlip(BlipId.from(5), "blipC", thirdDate, Ring.Hold, Quadrant.techniques, "desc", 52);
-        rawG = new Parser.RawBlip(BlipId.from(5), "blipC", fourthDate, Ring.Hold, Quadrant.techniques, "desc", 53);
+        rawE = new Parser.RawBlip(UniqueBlipId.from(5), "blipC", secondDate, Ring.Adopt, Quadrant.techniques, "desc", 51);
+        rawF = new Parser.RawBlip(UniqueBlipId.from(5), "blipC", thirdDate, Ring.Hold, Quadrant.techniques, "desc", 52);
+        rawG = new Parser.RawBlip(UniqueBlipId.from(5), "blipC", fourthDate, Ring.Hold, Quadrant.techniques, "desc", 53);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -66,13 +66,13 @@ public class RadarsTest {
 
     @Test
     void shouldHaveExpectedMoveCount() {
-        Blip blip1 = radar.getBlip(BlipId.from(1));
+        Blip blip1 = radar.getBlip(UniqueBlipId.from(1));
         assertEquals(2, blip1.getNumberBlipMoves());
 
-        Blip blip2 = radar.getBlip(BlipId.from(4));
+        Blip blip2 = radar.getBlip(UniqueBlipId.from(4));
         assertEquals(0, blip2.getNumberBlipMoves());
 
-        Blip blip3 = radar.getBlip(BlipId.from(5));
+        Blip blip3 = radar.getBlip(UniqueBlipId.from(5));
         assertEquals(1, blip3.getNumberBlipMoves());
     }
 
@@ -87,11 +87,11 @@ public class RadarsTest {
     @Test
     public void shouldFindMostMovedAndNonMovers() {
         // not a move, same ring
-        Parser.RawBlip rawX = new Parser.RawBlip(BlipId.from(1), "blipA", fifthDate, Ring.Adopt, Quadrant.tools, "desc", 33);
+        Parser.RawBlip rawX = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", fifthDate, Ring.Adopt, Quadrant.tools, "desc", 33);
         radar.add(rawX);
 
         // 5 moves
-        BlipId blipId = BlipId.from(52);
+        UniqueBlipId blipId = UniqueBlipId.from(52);
         radar.add(new Parser.RawBlip(blipId, "blipZ", firstDate, Ring.Adopt, Quadrant.tools, "desc", 71));
         radar.add(new Parser.RawBlip(blipId, "blipZ", secondDate, Ring.Trial, Quadrant.tools, "desc", 72));
         radar.add(new Parser.RawBlip(blipId, "blipZ", thirdDate, Ring.Assess, Quadrant.tools, "desc", 73));
@@ -103,21 +103,21 @@ public class RadarsTest {
         Blip added = radar.getBlip(blipId);
         assertEquals(4, added.getNumberBlipMoves());
 
-        List<BlipId> mostMoves = radar.mostMoves(BlipFilters.All(), 10).stream().map(Blip::getId).collect(Collectors.toList());
+        List<UniqueBlipId> mostMoves = radar.mostMoves(BlipFilters.All(), 10).stream().map(Blip::getId).collect(Collectors.toList());
 
         assertEquals(4, mostMoves.size());
-        BlipId firstResult = mostMoves.get(0);
-        BlipId secondResult = mostMoves.get(1);
+        UniqueBlipId firstResult = mostMoves.get(0);
+        UniqueBlipId secondResult = mostMoves.get(1);
 
         assertEquals(blipId, firstResult, mostMoves.toString());
         //assertEquals(2, firstResult.getNumberBlipMoves().intValue());
 
-        assertEquals(BlipId.from(1), secondResult, mostMoves.toString());
+        assertEquals(UniqueBlipId.from(1), secondResult, mostMoves.toString());
         //assertEquals(2, secondResult.getNumberBlipMoves().intValue()); // never moved from adopt
 
         List<Blip> nonMovers = radar.nonMovers(BlipFilters.All());
         assertEquals(1, nonMovers.size());
-        assertEquals(BlipId.from(4), nonMovers.get(0).getId());
+        assertEquals(UniqueBlipId.from(4), nonMovers.get(0).getId());
     }
 
     @Test
@@ -125,8 +125,8 @@ public class RadarsTest {
         List<Blip> result = radar.longestOnRadar(BlipFilters.All(), 2);
         assertEquals(2, result.size());
 
-        assertEquals(BlipId.from(5), result.get(0).getId(), result.toString());
-        assertEquals(BlipId.from(1), result.get(1).getId(), result.toString());
+        assertEquals(UniqueBlipId.from(5), result.get(0).getId(), result.toString());
+        assertEquals(UniqueBlipId.from(1), result.get(1).getId(), result.toString());
     }
 
     @Test
@@ -163,8 +163,8 @@ public class RadarsTest {
 
         blips = radar.blipsVisibleOn(volume3);
         assertEquals(3, blips.size());
-        assertEquals(BlipId.from(1), blips.get(0).getId());
-        assertEquals(BlipId.from(4), blips.get(1).getId());
+        assertEquals(UniqueBlipId.from(1), blips.get(0).getId());
+        assertEquals(UniqueBlipId.from(4), blips.get(1).getId());
     }
 
     @Test

@@ -7,17 +7,17 @@ public class BlipHistory {
     private final LocalDate date;
     private final Ring ring;
     private final String description;
-    private final int idOfBlipOnThisRadar;
-    private final BlipId blipId;
+    private final int idOnThisRadar;
+    private final UniqueBlipId blipId;
     private final Quadrant quadrant;
 
-    public BlipHistory(BlipId blipId, LocalDate date, Quadrant quadrant, Ring ring, String description, int rawRadarId) {
-        this.blipId = blipId;
+    public BlipHistory(UniqueBlipId uniqueId, LocalDate date, Quadrant quadrant, Ring ring, String description, int idOnThisRadar) {
+        this.blipId = uniqueId;
         this.date = date;
         this.quadrant = quadrant;
         this.ring = ring;
         this.description = description;
-        this.idOfBlipOnThisRadar = rawRadarId;
+        this.idOnThisRadar = idOnThisRadar;
     }
 
     public Ring getRing() {
@@ -32,11 +32,11 @@ public class BlipHistory {
         return description;
     }
 
-    public int getIdOfBlipOnThisRadar() {
-        return idOfBlipOnThisRadar;
+    public int getIdOnThisRadar() {
+        return idOnThisRadar;
     }
 
-    public BlipId getBlipId() {
+    public UniqueBlipId getUniqueId() {
         return blipId;
     }
 
@@ -45,13 +45,13 @@ public class BlipHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BlipHistory that = (BlipHistory) o;
-        return idOfBlipOnThisRadar == that.idOfBlipOnThisRadar &&
+        return idOnThisRadar == that.idOnThisRadar &&
                 Objects.equals(blipId, that.blipId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idOfBlipOnThisRadar, blipId);
+        return Objects.hash(idOnThisRadar, blipId);
     }
 
     public Quadrant getQuadrant() {

@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class Radars {
     // blip ID -> blip
-    private final SortedMap<BlipId,Blip> blips;
+    private final SortedMap<UniqueBlipId,Blip> blips;
     //private final SortedSet<LocalDate> dates;
     //private final List<BlipHistory> historyToAdd;
     private final VolumeRepository volumeRepository;
@@ -33,7 +33,7 @@ public class Radars {
     // add raw blips, then afterwards call updateBlipHistories()
     // stateful and a bit yuk, but there are circular dependencies between blips and blip history
     public void add(Parser.RawBlip rawBlip) {
-        BlipId blipId = rawBlip.getId();
+        UniqueBlipId blipId = rawBlip.getId();
 
         // consolidate multiple entries for a blip into one blip with a history
         if (!blips.containsKey(blipId)) {
@@ -129,7 +129,7 @@ public class Radars {
         return volumeRepository;
     }
 
-    public Blip getBlip(BlipId blipId) {
+    public Blip getBlip(UniqueBlipId blipId) {
         return blips.get(blipId);
     }
 

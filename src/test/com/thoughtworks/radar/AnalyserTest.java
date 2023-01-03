@@ -1,6 +1,6 @@
 package com.thoughtworks.radar;
 
-import com.thoughtworks.radar.domain.BlipId;
+import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 import com.thoughtworks.radar.domain.Volume;
@@ -43,17 +43,17 @@ public class AnalyserTest {
         volume4 = volumeRepository.getVolumeFor(fourthDate);
         volume5 = volumeRepository.getVolumeFor(fifthDate);
 
-        Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(42), "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA1", 30);
-        Parser.RawBlip rawB = new Parser.RawBlip(BlipId.from(42), "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA2", 11);
-        Parser.RawBlip rawC = new Parser.RawBlip(BlipId.from(42), "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA3", 40);
+        Parser.RawBlip rawA = new Parser.RawBlip(UniqueBlipId.from(42), "blipA", thirdDate, Ring.Hold, Quadrant.tools, "descA1", 30);
+        Parser.RawBlip rawB = new Parser.RawBlip(UniqueBlipId.from(42), "blipA", secondDate, Ring.Assess, Quadrant.tools, "descA2", 11);
+        Parser.RawBlip rawC = new Parser.RawBlip(UniqueBlipId.from(42), "blipA", fourthDate, Ring.Adopt, Quadrant.tools, "descA3", 40);
 
-        Parser.RawBlip rawD = new Parser.RawBlip(BlipId.from(52), "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text1", 50);
-        Parser.RawBlip rawE = new Parser.RawBlip(BlipId.from(52), "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 51);
-        Parser.RawBlip rawF = new Parser.RawBlip(BlipId.from(52), "blipB", secondDate, Ring.Assess, Quadrant.techniques, "later text2", 52);
-        Parser.RawBlip rawG = new Parser.RawBlip(BlipId.from(52), "blipB", thirdDate, Ring.Assess, Quadrant.techniques, "later text3 <ignore this/>", 53);
-        Parser.RawBlip rawH = new Parser.RawBlip(BlipId.from(52), "blipB", fourthDate, Ring.Assess, Quadrant.techniques, "later text4", 54);
+        Parser.RawBlip rawD = new Parser.RawBlip(UniqueBlipId.from(52), "blipB", fifthDate, Ring.Adopt, Quadrant.techniques, "later text1", 50);
+        Parser.RawBlip rawE = new Parser.RawBlip(UniqueBlipId.from(52), "blipB", firstDate, Ring.Assess, Quadrant.techniques, "init text", 51);
+        Parser.RawBlip rawF = new Parser.RawBlip(UniqueBlipId.from(52), "blipB", secondDate, Ring.Assess, Quadrant.techniques, "later text2", 52);
+        Parser.RawBlip rawG = new Parser.RawBlip(UniqueBlipId.from(52), "blipB", thirdDate, Ring.Assess, Quadrant.techniques, "later text3 <ignore this/>", 53);
+        Parser.RawBlip rawH = new Parser.RawBlip(UniqueBlipId.from(52), "blipB", fourthDate, Ring.Assess, Quadrant.techniques, "later text4", 54);
 
-        Parser.RawBlip rawI = new Parser.RawBlip(BlipId.from(53), "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10);
+        Parser.RawBlip rawI = new Parser.RawBlip(UniqueBlipId.from(53), "blipC", secondDate, Ring.Hold, Quadrant.LanguagesAndFrameworks, "descC", 10);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -194,7 +194,7 @@ public class AnalyserTest {
         assertEquals(volume2, blipLifetimeA.getFirstRadarNum());
         assertEquals(volume4, blipLifetimeA.getLastRadarNum());
         assertEquals("blipA", blipLifetimeA.getName());
-        assertEquals(BlipId.from(42), blipLifetimeA.getId());
+        assertEquals(UniqueBlipId.from(42), blipLifetimeA.getId());
         assertEquals(Quadrant.tools, blipLifetimeA.getQuadrant());
 
         BlipLifetime blipLifetimeB = result.get(2);
@@ -203,7 +203,7 @@ public class AnalyserTest {
         assertEquals(volume2, blipLifetimeB.getFirstRadarNum());
         assertEquals(volume2, blipLifetimeB.getLastRadarNum());
         assertEquals("blipC", blipLifetimeB.getName());
-        assertEquals(BlipId.from(53), blipLifetimeB.getId());
+        assertEquals(UniqueBlipId.from(53), blipLifetimeB.getId());
         assertEquals(Quadrant.LanguagesAndFrameworks, blipLifetimeB.getQuadrant());
     }
 
@@ -218,17 +218,17 @@ public class AnalyserTest {
         Radars radar = new Radars(otherVolumeRepository);
 
         for (int blipNumber = 0; blipNumber < 100; blipNumber++) {
-            Parser.RawBlip rawA = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber, firstDate,
+            Parser.RawBlip rawA = new Parser.RawBlip(UniqueBlipId.from(blipNumber), "blip"+blipNumber, firstDate,
                     Ring.Assess, Quadrant.tools, "desc", blipNumber);
             radar.add(rawA);
             if (blipNumber<49) {
-                Parser.RawBlip later = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber,
+                Parser.RawBlip later = new Parser.RawBlip(UniqueBlipId.from(blipNumber), "blip"+blipNumber,
                         otherDateA, Ring.Adopt,
                         Quadrant.tools, "desc", 41-blipNumber);
                 radar.add(later);
             }
             if (blipNumber<24) {
-                Parser.RawBlip later = new Parser.RawBlip(BlipId.from(blipNumber), "blip"+blipNumber,
+                Parser.RawBlip later = new Parser.RawBlip(UniqueBlipId.from(blipNumber), "blip"+blipNumber,
                         otherDateB, Ring.Adopt,
                         Quadrant.tools, "desc", 41-blipNumber);
                 radar.add(later);

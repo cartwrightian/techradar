@@ -1,6 +1,6 @@
 package com.thoughtworks.radar;
 
-import com.thoughtworks.radar.domain.BlipId;
+import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 import com.thoughtworks.radar.domain.Volume;
@@ -26,7 +26,7 @@ public class BlipFiltersTest {
 
         Volume volume1 = new Volume(1, date);
         Volume volume18 = new Volume(18, date.plusYears(10));
-        blipLifetime = new BlipLifetime("name", BlipId.from(42), Quadrant.LanguagesAndFrameworks, date,
+        blipLifetime = new BlipLifetime("name", UniqueBlipId.from(42), Quadrant.LanguagesAndFrameworks, date,
                 date, volume1,volume18, Ring.Adopt);
     }
 

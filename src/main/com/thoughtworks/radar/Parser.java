@@ -3,7 +3,7 @@ package com.thoughtworks.radar;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.radar.domain.BlipId;
+import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 import com.thoughtworks.radar.domain.Volume;
@@ -75,7 +75,7 @@ public class Parser {
         String name = jsonObject.get("name").asText();
         String rawRing = jsonObject.get("ring").asText();
         String rawQuadrant = jsonObject.get("quadrant").asText();
-        BlipId id = BlipId.parse(jsonObject.get("id").asText());
+        UniqueBlipId id = UniqueBlipId.parse(jsonObject.get("id").asText());
         String description = jsonObject.get("description").asText();
 
         // format of radar ID was changed at one point
@@ -91,7 +91,7 @@ public class Parser {
 
     public static class RawBlip {
 
-        private final BlipId id;
+        private final UniqueBlipId id;
         private final String name;
         private final LocalDate date;
         private final Ring ring;
@@ -99,7 +99,7 @@ public class Parser {
         private final int radarId;
         private final Quadrant quadrant;
 
-        public RawBlip(BlipId id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
+        public RawBlip(UniqueBlipId id, String name, LocalDate date, Ring ring, Quadrant quadrant, String description, int radarId) {
             this.id = id;
             this.name = name;
             this.date = date;
@@ -121,7 +121,7 @@ public class Parser {
             return ring;
         }
 
-        public BlipId getId() {
+        public UniqueBlipId getId() {
             return id;
         }
 

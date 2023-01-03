@@ -66,7 +66,7 @@ public class ParserTest {
 
         Blip blip = blips.get(0);
         assertEquals("Android", blip.getName());
-        assertEquals(BlipId.from(6661), blip.getId());
+        assertEquals(UniqueBlipId.from(6661), blip.getId());
         assertEquals(Quadrant.platforms, blip.getFirstQuadrant());
 
         assertEquals("ALT.NET", blips.get(1).getName());

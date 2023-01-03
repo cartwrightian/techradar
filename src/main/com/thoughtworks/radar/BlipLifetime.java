@@ -1,6 +1,6 @@
 package com.thoughtworks.radar;
 
-import com.thoughtworks.radar.domain.BlipId;
+import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 import com.thoughtworks.radar.domain.Volume;
@@ -13,7 +13,7 @@ public class BlipLifetime implements ToCSV {
     private final LocalDate appeared ;
     private final LocalDate lastSeen;
     private final String name;
-    private final BlipId id;
+    private final UniqueBlipId id;
     private final Volume firstRadarNum;
     private final Volume lastRadarNum;
     private final Quadrant quadrant;
@@ -31,7 +31,7 @@ public class BlipLifetime implements ToCSV {
         return format("%s,%s,%s,%s,%s,%s", "id", "name", "quadrant", "firstRadarNum", "lastRadarNum", "lifetimeInDays");
     }
 
-    public BlipLifetime(String name, BlipId id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
+    public BlipLifetime(String name, UniqueBlipId id, Quadrant quadrant, LocalDate appeared, LocalDate lastSeen,
                         Volume firstRadarNum, Volume lastRadarNum, Ring finalRing) {
         this.name = name;
         this.id = id;
@@ -63,7 +63,7 @@ public class BlipLifetime implements ToCSV {
         return name;
     }
 
-    public BlipId getId() {
+    public UniqueBlipId getId() {
         return id;
     }
 

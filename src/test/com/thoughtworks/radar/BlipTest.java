@@ -19,7 +19,7 @@ public class BlipTest {
         Volume volume2 = new Volume(2, secondDate);
         Volume volume3 = new Volume(3, thirdDate);
 
-        BlipId blipId = BlipId.from(42);
+        UniqueBlipId blipId = UniqueBlipId.from(42);
         Quadrant quadrant = Quadrant.tools;
         Blip blip = new Blip(blipId, "LifeTheUniverseEtc");
         BlipHistory historyA = new BlipHistory(blipId, firstDate, quadrant, Ring.Assess, "descA", 1);
@@ -67,7 +67,7 @@ public class BlipTest {
 
     @Test
     public void shouldKeepPreviousDescriptionIfNewOneIsEmpty() {
-        BlipId blipId = BlipId.from(42);
+        UniqueBlipId blipId = UniqueBlipId.from(42);
         Quadrant quadrant = Quadrant.tools;
         Blip blip = new Blip(blipId, "LifeTheUniverseEtc");
 

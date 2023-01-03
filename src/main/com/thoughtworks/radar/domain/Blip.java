@@ -8,16 +8,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Blip implements Comparable<Blip>, ToCSV {
-    private final BlipId id;
+    private final UniqueBlipId id;
     private final String name;
     private final String formatForCSV = "%s, \"%s\", %s, %s, %s, %s, %s, %s";
 
     // date -> history, in volume order
     private final SortedMap<Volume, BlipHistory> history;
 
-    private Volume lastEdition;
-
-    public Blip(BlipId id, String name) {
+    public Blip(UniqueBlipId id, String name) {
         this.id = id;
         this.name = name;
         history = new TreeMap<>();
@@ -27,13 +25,13 @@ public class Blip implements Comparable<Blip>, ToCSV {
         return name;
     }
 
-    public BlipId getId() {
+    public UniqueBlipId getId() {
         return id;
     }
 
     @Override
     public int compareTo(Blip other) {
-        return BlipId.compare(this.id, other.id);
+        return UniqueBlipId.compare(this.id, other.id);
     }
 
     public Collection<BlipHistory> getHistory() {
@@ -42,12 +40,6 @@ public class Blip implements Comparable<Blip>, ToCSV {
 
     public void addHistory(Volume volume, BlipHistory blipHistory) {
         history.put(volume, blipHistory);
-
-        if (lastEdition==null) {
-            lastEdition = volume;
-        } else if (volume.getPublicationDate().isAfter(lastEdition.getPublicationDate())) {
-            lastEdition = volume;
-        }
     }
 
     @Override
@@ -113,7 +105,7 @@ public class Blip implements Comparable<Blip>, ToCSV {
         if (!history.containsKey(volume)) {
             throw new RuntimeException("Could not find blip history for volume " + volume + " on blip " + this);
         }
-        return history.get(volume).getIdOfBlipOnThisRadar();
+        return history.get(volume).getIdOnThisRadar();
     }
 
     public Duration getDuration() {
@@ -223,7 +215,6 @@ public class Blip implements Comparable<Blip>, ToCSV {
                 ", name='" + name + '\'' +
                 ", formatForCSV='" + formatForCSV + '\'' +
                 ", history=" + history +
-                ", lastEdition=" + lastEdition +
                 '}';
     }
 
