@@ -50,7 +50,7 @@ public class Radars {
         return volumeRepository.dateOfEdition(editionNumber);
     }
 
-    public void forEachEdition(EachVolume eachVolume) {
+    public void forEachVolume(EachVolume eachVolume) {
         List<Volume> volumes = volumeRepository.getVolumes();
         volumes.forEach(eachVolume::volume);
     }

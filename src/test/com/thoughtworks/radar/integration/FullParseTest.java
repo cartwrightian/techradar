@@ -38,7 +38,7 @@ public class FullParseTest {
         assertEquals(latestEditionReleaseDate, radars.dateOfEdition(19));
         assertEquals(19, radars.getEditionFrom(latestEditionReleaseDate).getNumber());
 
-        radars.forEachEdition(System.out::println);
+        radars.forEachVolume(System.out::println);
 
         // number blips appeared in latest
         Volume latestVolume = radars.getEditionFrom(latestEditionReleaseDate);

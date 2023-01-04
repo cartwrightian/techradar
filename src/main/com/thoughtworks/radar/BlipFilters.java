@@ -1,6 +1,7 @@
 package com.thoughtworks.radar;
 
 import com.thoughtworks.radar.domain.Blip;
+import com.thoughtworks.radar.domain.BlipLifetime;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 

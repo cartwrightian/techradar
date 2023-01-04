@@ -1,9 +1,6 @@
 package com.thoughtworks.radar;
 
-import com.thoughtworks.radar.domain.UniqueBlipId;
-import com.thoughtworks.radar.domain.Quadrant;
-import com.thoughtworks.radar.domain.Ring;
-import com.thoughtworks.radar.domain.Volume;
+import com.thoughtworks.radar.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

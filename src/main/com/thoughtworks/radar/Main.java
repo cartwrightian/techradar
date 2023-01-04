@@ -1,10 +1,7 @@
 package com.thoughtworks.radar;
 
 
-import com.thoughtworks.radar.domain.Blip;
-import com.thoughtworks.radar.domain.Quadrant;
-import com.thoughtworks.radar.domain.Ring;
-import com.thoughtworks.radar.domain.Volume;
+import com.thoughtworks.radar.domain.*;
 import com.thoughtworks.radar.file.RadarFileService;
 
 import java.io.IOException;

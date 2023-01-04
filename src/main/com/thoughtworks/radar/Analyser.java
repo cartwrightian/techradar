@@ -1,10 +1,10 @@
 package com.thoughtworks.radar;
 
+import com.thoughtworks.radar.domain.BlipLifetime;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
 import com.thoughtworks.radar.domain.Volume;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,7 @@ public class Analyser {
 
         List<BlipLifetime> lifeTimes = lifeTimes();
 
-        radars.forEachEdition(volume -> {
+        radars.forEachVolume(volume -> {
             int volumeNumber = volume.getNumber();
             ArrayList<Integer> stillLeft = initList(count);
             lifeTimes.stream().
@@ -67,7 +67,7 @@ public class Analyser {
         int radarCount = summary.size();
 
         // radars editions
-        radars.forEachEdition((volume -> {
+        radars.forEachVolume((volume -> {
             List<Integer> decaysForRadar = summary.get(volume);
             int volumeNumber = volume.getNumber();
             int index = volumeNumber - 1;
@@ -110,7 +110,7 @@ public class Analyser {
                 .collect(Collectors.toList());
 
         // indexes
-        radars.forEachEdition((volume) -> {
+        radars.forEachVolume((volume) -> {
             final int volumeNumber = volume.getNumber();
 
             Double countNew = (double) filteredLifetimes.stream().
@@ -120,8 +120,6 @@ public class Analyser {
             Double countAll = (double) filteredLifetimes.stream().
                     filter(item -> Volume.greaterOrEquals(volume, item.getFirstVolume()) &&
                         Volume.lessThanOrEquals(volume, item.getFirstFadedVolume())).
-//                    filter(item -> (volumeNumber >= item.getFirstRadarNum().getNumber()
-//                            && volumeNumber <= item.getLastRadarNum().getNumber())).
                     count();
 
             Double ratio = countNew/countAll;
@@ -135,7 +133,7 @@ public class Analyser {
     public LinkedList<SummaryText> createSummaryText() {
         SortedSet<SummaryText> sorted = new TreeSet<>();
 
-        radars.forEachEdition(volume -> radars.blipsVisibleOn(volume).forEach(blip -> {
+        radars.forEachVolume(volume -> radars.blipsVisibleOn(volume).forEach(blip -> {
             SummaryText summaryText = new SummaryText(blip.getName(), volume.getPublicationDate(), blip.ringFor(volume), blip.quadrantFor(volume),
                     blip.getDescription(), blip.idOnRadar(volume));
             sorted.add(summaryText);
@@ -200,7 +198,7 @@ public class Analyser {
         }
         results.add(header);
 
-        radars.forEachEdition(volume -> {
+        radars.forEachVolume(volume -> {
             SimpleCSV line = new SimpleCSV();
             line.add(Integer.toString(volume.getNumber()));
 

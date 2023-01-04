@@ -1,5 +1,6 @@
-package com.thoughtworks.radar;
+package com.thoughtworks.radar.domain;
 
+import com.thoughtworks.radar.ToCSV;
 import com.thoughtworks.radar.domain.*;
 
 import java.time.LocalDate;
@@ -40,8 +41,6 @@ public class BlipLifetime implements ToCSV {
     public String getHeader() {
         return format("%s,%s,%s,%s,%s,%s", "id", "name", "quadrant", "firstRadarNum", "lastRadarNum", "lifetimeInDays");
     }
-
-
 
     public LocalDate getAppearedDate() {
         return firstVolume.getPublicationDate();
