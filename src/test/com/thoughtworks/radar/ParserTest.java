@@ -18,18 +18,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ParserTest {
     private static final String example = "[{\"date\":\"2010-01\",\"blips\":[{\"urlLabel\":\"\",\"radius\":\"\",\"quadrant\":\"" +
             "platforms\",\"lastModified\":\"\",\"description\":\"\",\"quadrantSortOrder\":\"3\",\"ring\":\"Trial\",\"" +
-            "ringSortOrder\":\"2\",\"id\":\"6661\",\"faded\":\"\",\"movement\":\"c\",\"name\":\"Android\",\"" +
+            "ringSortOrder\":\"2\",\"blip_id\":\"6661\",\"faded\":\"\",\"movement\":\"c\",\"name\":\"Android\",\"" +
             "editStatus\":\"Include w/o Write Up\",\"type\":\"Blip\",\"theta\":\"\"},{\"urlLabel\":\"\",\"radius\":\"\",\"" +
             "quadrant\":\"tools\",\"lastModified\":\"\",\"description\":\"\",\"quadrantSortOrder\":\"2\",\"ring\":\"" +
-            "Adopt\",\"ringSortOrder\":\"1\",\"id\":\"6663\",\"faded\":\"\",\"movement\":\"c\",\"name\":\"ASP.NET MVC\",\"" +
+            "Adopt\",\"ringSortOrder\":\"1\",\"blip_id\":\"6663\",\"faded\":\"\",\"movement\":\"c\",\"name\":\"ASP.NET MVC\",\"" +
             "editStatus\":\"Include w/o Write Up\",\"type\":\"Blip\",\"theta\":\"\"}]}," +
             "{\"date\":\"2010-08\",\"blips\":[{\"urlLabel\":\"\",\"radius\":\"\",\"quadrant\":\"platforms\"," +
             "\"lastModified\":\"2010-08\",\"description\":\"While .NET has proven itself as a solid platform, many practitioners are dissatisfied with many of the default Microsoft tools and practices. This has led to the growth of the Alt.NET community, which champions techniques that we find more effective along with (usually opensource) tools that better support them.\",\"" +
-            "quadrantSortOrder\":\"3\",\"ring\":\"Adopt\",\"ringSortOrder\":\"1\",\"id\":\"6662\",\"faded\":\"\",\"" +
+            "quadrantSortOrder\":\"3\",\"ring\":\"Adopt\",\"ringSortOrder\":\"1\",\"blip_id\":\"6662\",\"faded\":\"\",\"" +
             "movement\":\"c\",\"name\":\"ALT.NET\",\"editStatus\":\"Include w/o Write Up\",\"type\":\"Blip\",\"theta\":\"\"}," +
             "{\"urlLabel\":\"\",\"radius\":\"\",\"quadrant\":\"" +
             "platforms\",\"lastModified\":\"\",\"description\":\"\",\"quadrantSortOrder\":\"3\",\"ring\":\"Adopt\",\"" +
-            "ringSortOrder\":\"2\",\"id\":\"6661\",\"faded\":\"\",\"movement\":\"c\",\"name\":\"Android\",\"" +
+            "ringSortOrder\":\"2\",\"blip_id\":\"6661\",\"faded\":\"\",\"movement\":\"c\",\"name\":\"Android\",\"" +
             "editStatus\":\"Include w/o Write Up\",\"type\":\"Blip\",\"theta\":\"\"}," +
             "{\"radarId\":\"105\",\"name\":\"WebAssembly\",\"radius\":\"290\",\"quadrant\":\"languages-and-frameworks\",\"" +
             "description\":\"<p><a href=\\\"http://webassembly.org/\\\"><strong>WebAssembly</strong></a> is a big step forward in " +
@@ -39,7 +39,7 @@ public class ParserTest {
             "When run in the sandbox, it can interact with JavaScript and shares the same permissions and security model. " +
             "When used with <a href=\\\"http://hacks.mozilla.org/2018/01/making-webassembly-even-faster-firefoxs-new-streaming-and-tiering-compiler" +
             "/\\\">Firefox’s new streaming compiler</a>, it also results in faster page initialization. Although it's still early days, this W3C " +
-            "standard is definitely one to start exploring.</p>\",\"ring\":\"Assess\",\"id\":\"9999\",\"movement\":\"t\",\"theta\":\"355\"}" +
+            "standard is definitely one to start exploring.</p>\",\"ring\":\"Assess\",\"blip_id\":\"9999\",\"movement\":\"t\",\"theta\":\"355\"}" +
             "]," +
             "\"translated_locale\":\"en\",\"" +
             "last_modified\":\"2017-09-07T11:19:36+00:00\",\"last_modified_by\":\"wwwsuperuser\",\"id\":\"" +

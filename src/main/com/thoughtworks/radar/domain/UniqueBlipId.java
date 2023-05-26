@@ -21,7 +21,7 @@ public class UniqueBlipId implements Comparable<UniqueBlipId> {
             return UniqueBlipId.from(intId);
         }
         catch (NumberFormatException failedToParse) {
-            throw new RuntimeException("All blip ids are now numeric");
+            throw new RuntimeException("All blip ids are now numeric, but got :" + raw);
         }
     }
 

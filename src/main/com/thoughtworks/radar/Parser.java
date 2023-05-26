@@ -78,7 +78,7 @@ public class Parser {
         String name = jsonObject.get("name").asText();
         String rawRing = jsonObject.get("ring").asText();
         String rawQuadrant = jsonObject.get("quadrant").asText();
-        UniqueBlipId id = UniqueBlipId.parse(jsonObject.get("id").asText());
+        UniqueBlipId id = UniqueBlipId.parse(jsonObject.get("blip_id").asText());
         String description = jsonObject.get("description").asText();
 
         // format of radar ID was changed at one point
