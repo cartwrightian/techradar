@@ -1,7 +1,6 @@
 package com.thoughtworks.radar.domain;
 
 import com.thoughtworks.radar.ToCSV;
-import com.thoughtworks.radar.domain.*;
 
 import java.time.LocalDate;
 

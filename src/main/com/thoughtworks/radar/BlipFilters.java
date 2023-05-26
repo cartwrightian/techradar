@@ -10,9 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BlipFilters implements BlipLifeTimeFilter, BlipFilter {
-    private List<Ring> rings;
-    private List<Quadrant> quadrants;
-    private boolean firstRing;
+    private final List<Ring> rings;
+    private final List<Quadrant> quadrants;
+    private final boolean firstRing;
 
     public BlipFilters(boolean firstRing) {
         this.firstRing = firstRing;

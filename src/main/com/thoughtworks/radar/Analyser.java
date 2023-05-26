@@ -145,7 +145,7 @@ public class Analyser {
     public String allWordsFromDescriptions(BlipFilters blipFilters) {
         StringBuilder results = new StringBuilder();
         radars.getBlips().stream().filter(blipFilters::filter).forEach(blip -> blip.getHistory().forEach(blipHistory ->
-            {results.append(" ").append(filterText(blipHistory.getDescription()));}));
+                results.append(" ").append(filterText(blipHistory.getDescription()))));
 
         return results.toString();
     }

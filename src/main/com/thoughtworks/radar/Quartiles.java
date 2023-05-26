@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Quartiles {
 
-    private ArrayList<Long> results;
+    private final ArrayList<Long> results;
 
     public Quartiles() {
         results = new ArrayList<>(4);

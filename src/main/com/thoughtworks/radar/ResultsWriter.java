@@ -13,7 +13,7 @@ import java.util.Map;
 import static java.lang.String.format;
 
 public class ResultsWriter {
-    private Path path;
+    private final Path path;
     private final String lineSep;
 
     public ResultsWriter(Path path)  {

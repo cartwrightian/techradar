@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class JsonFromFile {
-    private Path path;
+    private final Path path;
 
     public JsonFromFile(Path path) {
         this.path = path;
@@ -15,7 +15,6 @@ public class JsonFromFile {
 
     public String load() throws IOException {
         byte[] bytes = Files.readAllBytes(path);
-        String result = new String(bytes, Charsets.UTF_8);
-        return result;
+        return new String(bytes, Charsets.UTF_8);
     }
 }
