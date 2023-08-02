@@ -3,10 +3,9 @@ package com.thoughtworks.radar;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Quadrant;
 import com.thoughtworks.radar.domain.Ring;
-import com.thoughtworks.radar.domain.Volume;
+import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.repository.BlipRepository;
 import com.thoughtworks.radar.repository.VolumeRepository;
 
@@ -17,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class Parser implements RadarJsonParser {
+public class ParserNewFormat implements RadarJsonParser {
 
     @Override
     public Radars parse(String rawJson) throws IOException {
@@ -33,20 +32,25 @@ public class Parser implements RadarJsonParser {
 
         Radars radars = new Radars(volumeRepository, blipRepository);
 
-        jsonNode.forEach(radarNode -> {
-            JsonNode dateNode = radarNode.get("date");
-            String rawDate = dateNode.asText();
-            LocalDate date = parseDate(rawDate);
-
-            Volume volume = volumeRepository.getVolumeFor(date);
-
-            JsonNode blipsNode = radarNode.get("blips");
-            for (JsonNode blipNode : blipsNode) {
-                RawBlip blip = parseItem(blipNode, date);
-                radars.add(blip);
-            }
-
+        jsonNode.forEach(blipNode -> {
+            RawBlip blip = parseItem(blipNode);
+            radars.add(blip);
         });
+
+//        jsonNode.forEach(radarNode -> {
+//            JsonNode dateNode = radarNode.get("date");
+//            String rawDate = dateNode.asText();
+//            LocalDate date = parseDate(rawDate);
+//
+//            //Volume volume = volumeRepository.getVolumeFor(date);
+//
+//            JsonNode blipsNode = radarNode.get("blips");
+//            for (JsonNode blipNode : blipsNode) {
+//                RawBlip blip = parseItem(blipNode, date);
+//                radars.add(blip);
+//            }
+//
+//        });
         
         //radars.updateBlipHistories();
 
@@ -56,10 +60,10 @@ public class Parser implements RadarJsonParser {
     private Set<LocalDate> parseDates(ObjectMapper objectMapper, String rawJson) throws IOException {
         JsonNode jsonNode = objectMapper.readTree(rawJson);
 
-        HashSet<LocalDate> results = new HashSet<>();
+        Set<LocalDate> results = new HashSet<>();
 
-        jsonNode.forEach(radarNode -> {
-            JsonNode dateNode = radarNode.get("date");
+        jsonNode.forEach(blipNode -> {
+            JsonNode dateNode = blipNode.get("volume_date");
             String rawDate = dateNode.asText();
             LocalDate date = parseDate(rawDate);
 
@@ -76,12 +80,14 @@ public class Parser implements RadarJsonParser {
         return LocalDate.parse(string+"-01", formatter);
     }
 
-    private RawBlip parseItem(JsonNode jsonObject, LocalDate date) {
+    private RawBlip parseItem(JsonNode jsonObject) {
         String name = jsonObject.get("name").asText();
         String rawRing = jsonObject.get("ring").asText();
         String rawQuadrant = jsonObject.get("quadrant").asText();
         UniqueBlipId id = UniqueBlipId.parse(jsonObject.get("blip_id").asText());
         String description = jsonObject.get("description").asText();
+        String volumeDataTxt = jsonObject.get("volume_date").asText();
+        LocalDate volumeDate = parseDate(volumeDataTxt);
 
         // format of radar ID was changed at one point
         int radarId = -1;
@@ -89,9 +95,9 @@ public class Parser implements RadarJsonParser {
             radarId = jsonObject.get("radarId").asInt();
         }
 
-        Ring ring = Ring.valueOf(rawRing);
+        Ring ring = Ring.parse(rawRing);
         Quadrant quadrant = Quadrant.fromString(rawQuadrant);
-        return new RawBlip(id, name, date, ring, quadrant,description, radarId);
+        return new RawBlip(id, name, volumeDate, ring, quadrant,description, radarId);
     }
 
 }

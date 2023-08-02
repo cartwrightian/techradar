@@ -28,7 +28,7 @@ public class Radars {
         return blipRepository.stream().filter(blipFilter::filter).collect(Collectors.toList());
     }
 
-    public void add(Parser.RawBlip rawBlip) {
+    public void add(RawBlip rawBlip) {
         LocalDate blipDate = rawBlip.getDate();
         Volume volume = volumeRepository.getVolumeFor(blipDate);
         blipRepository.add(volume, rawBlip);

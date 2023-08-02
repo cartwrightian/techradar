@@ -1,7 +1,7 @@
 package com.thoughtworks.radar.repository;
 
 import com.thoughtworks.radar.BlipFilter;
-import com.thoughtworks.radar.Parser;
+import com.thoughtworks.radar.RawBlip;
 import com.thoughtworks.radar.domain.Blip;
 import com.thoughtworks.radar.domain.BlipEntry;
 import com.thoughtworks.radar.domain.UniqueBlipId;
@@ -41,7 +41,7 @@ public class BlipRepository {
         return blips.get(blipId);
     }
 
-    public void add(Volume volume, Parser.RawBlip rawBlip) {
+    public void add(Volume volume, RawBlip rawBlip) {
         UniqueBlipId uniqueBlipId = rawBlip.getId();
 
         // consolidate multiple entries for a blip into one blip with a history

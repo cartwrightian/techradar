@@ -5,9 +5,9 @@ import java.io.IOException;
 
 public class RadarFactory {
     private final JsonFromFile jsonFromFile;
-    private final Parser parser;
+    private final RadarJsonParser parser;
 
-    public RadarFactory(JsonFromFile jsonFromFile, Parser parser) {
+    public RadarFactory(JsonFromFile jsonFromFile, RadarJsonParser parser) {
         this.jsonFromFile = jsonFromFile;
         this.parser = parser;
     }

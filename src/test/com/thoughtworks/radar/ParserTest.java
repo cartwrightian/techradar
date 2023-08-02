@@ -45,7 +45,7 @@ public class ParserTest {
             "last_modified\":\"2017-09-07T11:19:36+00:00\",\"last_modified_by\":\"wwwsuperuser\",\"id\":\"" +
             "2018-05/blips/2018_05\",\"content_category\":\"\"}]";
 
-    private Parser parser;
+    private RadarJsonParser parser;
 
     @BeforeEach
     public void beforeEachTestRuns() {

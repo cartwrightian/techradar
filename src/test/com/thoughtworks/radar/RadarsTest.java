@@ -22,14 +22,14 @@ public class RadarsTest {
     private LocalDate fifthDate;
 
     private Radars radar;
-    private Parser.RawBlip rawA;
-    private Parser.RawBlip rawB;
-    private Parser.RawBlip rawC;
-    private Parser.RawBlip rawD;
+    private RawBlip rawA;
+    private RawBlip rawB;
+    private RawBlip rawC;
+    private RawBlip rawD;
 
-    private Parser.RawBlip rawE;
-    private Parser.RawBlip rawF;
-    private Parser.RawBlip rawG;
+    private RawBlip rawE;
+    private RawBlip rawF;
+    private RawBlip rawG;
 
     private VolumeRepository volumeRepository;
 
@@ -45,15 +45,15 @@ public class RadarsTest {
         volumeRepository = new VolumeRepository(dates);
 
         radar = new Radars(volumeRepository, new BlipRepository());
-        rawA = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
-        rawB = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
-        rawC = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
+        rawA = new RawBlip(UniqueBlipId.from(1), "blipA", secondDate, Ring.Hold, Quadrant.tools, "desc", 11);
+        rawB = new RawBlip(UniqueBlipId.from(1), "blipA", firstDate, Ring.Assess, Quadrant.tools, "desc", 22);
+        rawC = new RawBlip(UniqueBlipId.from(1), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 33);
 
-        rawD = new Parser.RawBlip(UniqueBlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
+        rawD = new RawBlip(UniqueBlipId.from(4), "blipA", thirdDate, Ring.Adopt, Quadrant.tools, "desc", 44);
 
-        rawE = new Parser.RawBlip(UniqueBlipId.from(5), "blipC", secondDate, Ring.Adopt, Quadrant.techniques, "desc", 51);
-        rawF = new Parser.RawBlip(UniqueBlipId.from(5), "blipC", thirdDate, Ring.Hold, Quadrant.techniques, "desc", 52);
-        rawG = new Parser.RawBlip(UniqueBlipId.from(5), "blipC", fourthDate, Ring.Hold, Quadrant.techniques, "desc", 53);
+        rawE = new RawBlip(UniqueBlipId.from(5), "blipC", secondDate, Ring.Adopt, Quadrant.techniques, "desc", 51);
+        rawF = new RawBlip(UniqueBlipId.from(5), "blipC", thirdDate, Ring.Hold, Quadrant.techniques, "desc", 52);
+        rawG = new RawBlip(UniqueBlipId.from(5), "blipC", fourthDate, Ring.Hold, Quadrant.techniques, "desc", 53);
 
         radar.add(rawA);
         radar.add(rawB);
@@ -89,16 +89,16 @@ public class RadarsTest {
     @Test
     public void shouldFindMostMovedAndNonMovers() {
         // not a move, same ring
-        Parser.RawBlip rawX = new Parser.RawBlip(UniqueBlipId.from(1), "blipA", fifthDate, Ring.Adopt, Quadrant.tools, "desc", 33);
+        RawBlip rawX = new RawBlip(UniqueBlipId.from(1), "blipA", fifthDate, Ring.Adopt, Quadrant.tools, "desc", 33);
         radar.add(rawX);
 
         // 5 moves
         UniqueBlipId blipId = UniqueBlipId.from(52);
-        radar.add(new Parser.RawBlip(blipId, "blipZ", firstDate, Ring.Adopt, Quadrant.tools, "desc", 71));
-        radar.add(new Parser.RawBlip(blipId, "blipZ", secondDate, Ring.Trial, Quadrant.tools, "desc", 72));
-        radar.add(new Parser.RawBlip(blipId, "blipZ", thirdDate, Ring.Assess, Quadrant.tools, "desc", 73));
-        radar.add(new Parser.RawBlip(blipId, "blipZ", fourthDate, Ring.Hold, Quadrant.tools, "desc", 74));
-        radar.add(new Parser.RawBlip(blipId, "blipZ", fifthDate, Ring.Assess, Quadrant.tools, "desc", 75));
+        radar.add(new RawBlip(blipId, "blipZ", firstDate, Ring.Adopt, Quadrant.tools, "desc", 71));
+        radar.add(new RawBlip(blipId, "blipZ", secondDate, Ring.Trial, Quadrant.tools, "desc", 72));
+        radar.add(new RawBlip(blipId, "blipZ", thirdDate, Ring.Assess, Quadrant.tools, "desc", 73));
+        radar.add(new RawBlip(blipId, "blipZ", fourthDate, Ring.Hold, Quadrant.tools, "desc", 74));
+        radar.add(new RawBlip(blipId, "blipZ", fifthDate, Ring.Assess, Quadrant.tools, "desc", 75));
 
         //radar.updateBlipHistories();
 

@@ -1,9 +1,6 @@
 package com.thoughtworks.radar.file;
 
-import com.thoughtworks.radar.JsonFromFile;
-import com.thoughtworks.radar.Parser;
-import com.thoughtworks.radar.RadarFactory;
-import com.thoughtworks.radar.Radars;
+import com.thoughtworks.radar.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,7 +18,7 @@ public class RadarFileService {
         Path path = Paths.get(folder,"blips.json");
 
         JsonFromFile jsonFromFile = new JsonFromFile(path);
-        Parser parser = new Parser();
+        ParserNewFormat parser = new ParserNewFormat();
 
         return new RadarFactory(jsonFromFile,parser).loadRadar();
     }
