@@ -6,6 +6,7 @@ import com.thoughtworks.radar.repository.VolumeRepository;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -102,6 +103,11 @@ public class Radars {
 
     public List<BlipEntry> getBlipEntries() {
         return blipRepository.stream().flatMap(blip -> blip.getHistory().stream()).collect(Collectors.toList());
+    }
+
+    public Set<Blip> findByName(String text) {
+        String searchText = text.toLowerCase();
+        return blipRepository.stream().filter(blip -> blip.getName().toLowerCase().equals(searchText)).collect(Collectors.toSet());
     }
 
     public interface EachVolume {
