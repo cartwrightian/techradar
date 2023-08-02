@@ -18,7 +18,7 @@ public class RadarFileService {
         Path path = Paths.get(folder,"blips.json");
 
         JsonFromFile jsonFromFile = new JsonFromFile(path);
-        ParserNewFormat parser = new ParserNewFormat();
+        JsonParser parser = new JsonParser();
 
         return new RadarFactory(jsonFromFile,parser).loadRadar();
     }

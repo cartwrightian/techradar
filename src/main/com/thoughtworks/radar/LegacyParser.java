@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class Parser implements RadarJsonParser {
+public class LegacyParser implements RadarJsonParser {
 
     @Override
     public Radars parse(String rawJson) throws IOException {

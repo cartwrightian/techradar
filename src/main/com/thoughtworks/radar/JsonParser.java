@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class ParserNewFormat implements RadarJsonParser {
+public class JsonParser implements RadarJsonParser {
 
     @Override
     public Radars parse(String rawJson) throws IOException {
@@ -36,23 +36,6 @@ public class ParserNewFormat implements RadarJsonParser {
             RawBlip blip = parseItem(blipNode);
             radars.add(blip);
         });
-
-//        jsonNode.forEach(radarNode -> {
-//            JsonNode dateNode = radarNode.get("date");
-//            String rawDate = dateNode.asText();
-//            LocalDate date = parseDate(rawDate);
-//
-//            //Volume volume = volumeRepository.getVolumeFor(date);
-//
-//            JsonNode blipsNode = radarNode.get("blips");
-//            for (JsonNode blipNode : blipsNode) {
-//                RawBlip blip = parseItem(blipNode, date);
-//                radars.add(blip);
-//            }
-//
-//        });
-        
-        //radars.updateBlipHistories();
 
         return radars;
     }

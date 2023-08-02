@@ -6,7 +6,6 @@ import com.thoughtworks.radar.domain.BlipEntry;
 import com.thoughtworks.radar.domain.UniqueBlipId;
 import com.thoughtworks.radar.domain.Volume;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -17,14 +16,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
-public class FullParseNewFormatTest {
+public class ParserTest {
 
     private Radars radars;
 
@@ -34,7 +32,7 @@ public class FullParseNewFormatTest {
         Path path = Paths.get(folder,"blips.json");
 
         JsonFromFile jsonFromFile = new JsonFromFile(path);
-        ParserNewFormat parser = new ParserNewFormat();
+        JsonParser parser = new JsonParser();
 
         radars = new RadarFactory(jsonFromFile,parser).loadRadar();
     }

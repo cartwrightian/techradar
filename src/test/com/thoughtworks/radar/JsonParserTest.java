@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class ParserNewFormatTest {
+public class JsonParserTest {
     private static final String example = "[{\"ring\":\"assess\",\"blip_id\":202304063,\"quadrant\":\"tools\",\"volume_date\":\"2023-04\",\"description\":\"" +
             "Knowledge management is critical for tech workers, as we need to be constantly learning and staying up to date with the latest technology developments. " +
             "ecently, tools such as Obsidian and Logseq have emerged in the category of note-taking tools that support linking notes to form a knowledge graph, while " +
@@ -47,7 +47,7 @@ public class ParserNewFormatTest {
 
     @BeforeEach
     public void beforeEachTestRuns() {
-        parser = new ParserNewFormat();
+        parser = new JsonParser();
     }
 
     @Test

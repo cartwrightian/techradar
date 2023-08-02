@@ -49,7 +49,7 @@ public class ParserTest {
 
     @BeforeEach
     public void beforeEachTestRuns() {
-        parser = new Parser();
+        parser = new LegacyParser();
     }
 
     @Test

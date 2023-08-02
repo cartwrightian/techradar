@@ -4,8 +4,6 @@ import com.thoughtworks.radar.*;
 import com.thoughtworks.radar.domain.Blip;
 import com.thoughtworks.radar.domain.BlipEntry;
 import com.thoughtworks.radar.domain.Volume;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -20,18 +18,17 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@Disabled("older format of JSON")
-public class FullParseTest {
+public class LegacyParserTest {
 
     @Test
     public void shouldLoadRadarDataAndCreateAnalysis() throws IOException {
         String folder = "data";
-        Path path = Paths.get(folder,"blips.json");
+        Path path = Paths.get(folder,"blips.json.previous");
 
         JsonFromFile jsonFromFile = new JsonFromFile(path);
-        Parser parser = new Parser();
+        LegacyParser legacyParser = new LegacyParser();
 
-        Radars radars = new RadarFactory(jsonFromFile,parser).loadRadar();
+        Radars radars = new RadarFactory(jsonFromFile, legacyParser).loadRadar();
 
         assertEquals(28, radars.numberOfRadars());
         assertEquals(LocalDate.of(2010,1,1), radars.dateOfEdition(1));

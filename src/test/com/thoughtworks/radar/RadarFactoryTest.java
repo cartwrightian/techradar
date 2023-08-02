@@ -16,7 +16,7 @@ public class RadarFactoryTest {
         Path path = Paths.get("data","blips.json");
 
         JsonFromFile loader = new JsonFromFile(path);
-        ParserNewFormat parser = new ParserNewFormat();
+        JsonParser parser = new JsonParser();
         RadarFactory factor = new RadarFactory(loader, parser);
         Radars result = factor.loadRadar();
 
